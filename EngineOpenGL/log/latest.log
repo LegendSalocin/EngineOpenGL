@@ -1,0 +1,24 @@
+01.08.16 20:53 [Engine] [TestLogger] INFO: This should be logged.
+01.08.16 20:53 [Engine] SEVERE: java.lang.NullPointerException
+	
+	Exception occured.
+	
+	--------------------------------------------------------------------
+	Details:
+	
+	Name            = Salocin        
+	Session         = 586            
+	Logged in       = true           
+	--------------------------------------------------------------------
+	Stack Trace:
+	
+	de.salocin.gl.util.DetailedException: java.lang.NullPointerException
+		at de.salocin.gl.test.TestLogger.onEnable(TestLogger.java:39)
+		at de.salocin.gl.plugin.SimplePlugin.enable(SimplePlugin.java:52)
+		at de.salocin.gl.plugin.CorePlugin.enable(CorePlugin.java:49)
+		at de.salocin.gl.plugin.PluginManager.init(PluginManager.java:27)
+		at de.salocin.gl.Engine.start(Engine.java:33)
+		at de.salocin.gl.test.TestLogger.main(TestLogger.java:13)
+	Caused by: java.lang.NullPointerException
+		... 6 more
+01.08.16 20:53 [Engine] [Display] INFO: Display initialized.
