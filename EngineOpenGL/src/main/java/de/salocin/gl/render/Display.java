@@ -7,6 +7,8 @@ import de.salocin.gl.event.display.DisplayInitializedEvent;
 import de.salocin.gl.event.display.DisplayRenderStateChangeEvent;
 import de.salocin.gl.log.EngineLogger;
 import de.salocin.gl.scheduler.Scheduler;
+import de.salocin.gl.util.input.Keyboard;
+import de.salocin.gl.util.input.Mouse;
 
 public class Display {
 	
@@ -33,6 +35,9 @@ public class Display {
 		}
 		
 		resolution = new Resolution();
+		
+		Mouse.init();
+		Keyboard.init();
 		
 		logger.info("Display initialized.");
 		EventManager.getInstance().callEvent(new DisplayInitializedEvent());

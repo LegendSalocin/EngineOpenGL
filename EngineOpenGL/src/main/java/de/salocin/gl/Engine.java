@@ -2,6 +2,8 @@ package de.salocin.gl;
 
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.Validate;
+
 import de.salocin.gl.event.EventManager;
 import de.salocin.gl.event.engine.EngineShutdownEvent;
 import de.salocin.gl.event.engine.EngineShutdownEvent.State;
@@ -24,6 +26,13 @@ public class Engine {
 		if (isStarted()) {
 			throw new RuntimeException("Engine already started.");
 		}
+		
+		Validate.notNull(corePlugin);
+		
+		if (corePlugin.getName() == null) {
+			throw new RuntimeException("CorePlugin name can't be null.");
+		}
+		
 		started = true;
 		
 		try {

@@ -2,7 +2,7 @@ package de.salocin.gl.util;
 
 import org.lwjgl.opengl.GL11;
 
-public class Color {
+public class Color implements Copyable<Color> {
 	
 	public static final Color white = Color.fromRGB(0xffffff);
 	public static final Color black = Color.fromRGB(0x000000);
@@ -88,6 +88,7 @@ public class Color {
 		GL11.glColor4f(r, g, b, a);
 	}
 	
+	@Override
 	public Color copy() {
 		return new Color(r, g, b, a);
 	}
