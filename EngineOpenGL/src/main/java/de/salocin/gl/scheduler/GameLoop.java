@@ -13,6 +13,7 @@ import de.salocin.gl.render.Display;
 import de.salocin.gl.render.RenderState;
 import de.salocin.gl.render.Resolution;
 import de.salocin.gl.util.EngineException;
+import de.salocin.gl.util.render.TrueTypeFontDefaults;
 
 public class GameLoop implements Runnable {
 	
@@ -64,6 +65,7 @@ public class GameLoop implements Runnable {
 		
 		GL.createCapabilities();
 		
+		TrueTypeFontDefaults.init();
 		Display.getInstance().init();
 	}
 	

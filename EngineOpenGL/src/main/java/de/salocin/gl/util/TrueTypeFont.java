@@ -22,16 +22,15 @@ import de.salocin.gl.render.gui.Gui;
 
 public class TrueTypeFont {
 	
-	protected static final int correctionWidth = 15;
-	protected static final GraphicsConfiguration graphicsConfiguration;
-	protected static final Graphics2D fontMetricsGraphics;
-	protected Texture fontTexture;
-	protected Font font;
-	protected FontMetrics fontMetrics;
-	protected boolean antiAlias;
-	protected char[] chars;
-	protected int charsTextureWidth;
-	protected int charsTextureHeight;
+	private static final int correctionWidth = 10;
+	private static final GraphicsConfiguration graphicsConfiguration;
+	private static final Graphics2D fontMetricsGraphics;
+	private Texture fontTexture;
+	private Font font;
+	private FontMetrics fontMetrics;
+	private char[] chars;
+	private int charsTextureWidth;
+	private int charsTextureHeight;
 	
 	static {
 		graphicsConfiguration = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
@@ -62,7 +61,8 @@ public class TrueTypeFont {
 	public TrueTypeFont(Font font, boolean antiAlias, char[] customChars) {
 		Validate.notNull(font);
 		this.font = font;
-		this.antiAlias = antiAlias;
+		// TODO
+		// this.antiAlias = antiAlias;
 		setCustomChars(customChars);
 	}
 	
@@ -93,15 +93,6 @@ public class TrueTypeFont {
 			g.drawString(String.valueOf(c), xOffset, y);
 			xOffset += fontMetrics.charWidth(c) + correctionWidth;
 		}
-		// TODO - DEBUG
-		// try {
-		// File file = new File(font.getName() + ".png");
-		// file.delete();
-		// file.createNewFile();
-		// ImageIO.write(image, "png", file);
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
 		
 		fontTexture = new SimpleTexture(image);
 	}
@@ -208,7 +199,8 @@ public class TrueTypeFont {
 	}
 	
 	public static enum Algin {
-		LEFT, RIGHT;
+		LEFT,
+		RIGHT;
 	}
 	
 }

@@ -64,11 +64,11 @@ public class Resolution {
 		return height;
 	}
 	
-	public int getOrthoWidthInPixel(int width) {
+	public int getOrthoWidthInPixel(float width) {
 		return (int) ((width / this.orthoWidth) * this.width);
 	}
 	
-	public int getOrthoHeightInPixel(int height) {
+	public int getOrthoHeightInPixel(float height) {
 		return (int) ((height / this.orthoHeight) * this.height);
 	}
 	
@@ -78,6 +78,22 @@ public class Resolution {
 	
 	public float getPixelInOrthoHeight(int pixel) {
 		return ((float) pixel / (float) height) * orthoHeight;
+	}
+	
+	public static int convertOrthoWidth(float width) {
+		return getInstance().getOrthoWidthInPixel(width);
+	}
+	
+	public static int convertOrthoHeight(float height) {
+		return getInstance().getOrthoHeightInPixel(height);
+	}
+	
+	public static float convertPixelWidth(int pixel) {
+		return getInstance().getPixelInOrthoWidth(pixel);
+	}
+	
+	public static float convertPixelHeight(int pixel) {
+		return getInstance().getPixelInOrthoHeight(pixel);
 	}
 	
 }

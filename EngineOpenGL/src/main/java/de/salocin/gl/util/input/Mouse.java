@@ -8,6 +8,7 @@ import de.salocin.gl.event.EventManager;
 import de.salocin.gl.event.input.MouseButtonEvent;
 import de.salocin.gl.event.input.MouseMovedEvent;
 import de.salocin.gl.render.Display;
+import de.salocin.gl.render.Resolution;
 import de.salocin.gl.util.Check;
 import de.salocin.gl.util.math.Point;
 
@@ -31,10 +32,7 @@ public class Mouse {
 			
 			@Override
 			public void invoke(long window, double xpos, double ypos) {
-				// TODO convert point to ortho
-				// TODO Modifiers not working
-				
-				Point newPos = new Point((float) ypos, (float) ypos);
+				Point newPos = new Point(Resolution.convertPixelWidth((int) xpos), Resolution.convertPixelHeight((int) ypos));
 				EventManager.getInstance().callEvent(new MouseMovedEvent(mousePos, newPos));
 				mousePos = newPos;
 			}

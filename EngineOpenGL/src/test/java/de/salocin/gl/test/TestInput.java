@@ -6,6 +6,7 @@ import de.salocin.gl.event.EventManager;
 import de.salocin.gl.event.Listener;
 import de.salocin.gl.event.input.KeyPressedEvent;
 import de.salocin.gl.event.input.MouseButtonEvent;
+import de.salocin.gl.event.input.MouseMovedEvent;
 import de.salocin.gl.plugin.CorePlugin;
 import de.salocin.gl.util.EngineException;
 import de.salocin.gl.util.input.Action;
@@ -51,6 +52,11 @@ public class TestInput extends CorePlugin implements Listener {
 			printModifiers(e.getModifiers());
 			System.out.println();
 		}
+	}
+	
+	@EventHandler
+	public void onMouseMove(MouseMovedEvent e) {
+		System.out.println(e.getNewPos().getX() + " " + e.getNewPos().getY());
 	}
 	
 	@EventHandler
