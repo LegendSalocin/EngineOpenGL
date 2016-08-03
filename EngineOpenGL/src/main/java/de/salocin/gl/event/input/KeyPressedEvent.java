@@ -30,7 +30,7 @@ public class KeyPressedEvent extends ModifierEvent {
 	}
 	
 	public String getChar() {
-		if (!key.isPrintable()) {
+		if (action == Action.RELEASED || !key.isPrintable()) {
 			return null;
 		}
 		
