@@ -13,7 +13,7 @@ import de.salocin.gl.util.input.Mouse;
 
 public class Display {
 	
-	private static Logger logger = EngineLogger.getEngineLogger(Display.class);
+	public static final Logger logger = EngineLogger.getEngineLogger(Display.class);
 	private static Display instance = new Display();
 	private Resolution resolution;
 	private RenderState renderState;
@@ -24,10 +24,6 @@ public class Display {
 	
 	public static Display getInstance() {
 		return instance;
-	}
-	
-	public static Logger getLogger() {
-		return logger;
 	}
 	
 	public void init() {

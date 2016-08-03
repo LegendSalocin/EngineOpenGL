@@ -16,6 +16,7 @@ import java.util.HashSet;
 
 import org.apache.commons.lang3.Validate;
 
+import de.salocin.gl.render.Display;
 import de.salocin.gl.render.Resolution;
 import de.salocin.gl.render.SimpleTexture;
 import de.salocin.gl.render.Texture;
@@ -82,6 +83,8 @@ public class TrueTypeFont {
 		
 		cache.add(this);
 		
+		long start = System.currentTimeMillis();
+		
 		fontMetrics = fontMetricsGraphics.getFontMetrics(font);
 		
 		charsTextureWidth = 0;
@@ -109,6 +112,8 @@ public class TrueTypeFont {
 		}
 		
 		fontTexture = new SimpleTexture(image);
+		
+		Display.logger.info("Font " + font.getName() + " created. Total time: " + (System.currentTimeMillis() - start) + "ms");
 	}
 	
 	public void setCustomChars(char[] customChars) {
