@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 
 import org.apache.commons.lang3.Validate;
 
@@ -23,6 +24,7 @@ import de.salocin.gl.util.exception.DetailedException;
 
 public class TrueTypeFont {
 	
+	private static final HashSet<TrueTypeFont> cache = new HashSet<TrueTypeFont>();
 	private static final int correctionWidth = 10;
 	private static final GraphicsConfiguration graphicsConfiguration;
 	private static final Graphics2D fontMetricsGraphics;
@@ -68,8 +70,19 @@ public class TrueTypeFont {
 	}
 	
 	protected void updateFont() {
-		fontMetricsGraphics.setFont(font);
-		fontMetrics = fontMetricsGraphics.getFontMetrics();
+		for (TrueTypeFont f : cache) {
+			if (f.font.equals(font)) {
+				fontMetrics = f.fontMetrics;
+				charsTextureWidth = f.charsTextureWidth;
+				charsTextureHeight = f.charsTextureHeight;
+				fontTexture = f.fontTexture;
+				return;
+			}
+		}
+		
+		cache.add(this);
+		
+		fontMetrics = fontMetricsGraphics.getFontMetrics(font);
 		
 		charsTextureWidth = 0;
 		
