@@ -1,4 +1,4 @@
-package de.salocin.gl.util;
+package de.salocin.gl.util.render;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -19,6 +19,7 @@ import de.salocin.gl.render.Resolution;
 import de.salocin.gl.render.SimpleTexture;
 import de.salocin.gl.render.Texture;
 import de.salocin.gl.render.gui.Gui;
+import de.salocin.gl.util.exception.DetailedException;
 
 public class TrueTypeFont {
 	
@@ -145,14 +146,14 @@ public class TrueTypeFont {
 	}
 	
 	public void renderText(CharSequence text, float x, float y, Color color) {
-		renderText(text, x, y, color, Algin.LEFT);
+		renderText(text, x, y, color, AlginH.LEFT);
 	}
 	
-	public void renderText(CharSequence text, float x, float y, Color color, Algin algin) {
-		renderText(text, x, y, color, algin, true);
+	public void renderText(CharSequence text, float x, float y, Color color, AlginH alginH) {
+		renderText(text, x, y, color, alginH, true);
 	}
 	
-	public void renderText(CharSequence text, float x, float y, Color color, Algin algin, boolean enableAlpha) {
+	public void renderText(CharSequence text, float x, float y, Color color, AlginH alginH, boolean enableAlpha) {
 		float xOffset = 0;
 		
 		if (enableAlpha) {
@@ -161,7 +162,7 @@ public class TrueTypeFont {
 		
 		color.bind();
 		
-		if (algin == Algin.RIGHT) {
+		if (alginH == AlginH.RIGHT) {
 			for (int i = text.length() - 1; i >= 0; i--) {
 				final char c = text.charAt(i);
 				xOffset -= getWidth(c);
@@ -196,11 +197,6 @@ public class TrueTypeFont {
 		}
 		
 		fontTexture.render(x, y, charWidth, lineHeight, textureX, 0.0f, textureCharWidth, textureCharHeight);
-	}
-	
-	public static enum Algin {
-		LEFT,
-		RIGHT;
 	}
 	
 }

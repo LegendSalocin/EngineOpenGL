@@ -12,15 +12,15 @@ import javax.imageio.ImageIO;
 import org.lwjgl.opengl.GL12;
 
 import de.salocin.gl.render.gui.Gui;
-import de.salocin.gl.util.ByteBufferLoader;
-import de.salocin.gl.util.ResourceLocation;
+import de.salocin.gl.util.engine.ByteBufferLoader;
+import de.salocin.gl.util.engine.ResourceLocation;
 
 public class SimpleTexture implements Texture {
 	
 	protected static int lastBind = -1;
 	protected final ByteBuffer texture;
-	protected final int textureWidth;
-	protected final int textureHeight;
+	protected final float textureWidth;
+	protected final float textureHeight;
 	protected int textureId;
 	private boolean released = false;
 	
@@ -38,10 +38,10 @@ public class SimpleTexture implements Texture {
 		this.textureWidth = image.getWidth();
 		this.textureHeight = image.getHeight();
 		
-		loadTexture();
+		loadTexture(image.getWidth(), image.getHeight());
 	}
 	
-	protected void loadTexture() {
+	protected void loadTexture(int widthInPixel, int heightInPixel) {
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, textureId);
 		
@@ -50,7 +50,7 @@ public class SimpleTexture implements Texture {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
 		
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthInPixel, heightInPixel, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture);
 		glDisable(GL_TEXTURE_2D);
 	}
 	
@@ -93,12 +93,12 @@ public class SimpleTexture implements Texture {
 	}
 	
 	@Override
-	public int getTextureWidth() {
+	public float getWidth() {
 		return textureWidth;
 	}
 	
 	@Override
-	public int getTextureHeight() {
+	public float getHeight() {
 		return textureHeight;
 	}
 	

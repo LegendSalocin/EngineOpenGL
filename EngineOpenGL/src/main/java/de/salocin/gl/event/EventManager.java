@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang3.Validate;
 
 import de.salocin.gl.Engine;
-import de.salocin.gl.util.DetailedException;
+import de.salocin.gl.util.exception.DetailedException;
 
 public class EventManager {
 	

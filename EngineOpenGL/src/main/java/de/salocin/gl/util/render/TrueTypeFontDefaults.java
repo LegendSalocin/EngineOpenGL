@@ -1,7 +1,5 @@
 package de.salocin.gl.util.render;
 
-import de.salocin.gl.util.TrueTypeFont;
-
 public class TrueTypeFontDefaults {
 	
 	public static final TrueTypeFont ENGINE_FONT_SMALL = new TrueTypeFont("Arial", 20);

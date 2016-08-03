@@ -11,8 +11,8 @@ import de.salocin.gl.log.Log;
 import de.salocin.gl.plugin.CorePlugin;
 import de.salocin.gl.plugin.PluginManager;
 import de.salocin.gl.scheduler.Scheduler;
-import de.salocin.gl.util.EngineException;
-import de.salocin.gl.util.ExitCode;
+import de.salocin.gl.util.engine.ExitCode;
+import de.salocin.gl.util.exception.EngineException;
 
 public class Engine {
 	

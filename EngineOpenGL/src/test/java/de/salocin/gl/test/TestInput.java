@@ -8,7 +8,7 @@ import de.salocin.gl.event.input.KeyPressedEvent;
 import de.salocin.gl.event.input.MouseButtonEvent;
 import de.salocin.gl.event.input.MouseMovedEvent;
 import de.salocin.gl.plugin.CorePlugin;
-import de.salocin.gl.util.EngineException;
+import de.salocin.gl.util.exception.EngineException;
 import de.salocin.gl.util.input.Action;
 import de.salocin.gl.util.input.Modifier;
 

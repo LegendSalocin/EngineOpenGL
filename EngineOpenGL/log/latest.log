@@ -1,3 +1,5 @@
-02.08.16 19:04 [Engine] [EventManager] INFO: Method found and registered. (de.salocin.gl.test.TestInput#onKeyPress)
-02.08.16 19:04 [Engine] [EventManager] INFO: Method found and registered. (de.salocin.gl.test.TestInput#onMousePress)
-02.08.16 19:04 [Engine] [Display] INFO: Display initialized.
+03.08.16 19:07 [Engine] [EventManager] INFO: Method found and registered. (de.salocin.gl.test.TestGui#onKey)
+03.08.16 19:07 [Engine] [EventManager] INFO: Method found and registered. (de.salocin.gl.test.TestGui$Menu#onKeyPress)
+03.08.16 19:07 [Engine] [EventManager] INFO: Method found and registered. (de.salocin.gl.test.TestGui$Menu#onMouseMove)
+03.08.16 19:07 [Engine] [EventManager] INFO: Method found and registered. (de.salocin.gl.test.TestGui$Menu#onMousePress)
+03.08.16 19:07 [Engine] [Display] INFO: Display initialized.

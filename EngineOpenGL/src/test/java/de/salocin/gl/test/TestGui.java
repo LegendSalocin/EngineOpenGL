@@ -1,14 +1,20 @@
 package de.salocin.gl.test;
 
+import java.util.Random;
+
 import de.salocin.gl.Engine;
 import de.salocin.gl.event.EventHandler;
 import de.salocin.gl.event.EventManager;
 import de.salocin.gl.event.Listener;
 import de.salocin.gl.event.input.KeyPressedEvent;
 import de.salocin.gl.plugin.CorePlugin;
-import de.salocin.gl.render.gui.GuiState;
-import de.salocin.gl.util.EngineException;
-import de.salocin.gl.util.ExitCode;
+import de.salocin.gl.render.gui.GuiButton;
+import de.salocin.gl.render.gui.RenderState;
+import de.salocin.gl.util.engine.ExitCode;
+import de.salocin.gl.util.exception.EngineException;
+import de.salocin.gl.util.render.AlginH;
+import de.salocin.gl.util.render.AlginV;
+import de.salocin.gl.util.render.Color;
 
 public class TestGui extends CorePlugin implements Listener {
 	
@@ -46,21 +52,30 @@ public class TestGui extends CorePlugin implements Listener {
 		System.out.println(e.getChar());
 	}
 	
-	public class Menu extends GuiState {
+	public class Menu extends RenderState {
+		
+		private Random rand = new Random();
+		private GuiButton btn;
 		
 		@Override
 		protected void onInit() {
 			renderDebugInfo(true);
+			btn = new GuiButton("Test", 0.45f, 0.45f, 0.1f, 0.1f);
+			btn.setBackgroundColor(Color.red);
+			btn.setTitleAlginH(AlginH.CENTER);
+			btn.setTitleAlginV(AlginV.CENTER);
+			btn.setOnAction(() -> {
+				btn.setBackgroundColor(Color.fromFloat(rand.nextFloat(), rand.nextFloat(), rand.nextFloat()));
+			});
+			add(btn);
 		}
 		
 		@Override
 		protected void onUpdate(long currentTime, long delta) {
-			
 		}
 		
 		@Override
 		protected void onRender() {
-			
 		}
 		
 		@Override

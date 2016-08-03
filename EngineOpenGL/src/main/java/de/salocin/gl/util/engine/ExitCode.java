@@ -1,4 +1,4 @@
-package de.salocin.gl.util;
+package de.salocin.gl.util.engine;
 
 import de.salocin.gl.Engine;
 

@@ -25,12 +25,33 @@ public class Rectangle implements Copyable<Rectangle> {
 		this.dimension = dimension;
 	}
 	
+	public Rectangle setBounds(float x, float y, float width, float height) {
+		setX(x);
+		setY(y);
+		setWidth(width);
+		setHeight(height);
+		return this;
+	}
+	
+	public Rectangle setPosition(float x, float y) {
+		setX(x);
+		setY(y);
+		return this;
+	}
+	
+	public Rectangle setSize(float width, float height) {
+		setWidth(width);
+		setHeight(height);
+		return this;
+	}
+	
 	public float getX() {
 		return point.getX();
 	}
 	
 	public Rectangle setX(float x) {
 		point.setX(x);
+		onUpdate();
 		return this;
 	}
 	
@@ -40,6 +61,7 @@ public class Rectangle implements Copyable<Rectangle> {
 	
 	public Rectangle setY(float y) {
 		point.setY(y);
+		onUpdate();
 		return this;
 	}
 	
@@ -49,6 +71,7 @@ public class Rectangle implements Copyable<Rectangle> {
 	
 	public Rectangle setWidth(float width) {
 		dimension.setWidth(width);
+		onUpdate();
 		return this;
 	}
 	
@@ -58,6 +81,7 @@ public class Rectangle implements Copyable<Rectangle> {
 	
 	public Rectangle setHeight(float height) {
 		dimension.setHeight(height);
+		onUpdate();
 		return this;
 	}
 	
@@ -87,6 +111,9 @@ public class Rectangle implements Copyable<Rectangle> {
 	
 	public boolean contains(Point point) {
 		return point.getX() > this.point.getX() && point.getY() > this.point.getY() && point.getX() < getEndX() && point.getY() < getEndY();
+	}
+	
+	public void onUpdate() {
 	}
 	
 	@Override

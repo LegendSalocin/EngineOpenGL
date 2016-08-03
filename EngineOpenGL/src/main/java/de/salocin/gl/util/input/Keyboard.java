@@ -7,7 +7,7 @@ import org.lwjgl.glfw.GLFWKeyCallbackI;
 import de.salocin.gl.event.EventManager;
 import de.salocin.gl.event.input.KeyPressedEvent;
 import de.salocin.gl.render.Display;
-import de.salocin.gl.util.Check;
+import de.salocin.gl.util.engine.Check;
 
 public class Keyboard {
 	

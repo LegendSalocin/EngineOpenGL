@@ -1,4 +1,4 @@
-package de.salocin.gl.util;
+package de.salocin.gl.util.exception;
 
 import de.salocin.gl.Engine;
 import de.salocin.gl.log.PluginLogger;

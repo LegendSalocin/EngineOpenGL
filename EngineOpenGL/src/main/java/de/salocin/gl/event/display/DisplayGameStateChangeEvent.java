@@ -1,13 +1,13 @@
 package de.salocin.gl.event.display;
 
-import de.salocin.gl.render.RenderState;
+import de.salocin.gl.render.gui.RenderState;
 
-public class DisplayRenderStateChangeEvent extends DisplayEvent {
+public class DisplayGameStateChangeEvent extends DisplayEvent {
 	
 	private final RenderState oldState;
 	private RenderState newState;
 	
-	public DisplayRenderStateChangeEvent(RenderState oldState, RenderState newState) {
+	public DisplayGameStateChangeEvent(RenderState oldState, RenderState newState) {
 		this.oldState = oldState;
 		this.newState = newState;
 	}

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import de.salocin.gl.util.EngineException;
+import de.salocin.gl.util.exception.EngineException;
 
 public class PluginDescriptionFile {
 	

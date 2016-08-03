@@ -9,7 +9,7 @@ import de.salocin.gl.event.input.MouseButtonEvent;
 import de.salocin.gl.event.input.MouseMovedEvent;
 import de.salocin.gl.render.Display;
 import de.salocin.gl.render.Resolution;
-import de.salocin.gl.util.Check;
+import de.salocin.gl.util.engine.Check;
 import de.salocin.gl.util.math.Point;
 
 public class Mouse {

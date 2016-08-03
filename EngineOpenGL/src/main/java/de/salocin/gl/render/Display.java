@@ -3,9 +3,10 @@ package de.salocin.gl.render;
 import java.util.logging.Logger;
 
 import de.salocin.gl.event.EventManager;
+import de.salocin.gl.event.display.DisplayGameStateChangeEvent;
 import de.salocin.gl.event.display.DisplayInitializedEvent;
-import de.salocin.gl.event.display.DisplayRenderStateChangeEvent;
 import de.salocin.gl.log.EngineLogger;
+import de.salocin.gl.render.gui.RenderState;
 import de.salocin.gl.scheduler.Scheduler;
 import de.salocin.gl.util.input.Keyboard;
 import de.salocin.gl.util.input.Mouse;
@@ -59,7 +60,7 @@ public class Display {
 	
 	public void setRenderState(RenderState state) {
 		Scheduler.getInstance().runLater(() -> {
-			DisplayRenderStateChangeEvent e = new DisplayRenderStateChangeEvent(renderState, state);
+			DisplayGameStateChangeEvent e = new DisplayGameStateChangeEvent(renderState, state);
 			if (!EventManager.getInstance().callEvent(e)) {
 				if (renderState != null) {
 					renderState.exit();

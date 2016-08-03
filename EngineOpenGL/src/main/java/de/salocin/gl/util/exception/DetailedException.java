@@ -1,4 +1,4 @@
-package de.salocin.gl.util;
+package de.salocin.gl.util.exception;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

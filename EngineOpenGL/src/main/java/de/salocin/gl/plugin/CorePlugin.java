@@ -2,9 +2,9 @@ package de.salocin.gl.plugin;
 
 import de.salocin.gl.Engine;
 import de.salocin.gl.render.Display;
-import de.salocin.gl.render.RenderState;
-import de.salocin.gl.util.ExitCode;
-import de.salocin.gl.util.StartArgument;
+import de.salocin.gl.render.gui.RenderState;
+import de.salocin.gl.util.engine.ExitCode;
+import de.salocin.gl.util.engine.StartArgument;
 
 public abstract class CorePlugin extends SimplePlugin implements Plugin {
 	

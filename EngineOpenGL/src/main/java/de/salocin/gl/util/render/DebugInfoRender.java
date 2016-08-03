@@ -3,8 +3,6 @@ package de.salocin.gl.util.render;
 import org.apache.commons.lang3.Validate;
 
 import de.salocin.gl.scheduler.FPS;
-import de.salocin.gl.util.Color;
-import de.salocin.gl.util.TrueTypeFont;
 import de.salocin.gl.util.input.Mouse;
 
 public class DebugInfoRender {

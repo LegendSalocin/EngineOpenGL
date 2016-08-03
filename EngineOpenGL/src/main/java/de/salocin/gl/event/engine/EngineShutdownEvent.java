@@ -1,6 +1,6 @@
 package de.salocin.gl.event.engine;
 
-import de.salocin.gl.util.ExitCode;
+import de.salocin.gl.util.engine.ExitCode;
 
 public class EngineShutdownEvent extends EngineEvent {
 	

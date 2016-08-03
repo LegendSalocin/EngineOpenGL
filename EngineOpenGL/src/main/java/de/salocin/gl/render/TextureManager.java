@@ -3,8 +3,8 @@ package de.salocin.gl.render;
 import java.io.IOException;
 import java.util.HashMap;
 
-import de.salocin.gl.util.EngineException;
-import de.salocin.gl.util.ResourceLocation;
+import de.salocin.gl.util.engine.ResourceLocation;
+import de.salocin.gl.util.exception.EngineException;
 
 public class TextureManager {
 	

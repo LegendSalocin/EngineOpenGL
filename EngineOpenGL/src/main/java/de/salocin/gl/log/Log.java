@@ -11,9 +11,9 @@ import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
 import de.salocin.gl.Engine;
-import de.salocin.gl.util.DetailedException;
-import de.salocin.gl.util.EngineException;
-import de.salocin.gl.util.StartArgument;
+import de.salocin.gl.util.engine.StartArgument;
+import de.salocin.gl.util.exception.DetailedException;
+import de.salocin.gl.util.exception.EngineException;
 
 public class Log {
 	

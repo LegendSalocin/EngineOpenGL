@@ -1,6 +1,8 @@
-package de.salocin.gl.util;
+package de.salocin.gl.util.render;
 
 import org.lwjgl.opengl.GL11;
+
+import de.salocin.gl.util.Copyable;
 
 public class Color implements Copyable<Color> {
 	

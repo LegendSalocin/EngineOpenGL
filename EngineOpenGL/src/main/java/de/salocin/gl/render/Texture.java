@@ -10,9 +10,9 @@ public interface Texture {
 	
 	boolean isReleased();
 	
-	int getTextureWidth();
+	float getWidth();
 	
-	int getTextureHeight();
+	float getHeight();
 	
 	void render(float x, float y);
 	

@@ -8,8 +8,8 @@ import java.util.logging.StreamHandler;
 
 import org.apache.commons.lang3.Validate;
 
-import de.salocin.gl.util.DetailedException;
-import de.salocin.gl.util.EngineException;
+import de.salocin.gl.util.exception.DetailedException;
+import de.salocin.gl.util.exception.EngineException;
 
 public class FileHandler extends StreamHandler {
 	
