@@ -1,4 +1,4 @@
-package de.salocin.gl.util.render;
+package de.salocin.gl.util;
 
 import org.lwjgl.opengl.GL11;
 

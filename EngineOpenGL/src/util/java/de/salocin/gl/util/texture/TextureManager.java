@@ -1,4 +1,4 @@
-package de.salocin.gl.render;
+package de.salocin.gl.util.texture;
 
 import java.io.IOException;
 import java.util.HashMap;

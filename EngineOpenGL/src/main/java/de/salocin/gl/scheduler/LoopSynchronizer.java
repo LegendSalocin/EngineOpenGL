@@ -2,18 +2,20 @@ package de.salocin.gl.scheduler;
 
 import java.util.ArrayList;
 
-public class LoopSync {
+import org.apache.commons.lang3.Validate;
+
+public class LoopSynchronizer {
 	
 	private static ArrayList<EngineRunnable> runLater = new ArrayList<EngineRunnable>();
 	
-	private LoopSync() {
+	private LoopSynchronizer() {
 	}
 	
 	protected static void run(long currentTime) {
 		ArrayList<EngineRunnable> runLater = copy();
-		ArrayList<EngineRunnable> toRemove = new ArrayList<EngineRunnable>();
 		
-		for (EngineRunnable r : runLater) {
+		for (int i = runLater.size() - 1; i >= 0; i--) {
+			EngineRunnable r = runLater.get(i);
 			if (r.getDelay() <= 0 || r.getStartTime() + r.getDelay() <= currentTime) {
 				if (r.isRepeated()) {
 					if (currentTime - r.lastRepeat >= r.getRepeatPeriod()) {
@@ -22,23 +24,24 @@ public class LoopSync {
 					}
 				} else {
 					r.getRunnable().run();
-					toRemove.add(r);
+					removeEngineRunnable(r);
+					r = null;
 				}
 			}
-		}
-		
-		for (EngineRunnable engineRunnable : toRemove) {
-			removeEngineRunnable(engineRunnable);
 		}
 	}
 	
 	protected static void addEngineRunnable(EngineRunnable runnable) {
+		Validate.notNull(runnable);
+		
 		synchronized (runLater) {
 			runLater.add(runnable);
 		}
 	}
 	
 	protected static void removeEngineRunnable(EngineRunnable runnable) {
+		Validate.notNull(runnable);
+		
 		synchronized (runLater) {
 			runLater.remove(runnable);
 		}
@@ -57,9 +60,9 @@ public class LoopSync {
 	}
 	
 	private static ArrayList<EngineRunnable> copy() {
-		ArrayList<EngineRunnable> runLaterCopy;
+		ArrayList<EngineRunnable> runLaterCopy = new ArrayList<EngineRunnable>();
 		synchronized (runLater) {
-			runLaterCopy = runLater;
+			runLaterCopy.addAll(runLater);
 		}
 		return runLaterCopy;
 	}

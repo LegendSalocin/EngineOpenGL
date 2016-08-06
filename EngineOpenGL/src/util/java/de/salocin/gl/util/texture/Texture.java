@@ -1,4 +1,4 @@
-package de.salocin.gl.render;
+package de.salocin.gl.util.texture;
 
 public interface Texture {
 	

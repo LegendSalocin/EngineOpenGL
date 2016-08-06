@@ -12,9 +12,9 @@ import de.salocin.gl.render.gui.GuiButton;
 import de.salocin.gl.render.gui.RenderState;
 import de.salocin.gl.util.engine.ExitCode;
 import de.salocin.gl.util.exception.EngineException;
+import de.salocin.gl.util.font.Color;
 import de.salocin.gl.util.render.AlginH;
 import de.salocin.gl.util.render.AlginV;
-import de.salocin.gl.util.render.Color;
 
 public class TestGui extends CorePlugin implements Listener {
 	

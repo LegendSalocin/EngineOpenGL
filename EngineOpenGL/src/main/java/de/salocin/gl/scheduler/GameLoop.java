@@ -14,6 +14,7 @@ import de.salocin.gl.event.engine.EngineCLContextCreatedEvent;
 import de.salocin.gl.render.Display;
 import de.salocin.gl.render.Resolution;
 import de.salocin.gl.render.gui.RenderState;
+import de.salocin.gl.scheduler.TimeTracker.Mode;
 import de.salocin.gl.util.exception.EngineException;
 import de.salocin.gl.util.render.TrueTypeFontDefaults;
 
@@ -77,17 +78,23 @@ public class GameLoop implements Runnable {
 		while (!glfwWindowShouldClose(window)) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			
+			TimeTracker.start(Mode.FPS_COUNTER);
 			FPS.run();
+			TimeTracker.end();
 			
 			glfwPollEvents();
 			
+			TimeTracker.start(Mode.RENDER_STATE);
 			RenderState current = Display.getInstance().getRenderState();
 			if (current != null) {
 				current.update(FPS.getCurrentTime(), FPS.getDelta());
 				current.render();
 			}
+			TimeTracker.end();
 			
-			LoopSync.run(FPS.getCurrentTime());
+			TimeTracker.start(Mode.LOOP_SYNCHRONIZER);
+			LoopSynchronizer.run(FPS.getCurrentTime());
+			TimeTracker.end();
 			
 			glfwSwapBuffers(window);
 		}

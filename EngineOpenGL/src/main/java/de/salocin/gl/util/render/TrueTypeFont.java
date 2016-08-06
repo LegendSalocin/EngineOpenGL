@@ -4,125 +4,105 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
+import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.IntBuffer;
+import java.util.Arrays;
 import java.util.HashSet;
 
-import org.apache.commons.lang3.Validate;
+import javax.imageio.ImageIO;
+
+import org.lwjgl.opengl.GL11;
 
 import de.salocin.gl.render.Display;
 import de.salocin.gl.render.Resolution;
-import de.salocin.gl.render.SimpleTexture;
-import de.salocin.gl.render.Texture;
 import de.salocin.gl.render.gui.Gui;
-import de.salocin.gl.util.exception.DetailedException;
+import de.salocin.gl.util.font.Color;
+import de.salocin.gl.util.texture.SimpleTexture;
+import de.salocin.gl.util.texture.Texture;
 
-public class TrueTypeFont {
+public class TrueTypeFont implements Cloneable {
 	
-	private static final HashSet<TrueTypeFont> cache = new HashSet<TrueTypeFont>();
-	private static final int correctionWidth = 10;
-	private static final GraphicsConfiguration graphicsConfiguration;
-	private static final Graphics2D fontMetricsGraphics;
-	private Texture fontTexture;
-	private Font font;
-	private FontMetrics fontMetrics;
-	private char[] chars;
-	private int charsTextureWidth;
-	private int charsTextureHeight;
+	private static final HashSet<TrueTypeFont> CACHE = new HashSet<TrueTypeFont>();
+	private static final int CHAR_TEXTURE_PADDING = 10;
+	private static final Graphics2D GLOBAL_GRAPHICS;
+	
+	/* Chars */
+	private final char[] chars;
+	
+	/* Data */
+	private TrueTypeFont.Data normalData = new TrueTypeFont.Data(Style.PLAIN);
+	private TrueTypeFont.Data boldData = new TrueTypeFont.Data(Style.BOLD);
+	private TrueTypeFont.Data italicData = new TrueTypeFont.Data(Style.ITALIC);
+	private TrueTypeFont.Data boldItalicData = new TrueTypeFont.Data(Style.BOLD, Style.ITALIC);
+	private TrueTypeFont.Data[] data = { normalData, boldData, italicData, boldItalicData };
+	
+	/* Settings */
+	private final boolean antiAlias;
+	private final int baseFontSize;
+	private TrueTypeFont.Data currentData;
+	private Style[] styles;
+	private int size;
 	
 	static {
-		graphicsConfiguration = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-		fontMetricsGraphics = graphicsConfiguration.createCompatibleImage(1, 1, Transparency.TRANSLUCENT).createGraphics();
+		GLOBAL_GRAPHICS = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(1, 1, Transparency.TRANSLUCENT).createGraphics();
 	}
 	
-	public TrueTypeFont(File file, int size) throws FontFormatException, IOException {
-		this(new FileInputStream(file), size);
+	public static TrueTypeFont.Builder newBuilder(String fontName) {
+		return new TrueTypeFont.Builder(fontName);
 	}
 	
-	public TrueTypeFont(InputStream inputStream, int size) throws FontFormatException, IOException {
-		this(Font.createFont(Font.TRUETYPE_FONT, inputStream));
-		setFontSize(size);
+	public static TrueTypeFont.Builder newBuilder(InputStream fontInputStream) throws FontFormatException, IOException {
+		return new TrueTypeFont.Builder(fontInputStream);
 	}
 	
-	public TrueTypeFont(String name, int size) {
-		this(new Font(name, Font.PLAIN, size));
+	public static TrueTypeFont.Builder newBuilder(File fontFile) throws FontFormatException, IOException {
+		return new TrueTypeFont.Builder(fontFile);
 	}
 	
-	public TrueTypeFont(Font font) {
-		this(font, true);
+	/**
+	 * <b>Only used for {@link #clone()}.
+	 */
+	private TrueTypeFont(int baseFontSize, boolean antiAlias, char[] chars) {
+		this.antiAlias = antiAlias;
+		this.baseFontSize = baseFontSize;
+		this.chars = chars;
 	}
 	
-	public TrueTypeFont(Font font, boolean antiAlias) {
-		this(font, antiAlias, null);
-	}
-	
-	public TrueTypeFont(Font font, boolean antiAlias, char[] customChars) {
-		Validate.notNull(font);
-		this.font = font;
-		// TODO
-		// this.antiAlias = antiAlias;
-		setCustomChars(customChars);
-	}
-	
-	protected void updateFont() {
-		for (TrueTypeFont f : cache) {
-			if (f.font.equals(font)) {
-				fontMetrics = f.fontMetrics;
-				charsTextureWidth = f.charsTextureWidth;
-				charsTextureHeight = f.charsTextureHeight;
-				fontTexture = f.fontTexture;
-				return;
-			}
+	/**
+	 * Only used for {@link Builder}.
+	 */
+	private TrueTypeFont(Font f, int baseFontSize, boolean antiAlias, char[] chars) {
+		this.antiAlias = antiAlias;
+		this.baseFontSize = baseFontSize;
+		final Font base = f.deriveFont((float) baseFontSize);
+		
+		/* Create fonts */
+		normalData.setFont(base);
+		boldData.setFont(base.deriveFont(Font.BOLD));
+		italicData.setFont(base.deriveFont(Font.ITALIC));
+		boldItalicData.setFont(base.deriveFont(Font.BOLD | Font.ITALIC));
+		
+		/* Init */
+		if (chars == null) {
+			chars = new char[0];
 		}
+		this.chars = new char[256 + chars.length];
+		initChars(chars);
+		initFonts(antiAlias);
 		
-		cache.add(this);
-		
-		long start = System.currentTimeMillis();
-		
-		fontMetrics = fontMetricsGraphics.getFontMetrics(font);
-		
-		charsTextureWidth = 0;
-		
-		for (char c : chars) {
-			charsTextureWidth += fontMetrics.charWidth(c);
-		}
-		
-		if (charsTextureWidth == 0) {
-			throw new RuntimeException("charsTextureWidth is 0", new DetailedException().addDetail("Font Name", font.getName()).addDetail("Chars Length", chars.length));
-		}
-		
-		charsTextureHeight = fontMetrics.getHeight();
-		
-		BufferedImage image = new BufferedImage(charsTextureWidth, charsTextureHeight, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = image.createGraphics();
-		g.setFont(font);
-		
-		int xOffset = 0;
-		int y = font.getSize();
-		
-		for (char c : chars) {
-			g.drawString(String.valueOf(c), xOffset, y);
-			xOffset += fontMetrics.charWidth(c) + correctionWidth;
-		}
-		
-		fontTexture = new SimpleTexture(image);
-		
-		Display.logger.info("Font " + font.getName() + " created. Total time: " + (System.currentTimeMillis() - start) + "ms");
+		/* Init settings */
+		setSize(baseFontSize);
+		setStyle();
 	}
 	
-	public void setCustomChars(char[] customChars) {
-		if (customChars == null || customChars.length == 0) {
-			chars = new char[256];
-		} else {
-			chars = new char[256 + customChars.length];
-		}
-		
+	private void initChars(char[] customChars) {
 		for (int i = 0; i < chars.length; i++) {
 			if (i < 256) {
 				chars[i] = (char) i;
@@ -131,24 +111,113 @@ public class TrueTypeFont {
 			}
 		}
 		
-		updateFont();
+		for (Data d : data) {
+			int total = 0;
+			d.charPos = IntBuffer.allocate(chars.length);
+			
+			for (char c : chars) {
+				d.charPos.put(total);
+				total += d.fontMetrics.charWidth(c) + CHAR_TEXTURE_PADDING;
+			}
+			
+			d.charPos.rewind();
+		}
 	}
 	
-	public void setFontSize(int size) {
-		font = font.deriveFont(size);
-		updateFont();
+	private void initFonts(boolean antiAlias) {
+		new Exception().printStackTrace();
+		for (TrueTypeFont.Data d : data) {
+			final long start = System.currentTimeMillis();
+			
+			/* Create char texture */
+			BufferedImage image = new BufferedImage(d.charPos.get(d.charPos.limit() - 1), d.font.getSize(), BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = image.createGraphics();
+			if (antiAlias) {
+				g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			}
+			g.setFont(d.font);
+			
+			/* Write chars */
+			d.charPos.rewind();
+			
+			while (d.charPos.hasRemaining()) {
+				g.drawString(String.valueOf(chars[d.charPos.position()]), d.charPos.get(), d.font.getSize() - d.fontMetrics.getDescent());
+			}
+			
+			// DEBUG
+			try {
+				String style = "";
+				
+				for (Style s : d.style) {
+					style += s.name();
+				}
+				
+				File f = new File(d.font.getName() + "_" + style + ".png");
+				f.delete();
+				f.createNewFile();
+				ImageIO.write(image, "png", f);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			/* Convert to OpenGL Texture */
+			d.texture = new SimpleTexture(image);
+			Display.logger.info("Font '" + d + "' created. Total time: " + (System.currentTimeMillis() - start) + "ms");
+		}
 	}
 	
-	public int getFontSize() {
-		return font.getSize();
+	private float getScale() {
+		return (float) getSize() / (float) baseFontSize;
 	}
 	
-	public float getLineHeight() {
-		return Resolution.getInstance().getPixelInOrthoHeight(fontMetrics.getHeight());
+	public boolean isAntiAliasEnabled() {
+		return antiAlias;
+	}
+	
+	public int getBaseFontSize() {
+		return baseFontSize;
+	}
+	
+	private void updateCurrentData() {
+		for (TrueTypeFont.Data d : data) {
+			if (d.is(styles)) {
+				currentData = d;
+			}
+		}
+	}
+	
+	public void setStyle(Style... styles) {
+		if (normalData.is(styles)) {
+			for (Style style : styles) {
+				if (style.hasCustomFont() && style != Style.PLAIN) {
+					throw new IllegalArgumentException("Can not combine '" + Style.PLAIN.name() + "' with '" + style.name() + "'");
+				}
+			}
+		}
+		
+		this.styles = styles.length == 0 ? new Style[] { Style.PLAIN } : styles;
+		
+		updateCurrentData();
+	}
+	
+	public Style[] getStyles() {
+		return styles;
+	}
+	
+	public void setSize(int size) {
+		this.size = size;
+	}
+	
+	public int getSize() {
+		return size;
+	}
+	
+	public float getFontHeight() {
+		return Resolution.getInstance().getPixelInOrthoHeight((int) ((currentData.font.getSize() - currentData.fontMetrics.getDescent()) * getScale()));
 	}
 	
 	public float getWidth(CharSequence text) {
-		return Resolution.getInstance().getPixelInOrthoWidth(fontMetrics.stringWidth(text.toString()));
+		return Resolution.getInstance().getPixelInOrthoWidth((int) (currentData.fontMetrics.stringWidth(text.toString()) * getScale()));
 	}
 	
 	public float getWidth(char c) {
@@ -172,6 +241,11 @@ public class TrueTypeFont {
 	}
 	
 	public void renderText(CharSequence text, float x, float y, Color color, AlginH alginH, boolean enableAlpha) {
+		if (currentData.texture == null) {
+			// Font texture still loading and not available
+			return;
+		}
+		
 		float xOffset = 0;
 		
 		if (enableAlpha) {
@@ -179,6 +253,11 @@ public class TrueTypeFont {
 		}
 		
 		color.bind();
+		
+		final float scale = getScale();
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x - (x * scale), y - (y * scale), 0.0f);
+		GL11.glScalef(scale, scale, 0.0f);
 		
 		if (alginH == AlginH.RIGHT) {
 			for (int i = text.length() - 1; i >= 0; i--) {
@@ -194,27 +273,242 @@ public class TrueTypeFont {
 			}
 		}
 		
+		GL11.glPopMatrix();
+		
 		if (enableAlpha) {
 			Gui.disableAlpha();
 		}
 	}
 	
 	private void renderChar(char c, float x, float y) {
-		float textureX = 0.0f;
-		float textureCharWidth = fontMetrics.charWidth(c);
-		float textureCharHeight = charsTextureHeight;
-		float charWidth = getWidth(c);
-		float lineHeight = getLineHeight();
+		final float charWidth = getWidth(c);
+		final float lineHeight = getFontHeight();
 		
-		for (char ch : chars) {
-			if (ch == c) {
-				break;
-			} else {
-				textureX += fontMetrics.charWidth(ch) + correctionWidth;
+		int charPos = (int) c < 256 ? (int) c : -1;
+		
+		if (charPos == -1) {
+			try {
+				currentData.charPos.position(256);
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException("Char '" + c + "' is not registered for this TrueTypeFont.", e);
+			}
+			
+			while (currentData.charPos.hasRemaining()) {
+				if (chars[currentData.charPos.position()] == c) {
+					charPos = currentData.charPos.position();
+					break;
+				}
+			}
+			
+			if (charPos == -1) {
+				throw new RuntimeException("Char '" + c + "' is not registered for this TrueTypeFont.");
 			}
 		}
 		
-		fontTexture.render(x, y, charWidth, lineHeight, textureX, 0.0f, textureCharWidth, textureCharHeight);
+		currentData.texture.render(x, y, charWidth, lineHeight, currentData.charPos.get(charPos), 0.0f, currentData.fontMetrics.charWidth(c), currentData.texture.getHeight());
+	}
+	
+	@Override
+	public TrueTypeFont clone() {
+		TrueTypeFont font = new TrueTypeFont(baseFontSize, antiAlias, Arrays.copyOfRange(chars, 256, chars.length));
+		font.normalData = normalData.clone();
+		font.boldData = boldData.clone();
+		font.italicData = italicData.clone();
+		font.boldItalicData = boldItalicData.clone();
+		font.size = size;
+		font.styles = styles;
+		font.currentData = currentData;
+		return font;
+	}
+	
+	private class Data implements Cloneable {
+		
+		private Style[] style;
+		private Font font;
+		private FontMetrics fontMetrics;
+		private IntBuffer charPos;
+		private Texture texture;
+		
+		private Data(Style... styles) {
+			this.style = styles;
+		}
+		
+		private void setFont(Font font) {
+			this.font = font;
+			this.fontMetrics = GLOBAL_GRAPHICS.getFontMetrics(font);
+		}
+		
+		private boolean is(Style... styles) {
+			OUTER: for (Style style : styles) {
+				if (style.hasCustomFont()) {
+					for (Style s : this.style) {
+						if (style == s) {
+							continue OUTER;
+						}
+					}
+					
+					return false;
+				}
+			}
+			
+			return true;
+		}
+		
+		@Override
+		protected Data clone() {
+			Data d = new Data(style);
+			d.font = font;
+			d.fontMetrics = fontMetrics;
+			d.charPos = charPos;
+			d.texture = texture;
+			return d;
+		}
+		
+		@Override
+		public String toString() {
+			return font.getFontName();
+		}
+		
+	}
+	
+	public static class Builder {
+		
+		private Font baseFont;
+		private int fontBaseSize = 50;
+		private char[] chustomChars = new char[0];
+		private int fontSize = fontBaseSize;
+		private Style[] fontStyle = new Style[0];
+		private boolean antiAlias = true;
+		
+		/**
+		 * Creates a new {@link TrueTypeFont} using the specified font type and
+		 * input data.
+		 * 
+		 * @param inputStream
+		 *            The {@link InputStream} of the font
+		 * @throws FontFormatException
+		 *             if the fontStream data does not contain the required font
+		 *             tables for the specified format.
+		 * @throws IOException
+		 *             if the <code>fontStream</code> cannot be completely read.
+		 */
+		public Builder(File file) throws FontFormatException, IOException {
+			this(new FileInputStream(file));
+		}
+		
+		/**
+		 * Creates a new {@link TrueTypeFont} using the specified font type and
+		 * input data.
+		 * 
+		 * @param inputStream
+		 *            The {@link InputStream} of the font
+		 * @throws FontFormatException
+		 *             if the fontStream data does not contain the required font
+		 *             tables for the specified format.
+		 * @throws IOException
+		 *             if the <code>fontStream</code> cannot be completely read.
+		 */
+		public Builder(InputStream inputStream) throws FontFormatException, IOException {
+			this.baseFont = Font.createFont(Font.TRUETYPE_FONT, inputStream);
+		}
+		
+		/**
+		 * Searches the system for the given Font name and renders the text with
+		 * the found font.
+		 * 
+		 * @param fontName
+		 *            The Font name
+		 */
+		public Builder(String fontName) {
+			this.baseFont = new Font(fontName, Font.PLAIN, 1);
+		}
+		
+		/**
+		 * Set the base font size. This size will be scaled when changing the
+		 * {@link TrueTypeFont} size ({@link TrueTypeFont#setSize(int)}).<br>
+		 * As a result, the higher the number the more detailed the final Font
+		 * will be.<br>
+		 * This option is optional. The default value is 50.
+		 * 
+		 * @param fontSize
+		 *            The font size
+		 * @return Current {@link Builder} instance
+		 */
+		public Builder setBaseFontSize(int fontSize) {
+			this.fontBaseSize = fontSize;
+			return this;
+		}
+		
+		/**
+		 * This allows to add chars that are not supported by the ASCII
+		 * code.<br>
+		 * This option is optional.
+		 * 
+		 * @param chustomChars
+		 *            The chars to add.
+		 * @return Current {@link Builder} instance
+		 */
+		public Builder setChustomChars(char... chustomChars) {
+			this.chustomChars = chustomChars;
+			return this;
+		}
+		
+		/**
+		 * Sets the real font size. The {@link #setBaseFontSize(int)} will be
+		 * scaled to match this value.<br>
+		 * <b>This option can be changed in the <code>TrueTypeFont</code>
+		 * instance.</b>
+		 * 
+		 * @param fontSize
+		 *            The font size
+		 * @return Current {@link Builder} instance
+		 * @see TrueTypeFont#setSize(int)
+		 */
+		public Builder setFontSize(int fontSize) {
+			this.fontSize = fontSize;
+			return this;
+		}
+		
+		/**
+		 * Sets the font style. <br>
+		 * <b>This option can be changed in the <code>TrueTypeFont</code>
+		 * instance.</b>
+		 * 
+		 * @param fontStyle
+		 *            The font style
+		 * @return Current {@link Builder} instance
+		 * @see TrueTypeFont#setStyle(Style...)
+		 */
+		public Builder setFontStyle(Style... fontStyle) {
+			this.fontStyle = fontStyle;
+			return this;
+		}
+		
+		/**
+		 * Enables Anti-Aliasing for the font. <br>
+		 * This option is optional. The default value is set to
+		 * <code>true</code>.
+		 * 
+		 * @param antiAlias
+		 *            <code>true</code> to enable Anti-Aliasing, otherwise
+		 *            <code>false</code>.
+		 */
+		public void setAntiAlias(boolean antiAlias) {
+			this.antiAlias = antiAlias;
+		}
+		
+		/**
+		 * Creates the new {@link TrueTypeFont} instance based on the settings.
+		 * 
+		 * @return A new {@link TrueTypeFont}
+		 */
+		public TrueTypeFont build() {
+			TrueTypeFont font = new TrueTypeFont(baseFont, fontBaseSize, antiAlias, chustomChars);
+			font.setSize(fontSize);
+			font.setStyle(fontStyle);
+			return font;
+		}
+		
 	}
 	
 }

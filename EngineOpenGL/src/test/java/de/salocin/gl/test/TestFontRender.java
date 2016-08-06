@@ -4,12 +4,12 @@ import de.salocin.gl.Engine;
 import de.salocin.gl.plugin.CorePlugin;
 import de.salocin.gl.render.Display;
 import de.salocin.gl.render.gui.RenderState;
-import de.salocin.gl.scheduler.FPS;
 import de.salocin.gl.util.engine.ExitCode;
 import de.salocin.gl.util.exception.EngineException;
+import de.salocin.gl.util.font.Color;
 import de.salocin.gl.util.render.AlginH;
-import de.salocin.gl.util.render.Color;
 import de.salocin.gl.util.render.TrueTypeFont;
+import de.salocin.gl.util.render.TrueTypeFontDefaults;
 
 public class TestFontRender extends CorePlugin {
 	
@@ -47,16 +47,15 @@ public class TestFontRender extends CorePlugin {
 		private TrueTypeFont timesNewRoman;
 		private TrueTypeFont segoeUI;
 		private TrueTypeFont segoePrint;
-		private TrueTypeFont arial;;
+		private TrueTypeFont arial;
 		private TrueTypeFont calibri;
 		
 		@Override
 		public void onInit() {
-			timesNewRoman = new TrueTypeFont("Times New Roman", 25);
-			segoeUI = new TrueTypeFont("Segoe UI", 50);
-			segoePrint = new TrueTypeFont("Segoe Print", 75);
-			arial = new TrueTypeFont("Arial", 100);
-			calibri = new TrueTypeFont("Calibri", 16);
+			arial = TrueTypeFontDefaults.getDefaultEngineFont();
+			arial.setSize(100);
+			
+			renderDebugInfo(true);
 		}
 		
 		@Override
@@ -65,11 +64,15 @@ public class TestFontRender extends CorePlugin {
 		
 		@Override
 		public void onRender() {
-			timesNewRoman.renderText("Times New Roman", 0.01f, 0, Color.blue);
-			segoeUI.renderText("Segoe UI", 0.01f, 0.1f, Color.red);
-			segoePrint.renderText("Segoe Print", 0.01f, 0.3f, Color.green);
-			arial.renderText("Arial", 0.01f, 0.5f, Color.yellow);
-			calibri.renderText("FPS: " + FPS.getFPS(), 0.99f, 0.0f, Color.white, AlginH.RIGHT);
+			// timesNewRoman.renderText("Times New Roman", 0.01f, 0,
+			// Color.blue);
+			// segoeUI.renderText("Segoe UI", 0.01f, 0.1f, Color.red);
+			// segoePrint.renderText("Segoe Print", 0.01f, 0.3f, Color.green);
+			// arial.renderText("Arial", 0.01f, 0.5f, Color.yellow);
+			// calibri.renderText("FPS: " + FPS.getFPS(), 0.99f, 0.0f,
+			// Color.white, AlginH.RIGHT);
+			
+			arial.renderText("öäü ß ^ {}", 1.0f, 0.75f, Color.red, AlginH.RIGHT);
 		}
 		
 		@Override

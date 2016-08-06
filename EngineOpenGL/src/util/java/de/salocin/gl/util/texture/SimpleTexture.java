@@ -1,4 +1,4 @@
-package de.salocin.gl.render;
+package de.salocin.gl.util.texture;
 
 import static org.lwjgl.opengl.GL11.*;
 

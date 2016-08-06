@@ -2,9 +2,9 @@ package de.salocin.gl.render.gui;
 
 import org.apache.commons.lang3.Validate;
 
+import de.salocin.gl.util.font.Color;
 import de.salocin.gl.util.render.AlginH;
 import de.salocin.gl.util.render.AlginV;
-import de.salocin.gl.util.render.Color;
 import de.salocin.gl.util.render.TrueTypeFont;
 import de.salocin.gl.util.render.TrueTypeFontDefaults;
 
@@ -23,7 +23,7 @@ public class GuiTitle extends GuiComponent {
 	public GuiTitle(CharSequence title, float x, float y, float width, float height) {
 		super(x, y, width, height);
 		setTitle(title);
-		setTitleFont(TrueTypeFontDefaults.ENGINE_FONT_SMALL);
+		setTitleFont(TrueTypeFontDefaults.getDefaultEngineFont());
 		setTitleColor(Color.white);
 	}
 	
@@ -97,7 +97,7 @@ public class GuiTitle extends GuiComponent {
 	protected void updateTitlePos() {
 		if (titleFont != null && title != null && bounds.getWidth() >= 0.0f && bounds.getHeight() >= 0.0f) {
 			float titleWidth = titleFont.getWidth(title);
-			float titleHeight = titleFont.getLineHeight();
+			float titleHeight = titleFont.getFontHeight();
 			
 			titleX = bounds.getX() + titleOffsetX;
 			titleY = bounds.getY() + titleOffsetY;
