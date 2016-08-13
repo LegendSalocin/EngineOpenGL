@@ -1,5 +1,7 @@
 package de.salocin.gl.render;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 import java.util.logging.Logger;
 
 import de.salocin.gl.event.EventManager;
@@ -8,6 +10,8 @@ import de.salocin.gl.event.display.DisplayInitializedEvent;
 import de.salocin.gl.log.EngineLogger;
 import de.salocin.gl.render.gui.RenderState;
 import de.salocin.gl.scheduler.Scheduler;
+import de.salocin.gl.util.font.Font;
+import de.salocin.gl.util.font.FontBuilder;
 import de.salocin.gl.util.input.Keyboard;
 import de.salocin.gl.util.input.Mouse;
 
@@ -15,15 +19,26 @@ public class Display {
 	
 	public static final Logger logger = EngineLogger.getEngineLogger(Display.class);
 	private static Display instance = new Display();
+	private static Font engineFont;
 	private Resolution resolution;
 	private RenderState renderState;
-	private int targetFps;
+	private boolean vsync;
 	
 	private Display() {
 	}
 	
 	public static Display getInstance() {
 		return instance;
+	}
+	
+	public static Font getDefaultEngineFont() {
+		getInstance().checkInit();
+		
+		return engineFont;
+	}
+	
+	public static Font getDefaultEngineFontCustomSize(int size) {
+		return new FontBuilder(getDefaultEngineFont()).setFontSize(size).build();
 	}
 	
 	public void init() {
@@ -36,18 +51,20 @@ public class Display {
 		Mouse.init();
 		Keyboard.init();
 		
+		engineFont = Font.newBuilder("Arial").setFontSize(20).build();
+		
 		logger.info("Display initialized.");
 		EventManager.getInstance().callEvent(new DisplayInitializedEvent());
-	}
-	
-	public boolean isInitialized() {
-		return resolution != null;
 	}
 	
 	private void checkInit() {
 		if (!isInitialized()) {
 			throw new RuntimeException("Display not initialized. Wait for the game loop before calling this method or catch a " + DisplayInitializedEvent.class.getSimpleName());
 		}
+	}
+	
+	public boolean isInitialized() {
+		return resolution != null;
 	}
 	
 	public long getWindow() {
@@ -72,12 +89,13 @@ public class Display {
 		return renderState;
 	}
 	
-	public void setTargetFPS(int fps) {
-		this.targetFps = fps;
+	public void enableVsync(boolean vsync) {
+		this.vsync = vsync;
+		glfwSwapInterval(vsync == true ? 1 : 0);
 	}
 	
-	public int getTargetFps() {
-		return targetFps;
+	public boolean isVsyncEnabled() {
+		return vsync;
 	}
 	
 	public Resolution getResolution() {

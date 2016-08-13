@@ -6,8 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import de.salocin.gl.util.Color;
+import de.salocin.gl.util.Copyable;
 
-public interface Font extends Cloneable {
+public interface Font extends Copyable<Font> {
 	
 	/**
 	 * Returns the {@link FontMetrics} of this font which holds basic
@@ -18,20 +19,14 @@ public interface Font extends Cloneable {
 	FontMetrics getMetrics();
 	
 	/**
-	 * Returns if Anti-Aliasing is enabled for that font.
-	 * 
-	 * @return <code>true</code> if it is enabled, otherwise <code>false</code>.
-	 */
-	boolean isAntiAliasEnabled();
-	
-	/**
-	 * Sets the real font size (in pixel). The {@link #getBaseSize()} will be
-	 * scaled to match this value.<br>
+	 * Sets the real font size (in pixel). This method will return a copy of the
+	 * current font.
 	 * 
 	 * @param fontSizeInPixel
 	 *            The font size
+	 * @return A copy of the current font
 	 */
-	void setSize(int sizeInPixel);
+	Font setSize(int sizeInPixel);
 	
 	/**
 	 * Returns the font size in pixel.
@@ -86,7 +81,7 @@ public interface Font extends Cloneable {
 	 * 
 	 * @return The cloned Font.
 	 */
-	Font clone();
+	Font copy();
 	
 	/**
 	 * @see FontBuilder#FontBuilder(String)

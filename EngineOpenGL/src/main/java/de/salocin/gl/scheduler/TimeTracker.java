@@ -37,10 +37,15 @@ public class TimeTracker {
 		return getDeltaTime(Mode.LOOP_SYNCHRONIZER);
 	}
 	
+	public static long getVSyncDelta() {
+		return getDeltaTime(Mode.V_SYNC);
+	}
+	
 	public static enum Mode {
 		FPS_COUNTER("FPS_COUNT"),
-		RENDER_STATE,
-		LOOP_SYNCHRONIZER("LOOP_SYNC");
+		RENDER_STATE(),
+		LOOP_SYNCHRONIZER("LOOP_SYNC"),
+		V_SYNC();
 		
 		private final String shortName;
 		

@@ -22,7 +22,7 @@ public abstract class RenderState implements Listener, Renderable {
 		EventManager.getInstance().registerListener(this);
 	}
 	
-	public void renderDebugInfo(boolean renderDebugInfo) {
+	public void enableRenderDebugInfo(boolean renderDebugInfo) {
 		this.renderDebugInfo = renderDebugInfo;
 	}
 	

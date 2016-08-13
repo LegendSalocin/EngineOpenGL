@@ -4,6 +4,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
 
@@ -12,7 +13,7 @@ import javax.imageio.ImageIO;
 import org.lwjgl.opengl.GL12;
 
 import de.salocin.gl.render.gui.Gui;
-import de.salocin.gl.util.engine.ByteBufferLoader;
+import de.salocin.gl.util.ByteBufferUtils;
 import de.salocin.gl.util.engine.ResourceLocation;
 
 public class SimpleTexture implements Texture {
@@ -24,17 +25,21 @@ public class SimpleTexture implements Texture {
 	protected int textureId;
 	private boolean released = false;
 	
-	public SimpleTexture(ResourceLocation resourceLocation) throws IOException {
+	protected SimpleTexture(ResourceLocation resourceLocation) throws IOException {
 		this(resourceLocation.toURL());
 	}
 	
-	public SimpleTexture(URL url) throws IOException {
-		this(ImageIO.read(url.openStream()));
+	protected SimpleTexture(URL url) throws IOException {
+		this(url.openStream());
 	}
 	
-	public SimpleTexture(BufferedImage image) {
+	protected SimpleTexture(InputStream inputStream) throws IOException {
+		this(ImageIO.read(inputStream));
+	}
+	
+	protected SimpleTexture(BufferedImage image) {
 		this.textureId = glGenTextures();
-		this.texture = new ByteBufferLoader(image).load();
+		this.texture = ByteBufferUtils.loadImage(image);
 		this.textureWidth = image.getWidth();
 		this.textureHeight = image.getHeight();
 		

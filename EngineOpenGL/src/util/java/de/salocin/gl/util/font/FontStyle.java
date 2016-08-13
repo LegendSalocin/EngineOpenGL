@@ -1,7 +1,5 @@
 package de.salocin.gl.util.font;
 
-import de.salocin.gl.util.render.Style;
-
 public enum FontStyle {
 	
 	PLAIN(true),
@@ -21,8 +19,8 @@ public enum FontStyle {
 		this.customFont = customFont;
 	}
 	
-	protected static boolean contains(Style[] styles, Style style) {
-		for (Style s : styles) {
+	protected static boolean contains(FontStyle[] styles, FontStyle style) {
+		for (FontStyle s : styles) {
 			if (s == style) {
 				return true;
 			}

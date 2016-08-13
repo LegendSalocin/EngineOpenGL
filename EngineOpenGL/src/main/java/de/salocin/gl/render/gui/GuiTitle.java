@@ -2,19 +2,15 @@ package de.salocin.gl.render.gui;
 
 import org.apache.commons.lang3.Validate;
 
-import de.salocin.gl.util.font.Color;
-import de.salocin.gl.util.render.AlginH;
-import de.salocin.gl.util.render.AlginV;
-import de.salocin.gl.util.render.TrueTypeFont;
-import de.salocin.gl.util.render.TrueTypeFontDefaults;
+import de.salocin.gl.render.Display;
+import de.salocin.gl.util.Color;
+import de.salocin.gl.util.font.Font;
 
 public class GuiTitle extends GuiComponent {
 	
 	protected CharSequence title;
-	protected TrueTypeFont titleFont;
+	protected Font titleFont;
 	protected Color titleColor;
-	protected AlginV titleVertAlgin = AlginV.CENTER;
-	protected AlginH titleHorAlgin = AlginH.CENTER;
 	protected float titleOffsetX;
 	protected float titleOffsetY;
 	protected float titleX;
@@ -23,7 +19,7 @@ public class GuiTitle extends GuiComponent {
 	public GuiTitle(CharSequence title, float x, float y, float width, float height) {
 		super(x, y, width, height);
 		setTitle(title);
-		setTitleFont(TrueTypeFontDefaults.getDefaultEngineFont());
+		setTitleFont(Display.getDefaultEngineFont());
 		setTitleColor(Color.white);
 	}
 	
@@ -45,33 +41,13 @@ public class GuiTitle extends GuiComponent {
 		updateTitlePos();
 	}
 	
-	public TrueTypeFont getTitleFont() {
+	public Font getTitleFont() {
 		return titleFont;
 	}
 	
-	public void setTitleFont(TrueTypeFont titleFont) {
+	public void setTitleFont(Font titleFont) {
 		Validate.notNull(titleFont);
 		this.titleFont = titleFont;
-		updateTitlePos();
-	}
-	
-	public AlginV getVAlgin() {
-		return titleVertAlgin;
-	}
-	
-	public void setTitleAlginV(AlginV algin) {
-		Validate.notNull(algin);
-		this.titleVertAlgin = algin;
-		updateTitlePos();
-	}
-	
-	public AlginH getHAlgin() {
-		return titleHorAlgin;
-	}
-	
-	public void setTitleAlginH(AlginH algin) {
-		Validate.notNull(algin);
-		this.titleHorAlgin = algin;
 		updateTitlePos();
 	}
 	
@@ -96,33 +72,37 @@ public class GuiTitle extends GuiComponent {
 	
 	protected void updateTitlePos() {
 		if (titleFont != null && title != null && bounds.getWidth() >= 0.0f && bounds.getHeight() >= 0.0f) {
-			float titleWidth = titleFont.getWidth(title);
-			float titleHeight = titleFont.getFontHeight();
+			float titleWidth = titleFont.getMetrics().getWidth(title);
+			float titleHeight = titleFont.getMetrics().getLineHeight();
 			
 			titleX = bounds.getX() + titleOffsetX;
 			titleY = bounds.getY() + titleOffsetY;
 			
-			switch (titleHorAlgin) {
-			case CENTER:
-				titleX += (bounds.getWidth() - titleWidth) / 2;
-				break;
-			case LEFT:
-				break;
-			case RIGHT:
-				titleX += bounds.getWidth();
-				break;
-			}
+			titleX += (bounds.getWidth() - titleWidth) / 2;
+			titleY += (bounds.getHeight() - titleHeight) / 2;
 			
-			switch (titleVertAlgin) {
-			case CENTER:
-				titleY += (bounds.getHeight() - titleHeight) / 2;
-				break;
-			case TOP:
-				break;
-			case BOTTOM:
-				titleY += bounds.getHeight() - titleHeight;
-				break;
-			}
+			// TODO align
+			// switch (titleHorAlign) {
+			// case CENTER:
+			// titleX += (bounds.getWidth() - titleWidth) / 2;
+			// break;
+			// case LEFT:
+			// break;
+			// case RIGHT:
+			// titleX += bounds.getWidth();
+			// break;
+			// }
+			//
+			// switch (titleVertAlign) {
+			// case CENTER:
+			// titleY += (bounds.getHeight() - titleHeight) / 2;
+			// break;
+			// case TOP:
+			// break;
+			// case BOTTOM:
+			// titleY += bounds.getHeight() - titleHeight;
+			// break;
+			// }
 		}
 	}
 	
@@ -130,7 +110,7 @@ public class GuiTitle extends GuiComponent {
 	public void render() {
 		super.render();
 		if (titleFont != null && title != null) {
-			titleFont.renderText(title, titleX, titleY, titleColor, titleHorAlgin);
+			titleFont.renderText(title, titleX, titleY, titleColor);
 		}
 	}
 	

@@ -1,24 +1,19 @@
 package de.salocin.gl.util.font;
 
+import org.lwjgl.stb.STBTTAlignedQuad;
+
+/**
+ * Not part of the official API
+ */
 public class TrueTypeFontMetrics implements FontMetrics, Cloneable {
 	
+	protected STBTTAlignedQuad quad = STBTTAlignedQuad.malloc();
 	private final TrueTypeFont font;
-	private final int baseSize;
-	private int size;
+	private final int size;
 	
-	protected TrueTypeFontMetrics(TrueTypeFont font, int baseSize) {
+	protected TrueTypeFontMetrics(TrueTypeFont font, int size) {
 		this.font = font;
-		this.baseSize = baseSize;
-	}
-	
-	@Override
-	public int getBaseSize() {
-		return baseSize;
-	}
-	
-	@Override
-	public void setSize(int sizeInPixel) {
-		this.size = sizeInPixel;
+		this.size = size;
 	}
 	
 	@Override
@@ -26,23 +21,7 @@ public class TrueTypeFontMetrics implements FontMetrics, Cloneable {
 		return size;
 	}
 	
-	@Override
-	public float getBaseline() {
-		// TODO
-		return 0;
-	}
-	
-	@Override
-	public float getAscentOffset() {
-		// TODO
-		return 0;
-	}
-	
-	@Override
-	public float getDescentOffset() {
-		// TODO
-		return 0;
-	}
+	// TODO
 	
 	@Override
 	public float getWidth(char... chars) {
@@ -57,14 +36,7 @@ public class TrueTypeFontMetrics implements FontMetrics, Cloneable {
 	}
 	
 	@Override
-	public float getHeight() {
-		return 0;
-	}
-	
-	@Override
-	protected TrueTypeFontMetrics clone() {
-		TrueTypeFontMetrics m = new TrueTypeFontMetrics(font, baseSize);
-		m.size = size;
-		return m;
+	public float getLineHeight() {
+		return size;
 	}
 }

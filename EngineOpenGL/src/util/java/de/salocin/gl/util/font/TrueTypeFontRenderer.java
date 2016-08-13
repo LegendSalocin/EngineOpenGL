@@ -1,195 +1,169 @@
 package de.salocin.gl.util.font;
 
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
-import java.awt.RenderingHints;
-import java.awt.Transparency;
-import java.awt.image.BufferedImage;
-import java.io.File;
+import static org.lwjgl.BufferUtils.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.stb.STBTruetype.*;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 
-import javax.imageio.ImageIO;
+import org.apache.commons.lang3.Validate;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.stb.STBTTAlignedQuad;
+import org.lwjgl.stb.STBTTPackContext;
+import org.lwjgl.stb.STBTTPackedchar;
+import org.lwjgl.system.MemoryUtil;
 
-import org.lwjgl.opengl.GL11;
-
-import de.salocin.gl.render.gui.Gui;
 import de.salocin.gl.util.Color;
-import de.salocin.gl.util.texture.SimpleTexture;
 
-public class TrueTypeFontRenderer implements Cloneable {
+/**
+ * Not part of the official API
+ */
+public class TrueTypeFontRenderer {
 	
-	protected static final Graphics2D GLOBAL_GRAPHICS;
-	
-	static {
-		GLOBAL_GRAPHICS = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(1, 1, Transparency.TRANSLUCENT).createGraphics();
-	}
+	private static final int BITMAP_WIDTH = 512;
+	private static final int BITMAP_HEIGHT = 512;
 	
 	private final TrueTypeFont font;
+	private final float scale;
+	protected final char[] usedChars;
 	
-	private TrueTypeFontData normalData = new TrueTypeFontData(FontStyle.PLAIN);
-	private TrueTypeFontData boldData = new TrueTypeFontData(FontStyle.BOLD);
-	private TrueTypeFontData italicData = new TrueTypeFontData(FontStyle.ITALIC);
-	private TrueTypeFontData boldItalicData = new TrueTypeFontData(FontStyle.BOLD, FontStyle.ITALIC);
-	private TrueTypeFontData[] allData = { normalData, boldData, italicData, boldItalicData };
-	private TrueTypeFontData currentData = null;
+	private final FloatBuffer xPos = MemoryUtil.memAllocFloat(1);
+	private final FloatBuffer yPos = MemoryUtil.memAllocFloat(1);
 	
-	private char[] chars;
+	private STBTTPackedchar.Buffer chardata;
+	private STBTTAlignedQuad quad = STBTTAlignedQuad.malloc();
 	
-	/**
-	 * 
-	 */
-	private TrueTypeFontRenderer(TrueTypeFont font) {
+	private int fontTexture;
+	
+	public TrueTypeFontRenderer(TrueTypeFont font, float scale, char[] usedChars) {
+		Validate.notNull(usedChars);
+		if (usedChars.length == 0) {
+			throw new IllegalArgumentException("usedChars is empty.");
+		}
+		
 		this.font = font;
+		this.scale = scale;
+		this.usedChars = usedChars;
+		loadFont(font.ttf);
 	}
 	
-	protected TrueTypeFontRenderer(TrueTypeFont font, Font baseFont, char[] chars) {
-		this(font);
+	protected void loadFont(InputStream inputStream) {
+		glEnable(GL_TEXTURE_2D);
 		
-		initChars(chars);
-		initData(baseFont.deriveFont((float) font.metrics.getBaseSize()));
-	}
-	
-	protected void initChars(char[] chars) {
-		this.chars = new char[256 + chars.length];
+		fontTexture = glGenTextures();
+		chardata = STBTTPackedchar.malloc(usedChars.length);
 		
-		for (int i = 0; i < allData.length; i++) {
-			if (i < 256) {
-				this.chars[i] = (char) i;
-			} else {
-				this.chars[i] = chars[i - 256];
-			}
-		}
-	}
-	
-	protected void initData(Font base) {
-		normalData.setFont(base);
-		boldData.setFont(base.deriveFont(Font.BOLD));
-		italicData.setFont(base.deriveFont(Font.ITALIC));
-		boldItalicData.setFont(base.deriveFont(Font.BOLD | Font.ITALIC));
-		
-		for (TrueTypeFontData d : allData) {
-			/* Create char texture */
-			BufferedImage image = new BufferedImage(d.charPos.get(d.charPos.limit() - 1), d.font.getSize(), BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g = image.createGraphics();
-			if (font.isAntiAliasEnabled()) {
-				g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			}
-			g.setFont(d.font);
+		try (STBTTPackContext pc = STBTTPackContext.malloc()) {
+			ByteBuffer ttf = ioResourceToByteBuffer(inputStream, 160 * 1024);
+			ByteBuffer bitmap = BufferUtils.createByteBuffer(BITMAP_WIDTH * BITMAP_HEIGHT);
 			
-			/* Write chars */
-			d.charPos.rewind();
-			
-			while (d.charPos.hasRemaining()) {
-				g.drawString(String.valueOf(chars[d.charPos.position()]), d.charPos.get(), d.font.getSize() - d.fontMetrics.getDescent());
+			stbtt_PackBegin(pc, bitmap, BITMAP_WIDTH, BITMAP_HEIGHT, 0, 1, null);
+			{
+				chardata.position(0);
+				stbtt_PackSetOversampling(pc, 1, 1);
+				stbtt_PackFontRange(pc, ttf, 0, scale, 0, chardata);
+				chardata.clear();
 			}
+			stbtt_PackEnd(pc);
 			
-			// DEBUG
-			try {
-				String style = "";
-				
-				for (FontStyle s : d.style) {
-					style += s.name();
-				}
-				
-				File f = new File(d.font.getName() + "_" + style + ".png");
-				f.delete();
-				f.createNewFile();
-				ImageIO.write(image, "png", f);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			/* Convert to OpenGL Texture */
-			d.texture = new SimpleTexture(image);
-		}
-	}
-	
-	protected void renderText(CharSequence text, float x, float y, Color color) {
-		if (currentData == null || currentData.texture == null) {
-			// Font texture still loading and not available
-			return;
+			glBindTexture(GL_TEXTURE_2D, fontTexture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, BITMAP_WIDTH, BITMAP_HEIGHT, 0, GL_ALPHA, GL_UNSIGNED_BYTE, bitmap);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 		
-		float xOffset = 0;
+		glDisable(GL_TEXTURE_2D);
+	}
+	
+	public void renderText(String text, float x, float y) {
+		renderText(text, x, y, Color.white);
+	}
+	
+	public void renderText(String text, float x, float y, Color color) {
+		xPos.put(0, x);
+		yPos.put(0, y);
 		
-		Gui.enableAlpha();
+		chardata.position(0);
+		
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, fontTexture);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
 		color.bind();
 		
-		final float scale = getCurrentScale();
-		GL11.glPushMatrix();
-		GL11.glTranslatef(x - (x * scale), y - (y * scale), 0.0f);
-		GL11.glScalef(scale, scale, 0.0f);
+		glBegin(GL_QUADS);
 		
 		for (int i = 0; i < text.length(); i++) {
-			final char c = text.charAt(i);
-			renderChar(c, x + xOffset, y);
-			xOffset += font.metrics.getWidth(c);
-		}
-		
-		GL11.glPopMatrix();
-		Gui.disableAlpha();
-	}
-	
-	protected void renderChar(char c, float x, float y) {
-		final float charWidth = font.metrics.getWidth(c);
-		final float lineHeight = font.metrics.getSize();
-		
-		int charPos = (int) c < 256 ? (int) c : -1;
-		
-		if (charPos == -1) {
-			try {
-				currentData.charPos.position(256);
-			} catch (IllegalArgumentException e) {
-				throw new RuntimeException("Char '" + c + "' is not registered for this TrueTypeFont.", e);
+			char ch = text.charAt(i);
+			if (!canRender(ch)) {
+				new RuntimeException("Cannot render char: " + ch + "(" + ((int) ch) + ")").printStackTrace();
+				
+				if (canRender('?')) {
+					ch = '?';
+				} else {
+					continue;
+				}
 			}
 			
-			while (currentData.charPos.hasRemaining()) {
-				if (chars[currentData.charPos.position()] == c) {
-					charPos = currentData.charPos.position();
+			stbtt_GetPackedQuad(chardata, BITMAP_WIDTH, BITMAP_HEIGHT, ch, xPos, yPos, quad, true);
+			drawBoxTex(quad.x0(), quad.y0(), quad.x1(), quad.y1(), quad.s0(), quad.t0(), quad.s1(), quad.t1());
+		}
+		
+		glEnd();
+		
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
+	}
+	
+	public boolean canRender(char ch) {
+		for (char c : usedChars) {
+			if (c == ch) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	protected static void drawBoxTex(float x0, float y0, float x1, float y1, float s0, float t0, float s1, float t1) {
+		glTexCoord2f(s0, t0);
+		glVertex2f(x0, y0);
+		glTexCoord2f(s1, t0);
+		glVertex2f(x1, y0);
+		glTexCoord2f(s1, t1);
+		glVertex2f(x1, y1);
+		glTexCoord2f(s0, t1);
+		glVertex2f(x0, y1);
+	}
+	
+	protected static ByteBuffer ioResourceToByteBuffer(InputStream inputStream, int bufferSize) throws IOException {
+		ByteBuffer buffer;
+		
+		try (InputStream source = inputStream; ReadableByteChannel rbc = Channels.newChannel(source)) {
+			buffer = createByteBuffer(bufferSize);
+			
+			while (true) {
+				int bytes = rbc.read(buffer);
+				if (bytes == -1)
 					break;
-				}
-			}
-			
-			if (charPos == -1) {
-				throw new RuntimeException("Char '" + c + "' is not registered for this TrueTypeFont.");
-			}
-		}
-		
-		currentData.texture.render(x, y, charWidth, lineHeight, currentData.charPos.get(charPos), 0.0f, currentData.fontMetrics.charWidth(c), currentData.texture.getHeight());
-	}
-	
-	protected void updateStyle(FontStyle[] styles) {
-		if (normalData.is(styles)) {
-			for (FontStyle style : styles) {
-				if (style.customFont && style != FontStyle.PLAIN) {
-					throw new IllegalArgumentException("Can not combine '" + FontStyle.PLAIN.name() + "' with '" + style.name() + "'");
+				if (buffer.remaining() == 0) {
+					ByteBuffer newBuffer = BufferUtils.createByteBuffer(buffer.capacity() * 2);
+					buffer.flip();
+					newBuffer.put(buffer);
+					buffer = newBuffer;
 				}
 			}
 		}
 		
-		for (TrueTypeFontData d : allData) {
-			if (d.is(styles)) {
-				currentData = d;
-			}
-		}
-		
-		currentData = null;
+		buffer.flip();
+		return buffer;
 	}
-	
-	protected float getCurrentScale() {
-		return (float) font.metrics.getSize() / (float) font.metrics.getBaseSize();
-	}
-	
-	@Override
-	protected TrueTypeFontRenderer clone() {
-		TrueTypeFontRenderer r = new TrueTypeFontRenderer(font);
-		r.normalData = normalData;
-		r.boldData = boldData;
-		r.italicData = italicData;
-		r.boldItalicData = boldItalicData;
-		r.chars = chars;
-		return r;
-	}
-	
 }

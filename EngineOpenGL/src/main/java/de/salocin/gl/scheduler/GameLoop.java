@@ -1,9 +1,9 @@
 package de.salocin.gl.scheduler;
 
-import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
+import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryUtil.NULL;
+import static org.lwjgl.system.MemoryUtil.*;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -16,7 +16,6 @@ import de.salocin.gl.render.Resolution;
 import de.salocin.gl.render.gui.RenderState;
 import de.salocin.gl.scheduler.TimeTracker.Mode;
 import de.salocin.gl.util.exception.EngineException;
-import de.salocin.gl.util.render.TrueTypeFontDefaults;
 
 public class GameLoop implements Runnable {
 	
@@ -68,7 +67,6 @@ public class GameLoop implements Runnable {
 		
 		GL.createCapabilities();
 		
-		TrueTypeFontDefaults.init();
 		Display.getInstance().init();
 		
 		EventManager.getInstance().callEvent(new EngineCLContextCreatedEvent());
@@ -96,7 +94,9 @@ public class GameLoop implements Runnable {
 			LoopSynchronizer.run(FPS.getCurrentTime());
 			TimeTracker.end();
 			
+			TimeTracker.start(Mode.V_SYNC);
 			glfwSwapBuffers(window);
+			TimeTracker.end();
 		}
 	}
 	

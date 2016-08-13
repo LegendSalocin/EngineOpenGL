@@ -1,45 +1,49 @@
 package de.salocin.gl.util.font;
 
-import java.awt.Font;
+import java.io.InputStream;
 
 import de.salocin.gl.util.Color;
 
-public class TrueTypeFont implements de.salocin.gl.util.font.Font {
+/**
+ * Not part of the official API
+ */
+public class TrueTypeFont implements Font {
 	
-	protected TrueTypeFontMetrics metrics;
-	protected TrueTypeFontRenderer renderer;
-	private boolean antiAlias;
+	protected final TrueTypeFontMetrics metrics;
+	protected final TrueTypeFontRenderer renderer;
+	protected final InputStream ttf;
+	protected char[] customChars;
 	private FontStyle[] styles;
 	
-	/**
-	 * Only used for {@link #clone()}
-	 */
-	private TrueTypeFont() {
+	protected TrueTypeFont(InputStream ttf, int size, char[] customChars) {
+		this.ttf = ttf;
+		this.customChars = customChars;
+		this.metrics = new TrueTypeFontMetrics(this, size);
+		this.renderer = new TrueTypeFontRenderer(this, size, buildChars(customChars));
 	}
 	
-	protected TrueTypeFont(Font f, int baseFontSize, boolean antiAlias, char[] chars) {
-		metrics = new TrueTypeFontMetrics(this, baseFontSize);
-		renderer = new TrueTypeFontRenderer(this, f, chars);
+	private char[] buildChars(char[] customChars) {
+		char[] all = new char[256 + customChars.length];
 		
-		/* Init settings */
-		setSize(baseFontSize);
-		setStyle();
+		for (int i = 0; i < all.length; i++) {
+			if (i < 256) {
+				all[i] = (char) i;
+			} else {
+				all[i] = customChars[i - 256];
+			}
+		}
+		
+		return all;
 	}
 	
 	@Override
-	public de.salocin.gl.util.font.FontMetrics getMetrics() {
+	public FontMetrics getMetrics() {
 		return metrics;
 	}
 	
 	@Override
-	public boolean isAntiAliasEnabled() {
-		return antiAlias;
-	}
-	
-	@Override
 	public void setStyle(FontStyle... styles) {
-		renderer.updateStyle(styles);
-		this.styles = styles.length == 0 ? new FontStyle[] { FontStyle.PLAIN } : styles;
+		// TODO
 	}
 	
 	@Override
@@ -48,8 +52,8 @@ public class TrueTypeFont implements de.salocin.gl.util.font.Font {
 	}
 	
 	@Override
-	public void setSize(int sizeInPixel) {
-		metrics.setSize(sizeInPixel);
+	public Font setSize(int sizeInPixel) {
+		return copy(ttf, sizeInPixel, renderer.usedChars);
 	}
 	
 	@Override
@@ -64,15 +68,16 @@ public class TrueTypeFont implements de.salocin.gl.util.font.Font {
 	
 	@Override
 	public void renderText(CharSequence text, float x, float y, Color color) {
-		renderer.renderText(text, x, y, color);
+		renderer.renderText(text.toString(), x, y, color);
 	}
 	
 	@Override
-	public TrueTypeFont clone() {
-		TrueTypeFont font = new TrueTypeFont();
-		font.metrics = metrics.clone();
-		font.renderer = renderer.clone();
-		font.antiAlias = antiAlias;
+	public Font copy() {
+		return copy(ttf, metrics.getSize(), renderer.usedChars);
+	}
+	
+	private Font copy(InputStream newTtf, int newSize, char[] newChars) {
+		TrueTypeFont font = new TrueTypeFont(newTtf, newSize, newChars);
 		font.styles = styles;
 		return font;
 	}
