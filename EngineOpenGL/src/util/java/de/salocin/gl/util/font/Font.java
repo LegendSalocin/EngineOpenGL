@@ -1,14 +1,17 @@
 package de.salocin.gl.util.font;
 
-import java.awt.FontFormatException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
 import de.salocin.gl.util.Color;
-import de.salocin.gl.util.Copyable;
 
-public interface Font extends Copyable<Font> {
+public interface Font {
+	
+	/**
+	 * Returns a {@link FontBuilder} with the current font's settings. In that
+	 * case it is very easy to copy the current font, or change some settings
+	 * like the font size or the font style.
+	 * 
+	 * @return The font builder the font was build from.
+	 */
+	FontBuilder getFontBuilder();
 	
 	/**
 	 * Returns the {@link FontMetrics} of this font which holds basic
@@ -18,15 +21,7 @@ public interface Font extends Copyable<Font> {
 	 */
 	FontMetrics getMetrics();
 	
-	/**
-	 * Sets the real font size (in pixel). This method will return a copy of the
-	 * current font.
-	 * 
-	 * @param fontSizeInPixel
-	 *            The font size
-	 * @return A copy of the current font
-	 */
-	Font setSize(int sizeInPixel);
+	FontStyle getStyle();
 	
 	/**
 	 * Returns the font size in pixel.
@@ -35,19 +30,17 @@ public interface Font extends Copyable<Font> {
 	 */
 	int getSize();
 	
-	/**
-	 * Sets the font style.
-	 * 
-	 * @param styles
-	 */
-	void setStyle(FontStyle... styles);
+	void setUnderline(boolean underline);
 	
-	/**
-	 * Returns the font style
-	 * 
-	 * @return
-	 */
-	FontStyle[] getStyle();
+	boolean isUnderlined();
+	
+	void setStrikethrough(boolean strikethrough);
+	
+	boolean isStrikethrough();
+	
+	void setOverline(boolean overline);
+	
+	boolean isOverlined();
 	
 	/**
 	 * Renders the text at the given position.
@@ -55,9 +48,10 @@ public interface Font extends Copyable<Font> {
 	 * @param text
 	 *            The text to render
 	 * @param x
-	 *            The x position of the position
+	 *            The x position
 	 * @param y
-	 *            The y position of the position
+	 *            The y position (of the <a href=
+	 *            "https://en.wikipedia.org/wiki/Baseline_(typography)">Baseline</a>)
 	 */
 	void renderText(CharSequence text, float x, float y);
 	
@@ -68,40 +62,27 @@ public interface Font extends Copyable<Font> {
 	 * @param text
 	 *            The text to render
 	 * @param x
-	 *            The x position of the position
+	 *            The x position
 	 * @param y
-	 *            The y position of the position
+	 *            The y position (of the <a href=
+	 *            "https://en.wikipedia.org/wiki/Baseline_(typography)">Baseline</a>)
 	 * @param color
 	 *            The color of the text
 	 */
 	void renderText(CharSequence text, float x, float y, Color color);
 	
 	/**
-	 * Clones the current Font without reloading it.
-	 * 
-	 * @return The cloned Font.
-	 */
-	Font copy();
-	
-	/**
 	 * @see FontBuilder#FontBuilder(String)
 	 */
-	public static FontBuilder newBuilder(String fontName) {
-		return new FontBuilder(fontName);
+	public static FontBuilder newBuilder(String fontFamily) {
+		return new FontBuilder(fontFamily);
 	}
 	
 	/**
-	 * @see FontBuilder#FontBuilder(InputStream)
+	 * @see FontBuilder#FontBuilder(String, FontStyle)
 	 */
-	public static FontBuilder newBuilder(InputStream fontInputStream) throws FontFormatException, IOException {
-		return new FontBuilder(fontInputStream);
-	}
-	
-	/**
-	 * @see FontBuilder#FontBuilder(File)
-	 */
-	public static FontBuilder newBuilder(File fontFile) throws FontFormatException, IOException {
-		return new FontBuilder(fontFile);
+	public static FontBuilder newBuilder(String fontFamily, FontStyle fontStyle) {
+		return new FontBuilder(fontFamily, fontStyle);
 	}
 	
 }

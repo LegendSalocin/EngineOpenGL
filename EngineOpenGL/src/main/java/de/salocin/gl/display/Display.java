@@ -1,4 +1,4 @@
-package de.salocin.gl.render;
+package de.salocin.gl.display;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -7,8 +7,8 @@ import java.util.logging.Logger;
 import de.salocin.gl.event.EventManager;
 import de.salocin.gl.event.display.DisplayGameStateChangeEvent;
 import de.salocin.gl.event.display.DisplayInitializedEvent;
+import de.salocin.gl.gui.RenderState;
 import de.salocin.gl.log.EngineLogger;
-import de.salocin.gl.render.gui.RenderState;
 import de.salocin.gl.scheduler.Scheduler;
 import de.salocin.gl.util.font.Font;
 import de.salocin.gl.util.font.FontBuilder;
@@ -18,6 +18,7 @@ import de.salocin.gl.util.input.Mouse;
 public class Display {
 	
 	public static final Logger logger = EngineLogger.getEngineLogger(Display.class);
+	private static final FontBuilder engineFontBuilder = new FontBuilder("Arial");
 	private static Display instance = new Display();
 	private static Font engineFont;
 	private Resolution resolution;
@@ -38,7 +39,7 @@ public class Display {
 	}
 	
 	public static Font getDefaultEngineFontCustomSize(int size) {
-		return new FontBuilder(getDefaultEngineFont()).setFontSize(size).build();
+		return engineFontBuilder.setFontSize(size).build();
 	}
 	
 	public void init() {
@@ -51,7 +52,7 @@ public class Display {
 		Mouse.init();
 		Keyboard.init();
 		
-		engineFont = Font.newBuilder("Arial").setFontSize(20).build();
+		engineFont = engineFontBuilder.setFontSize(20).build();
 		
 		logger.info("Display initialized.");
 		EventManager.getInstance().callEvent(new DisplayInitializedEvent());

@@ -1,8 +1,8 @@
-package de.salocin.gl.render.gui;
+package de.salocin.gl.gui;
 
 import org.apache.commons.lang3.Validate;
 
-import de.salocin.gl.render.Display;
+import de.salocin.gl.display.Display;
 import de.salocin.gl.util.Color;
 import de.salocin.gl.util.font.Font;
 

@@ -1,4 +1,4 @@
-package de.salocin.gl.render.gui;
+package de.salocin.gl.gui;
 
 import de.salocin.gl.event.input.MouseButtonEvent;
 import de.salocin.gl.util.input.Action;

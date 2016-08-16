@@ -14,8 +14,10 @@ import java.nio.channels.ReadableByteChannel;
 import org.apache.commons.lang3.Validate;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTAlignedQuad;
+import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.stb.STBTTPackContext;
 import org.lwjgl.stb.STBTTPackedchar;
+import org.lwjgl.stb.STBTruetype;
 import org.lwjgl.system.MemoryUtil;
 
 import de.salocin.gl.util.Color;
@@ -25,29 +27,31 @@ import de.salocin.gl.util.Color;
  */
 public class TrueTypeFontRenderer {
 	
-	private static final int BITMAP_WIDTH = 512;
-	private static final int BITMAP_HEIGHT = 512;
+	protected static final int BITMAP_WIDTH = 512;
+	protected static final int BITMAP_HEIGHT = 512;
 	
-	private final TrueTypeFont font;
-	private final float scale;
+	protected final TrueTypeFont font;
 	protected final char[] usedChars;
 	
-	private final FloatBuffer xPos = MemoryUtil.memAllocFloat(1);
-	private final FloatBuffer yPos = MemoryUtil.memAllocFloat(1);
+	protected final FloatBuffer xPos = MemoryUtil.memAllocFloat(1);
+	protected final FloatBuffer yPos = MemoryUtil.memAllocFloat(1);
 	
-	private STBTTPackedchar.Buffer chardata;
-	private STBTTAlignedQuad quad = STBTTAlignedQuad.malloc();
+	protected STBTTFontinfo fontInfo;
+	protected STBTTPackedchar.Buffer chardata;
+	protected STBTTAlignedQuad quad = STBTTAlignedQuad.malloc();
 	
-	private int fontTexture;
+	protected float textWidth;
+	protected float textX;
 	
-	public TrueTypeFontRenderer(TrueTypeFont font, float scale, char[] usedChars) {
+	protected int fontTexture;
+	
+	public TrueTypeFontRenderer(TrueTypeFont font, char[] usedChars) {
 		Validate.notNull(usedChars);
 		if (usedChars.length == 0) {
 			throw new IllegalArgumentException("usedChars is empty.");
 		}
 		
 		this.font = font;
-		this.scale = scale;
 		this.usedChars = usedChars;
 		loadFont(font.ttf);
 	}
@@ -58,15 +62,25 @@ public class TrueTypeFontRenderer {
 		fontTexture = glGenTextures();
 		chardata = STBTTPackedchar.malloc(usedChars.length);
 		
+		fontInfo = STBTTFontinfo.malloc();
+		
 		try (STBTTPackContext pc = STBTTPackContext.malloc()) {
 			ByteBuffer ttf = ioResourceToByteBuffer(inputStream, 160 * 1024);
 			ByteBuffer bitmap = BufferUtils.createByteBuffer(BITMAP_WIDTH * BITMAP_HEIGHT);
+			
+			if (stbtt_InitFont(fontInfo, ttf) == GL_FALSE) {
+				throw new RuntimeException("Couldn't init font");
+			}
+			
+			float scale = stbtt_ScaleForPixelHeight(fontInfo, font.getSize());
+			
+			font.metrics.init(this, scale);
 			
 			stbtt_PackBegin(pc, bitmap, BITMAP_WIDTH, BITMAP_HEIGHT, 0, 1, null);
 			{
 				chardata.position(0);
 				stbtt_PackSetOversampling(pc, 1, 1);
-				stbtt_PackFontRange(pc, ttf, 0, scale, 0, chardata);
+				stbtt_PackFontRange(pc, ttf, 0, font.getSize(), 0, chardata);
 				chardata.clear();
 			}
 			stbtt_PackEnd(pc);
@@ -82,27 +96,24 @@ public class TrueTypeFontRenderer {
 		glDisable(GL_TEXTURE_2D);
 	}
 	
-	public void renderText(String text, float x, float y) {
-		renderText(text, x, y, Color.white);
+	protected float renderText(String text, float x, float y, Color color) {
+		color.bind();
+		return getTextWidth(text, x, y, true);
 	}
 	
-	public void renderText(String text, float x, float y, Color color) {
+	protected float getTextWidth(String text, float x, float y, boolean renderText) {
 		xPos.put(0, x);
 		yPos.put(0, y);
-		
 		chardata.position(0);
 		
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, fontTexture);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		textWidth = 0.0f;
 		
-		color.bind();
+		if (renderText) {
+			glBindTexture(GL_TEXTURE_2D, fontTexture);
+			glBegin(GL_QUADS);
+		}
 		
-		glBegin(GL_QUADS);
-		
-		for (int i = 0; i < text.length(); i++) {
-			char ch = text.charAt(i);
+		for (char ch : text.toString().toCharArray()) {
 			if (!canRender(ch)) {
 				new RuntimeException("Cannot render char: " + ch + "(" + ((int) ch) + ")").printStackTrace();
 				
@@ -113,14 +124,22 @@ public class TrueTypeFontRenderer {
 				}
 			}
 			
-			stbtt_GetPackedQuad(chardata, BITMAP_WIDTH, BITMAP_HEIGHT, ch, xPos, yPos, quad, true);
-			drawBoxTex(quad.x0(), quad.y0(), quad.x1(), quad.y1(), quad.s0(), quad.t0(), quad.s1(), quad.t1());
+			textX = xPos.get(0);
+			
+			STBTruetype.stbtt_GetPackedQuad(chardata, BITMAP_WIDTH, BITMAP_HEIGHT, (int) ch, xPos, yPos, quad, true);
+			
+			textWidth += xPos.get(0) - textX;
+			
+			if (renderText) {
+				drawBoxTex(quad.x0(), quad.y0(), quad.x1(), quad.y1(), quad.s0(), quad.t0(), quad.s1(), quad.t1());
+			}
 		}
 		
-		glEnd();
+		if (renderText) {
+			glEnd();
+		}
 		
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
+		return textWidth;
 	}
 	
 	public boolean canRender(char ch) {

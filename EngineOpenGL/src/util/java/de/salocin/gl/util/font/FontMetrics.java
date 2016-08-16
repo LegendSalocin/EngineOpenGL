@@ -2,6 +2,12 @@ package de.salocin.gl.util.font;
 
 public interface FontMetrics {
 	
+	float getAscent();
+	
+	float getDescent();
+	
+	float getLineGap();
+	
 	/**
 	 * Returns the font size in pixel.
 	 * 
@@ -11,7 +17,7 @@ public interface FontMetrics {
 	
 	float getWidth(char... chars);
 	
-	float getWidth(CharSequence charSequence);
+	float getWidth(CharSequence text);
 	
 	float getLineHeight();
 	

@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL12;
 
-import de.salocin.gl.render.gui.Gui;
+import de.salocin.gl.gui.Gui;
 import de.salocin.gl.util.ByteBufferUtils;
 import de.salocin.gl.util.engine.ResourceLocation;
 

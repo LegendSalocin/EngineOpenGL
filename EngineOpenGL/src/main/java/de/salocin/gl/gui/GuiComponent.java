@@ -1,4 +1,4 @@
-package de.salocin.gl.render.gui;
+package de.salocin.gl.gui;
 
 import org.apache.commons.lang3.Validate;
 

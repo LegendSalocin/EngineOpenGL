@@ -1,0 +1,5 @@
+16.08.16 17:57 [Engine] [EventManager] INFO: Method found and registered. (de.salocin.gl.test.TestPlugin$Events#onKeyPress)
+16.08.16 17:57 [Engine] [EventManager] INFO: Method found and registered. (de.salocin.gl.test.TestPlugin$TestFontState#onKeyPress)
+16.08.16 17:57 [Engine] [EventManager] INFO: Method found and registered. (de.salocin.gl.test.TestPlugin$TestFontState#onMouseMove)
+16.08.16 17:57 [Engine] [EventManager] INFO: Method found and registered. (de.salocin.gl.test.TestPlugin$TestFontState#onMousePress)
+16.08.16 17:57 [Engine] [Display] INFO: Display initialized.

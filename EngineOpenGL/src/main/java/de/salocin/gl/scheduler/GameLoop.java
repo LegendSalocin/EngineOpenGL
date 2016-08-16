@@ -9,11 +9,11 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 
+import de.salocin.gl.display.Display;
+import de.salocin.gl.display.Resolution;
 import de.salocin.gl.event.EventManager;
 import de.salocin.gl.event.engine.EngineCLContextCreatedEvent;
-import de.salocin.gl.render.Display;
-import de.salocin.gl.render.Resolution;
-import de.salocin.gl.render.gui.RenderState;
+import de.salocin.gl.gui.RenderState;
 import de.salocin.gl.scheduler.TimeTracker.Mode;
 import de.salocin.gl.util.exception.EngineException;
 

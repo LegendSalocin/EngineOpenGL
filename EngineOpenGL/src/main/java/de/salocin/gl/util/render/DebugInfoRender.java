@@ -2,6 +2,7 @@ package de.salocin.gl.util.render;
 
 import org.apache.commons.lang3.Validate;
 
+import de.salocin.gl.display.Display;
 import de.salocin.gl.scheduler.FPS;
 import de.salocin.gl.scheduler.TimeTracker;
 import de.salocin.gl.scheduler.TimeTracker.Mode;
@@ -19,7 +20,7 @@ public class DebugInfoRender {
 	
 	public DebugInfoRender() {
 		setColor(Color.white);
-		setFont(Font.newBuilder("Arial").build());
+		setFont(Display.getDefaultEngineFont());
 	}
 	
 	public Color getColor() {
@@ -56,6 +57,7 @@ public class DebugInfoRender {
 		renderLine("GameLoop Delta: %d", FPS.getDelta());
 		renderLine("    %s: %dms; %s: %dms; %s: %dms; %s: %dms", Mode.FPS_COUNTER, TimeTracker.getFpsCounterDelta(), Mode.RENDER_STATE, TimeTracker.getRenderStateDelta(),
 				Mode.LOOP_SYNCHRONIZER, TimeTracker.getLoopSyncDelta(), Mode.V_SYNC, TimeTracker.getVSyncDelta());
+		renderLine("V-Sync: " + Display.getInstance().isVsyncEnabled());
 		renderLine("Mouse: [%.2f|%.2f]", Mouse.getMousePos().getX(), Mouse.getMousePos().getY());
 	}
 	
