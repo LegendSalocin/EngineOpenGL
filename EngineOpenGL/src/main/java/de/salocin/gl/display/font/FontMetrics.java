@@ -1,4 +1,4 @@
-package de.salocin.gl.util.font;
+package de.salocin.gl.display.font;
 
 public interface FontMetrics {
 	

@@ -1,4 +1,4 @@
-package de.salocin.gl.util.texture;
+package de.salocin.gl.impl.display;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -10,13 +10,14 @@ import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL12;
 
+import de.salocin.gl.display.Texture;
 import de.salocin.gl.gui.Gui;
-import de.salocin.gl.util.ByteBufferUtils;
 import de.salocin.gl.util.engine.ResourceLocation;
 
-public class SimpleTexture implements Texture {
+public class TextureImpl implements Texture {
 	
 	protected static int lastBind = -1;
 	protected final ByteBuffer texture;
@@ -25,25 +26,52 @@ public class SimpleTexture implements Texture {
 	protected int textureId;
 	private boolean released = false;
 	
-	protected SimpleTexture(ResourceLocation resourceLocation) throws IOException {
+	public TextureImpl(ResourceLocation resourceLocation) throws IOException {
 		this(resourceLocation.toURL());
 	}
 	
-	protected SimpleTexture(URL url) throws IOException {
+	public TextureImpl(URL url) throws IOException {
 		this(url.openStream());
 	}
 	
-	protected SimpleTexture(InputStream inputStream) throws IOException {
+	public TextureImpl(InputStream inputStream) throws IOException {
 		this(ImageIO.read(inputStream));
 	}
 	
-	protected SimpleTexture(BufferedImage image) {
+	public TextureImpl(BufferedImage image) {
 		this.textureId = glGenTextures();
-		this.texture = ByteBufferUtils.loadImage(image);
+		this.texture = imageToByteBuffer(image);
 		this.textureWidth = image.getWidth();
 		this.textureHeight = image.getHeight();
 		
 		loadTexture(image.getWidth(), image.getHeight());
+	}
+	
+	protected ByteBuffer imageToByteBuffer(BufferedImage image) {
+		final int width = image.getWidth();
+		final int height = image.getHeight();
+		ByteBuffer buffer = BufferUtils.createByteBuffer(4 * width * height);
+		
+		int[] pixels = new int[width * height];
+		image.getRGB(0, 0, width, height, pixels, 0, width);
+		
+		for (int y = 0; y < image.getHeight(); y++) {
+			for (int x = 0; x < width; x++) {
+				int pixel = pixels[y * width + x];
+				byte r = (byte) ((pixel >> 16) & 0xFF);
+				byte g = (byte) ((pixel >> 8) & 0xFF);
+				byte b = (byte) (pixel & 0xFF);
+				byte a = (byte) ((pixel >> 24) & 0xFF);
+				
+				buffer.put(r);
+				buffer.put(g);
+				buffer.put(b);
+				buffer.put(a);
+			}
+		}
+		
+		buffer.flip();
+		return buffer;
 	}
 	
 	protected void loadTexture(int widthInPixel, int heightInPixel) {

@@ -2,14 +2,15 @@ package de.salocin.gl.util.render;
 
 import org.apache.commons.lang3.Validate;
 
+import de.salocin.gl.display.Color;
 import de.salocin.gl.display.Display;
+import de.salocin.gl.display.font.Font;
 import de.salocin.gl.scheduler.FPS;
 import de.salocin.gl.scheduler.TimeTracker;
 import de.salocin.gl.scheduler.TimeTracker.Mode;
-import de.salocin.gl.util.Color;
-import de.salocin.gl.util.font.Font;
 import de.salocin.gl.util.input.Mouse;
 
+// TODO rework this class
 public class DebugInfoRender {
 	
 	private Color color;
@@ -20,7 +21,7 @@ public class DebugInfoRender {
 	
 	public DebugInfoRender() {
 		setColor(Color.white);
-		setFont(Display.getDefaultEngineFont());
+		setFont(Display.getInstance().getDefaultEngineFont());
 	}
 	
 	public Color getColor() {

@@ -1,10 +1,13 @@
-package de.salocin.gl.util.font;
+package de.salocin.gl.impl.display;
 
 import static org.lwjgl.stb.STBTruetype.*;
 
 import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
+
+import de.salocin.gl.display.Viewport;
+import de.salocin.gl.display.font.FontMetrics;
 
 /**
  * Not part of the official API
@@ -13,13 +16,15 @@ public class TrueTypeFontMetrics implements FontMetrics, Cloneable {
 	
 	private final TrueTypeFont font;
 	private final int size;
-	private float ascent;
-	private float descent;
-	private float lineGap;
+	private final float lineHeight;
+	private int ascent;
+	private int descent;
+	private int lineGap;
 	
 	protected TrueTypeFontMetrics(TrueTypeFont font, int size) {
 		this.font = font;
 		this.size = size;
+		this.lineHeight = Viewport.getInstance().scaledHeight(size);
 	}
 	
 	protected void init(TrueTypeFontRenderer renderer, float scale) {
@@ -29,24 +34,24 @@ public class TrueTypeFontMetrics implements FontMetrics, Cloneable {
 		
 		stbtt_GetFontVMetrics(renderer.fontInfo, ascent, descent, lineGap);
 		
-		this.ascent = ascent.get(0) * scale;
-		this.descent = descent.get(0) * scale;
-		this.lineGap = lineGap.get(0) * scale;
+		this.ascent = (int) (ascent.get(0) * scale);
+		this.descent = (int) (descent.get(0) * scale);
+		this.lineGap = (int) (lineGap.get(0) * scale);
 	}
 	
 	@Override
 	public float getAscent() {
-		return ascent;
+		return Viewport.getInstance().scaledHeight(ascent);
 	}
 	
 	@Override
 	public float getDescent() {
-		return descent;
+		return Viewport.getInstance().scaledHeight(descent);
 	}
 	
 	@Override
 	public float getLineGap() {
-		return lineGap;
+		return Viewport.getInstance().scaledHeight(lineGap);
 	}
 	
 	@Override
@@ -56,7 +61,7 @@ public class TrueTypeFontMetrics implements FontMetrics, Cloneable {
 	
 	@Override
 	public float getLineHeight() {
-		return size;
+		return Viewport.getInstance().scaledHeight(size);
 	}
 	
 	@Override

@@ -1,6 +1,6 @@
-package de.salocin.gl.util.font;
+package de.salocin.gl.display.font;
 
-import de.salocin.gl.util.Color;
+import de.salocin.gl.display.Color;
 
 public interface Font {
 	

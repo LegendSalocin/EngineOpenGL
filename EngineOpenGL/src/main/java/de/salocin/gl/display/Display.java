@@ -1,107 +1,32 @@
 package de.salocin.gl.display;
 
-import static org.lwjgl.glfw.GLFW.*;
-
-import java.util.logging.Logger;
-
-import de.salocin.gl.event.EventManager;
-import de.salocin.gl.event.display.DisplayGameStateChangeEvent;
-import de.salocin.gl.event.display.DisplayInitializedEvent;
+import de.salocin.gl.display.font.Font;
+import de.salocin.gl.display.font.FontBuilder;
 import de.salocin.gl.gui.RenderState;
-import de.salocin.gl.log.EngineLogger;
-import de.salocin.gl.scheduler.Scheduler;
-import de.salocin.gl.util.font.Font;
-import de.salocin.gl.util.font.FontBuilder;
-import de.salocin.gl.util.input.Keyboard;
-import de.salocin.gl.util.input.Mouse;
+import de.salocin.gl.impl.display.DisplayImpl;
+import de.salocin.gl.util.engine.Check;
 
-public class Display {
-	
-	public static final Logger logger = EngineLogger.getEngineLogger(Display.class);
-	private static final FontBuilder engineFontBuilder = new FontBuilder("Arial");
-	private static Display instance = new Display();
-	private static Font engineFont;
-	private Resolution resolution;
-	private RenderState renderState;
-	private boolean vsync;
-	
-	private Display() {
-	}
+public interface Display {
 	
 	public static Display getInstance() {
-		return instance;
+		Check.display();
+		return DisplayImpl.instance;
 	}
 	
-	public static Font getDefaultEngineFont() {
-		getInstance().checkInit();
-		
-		return engineFont;
-	}
+	Font getDefaultEngineFont();
 	
-	public static Font getDefaultEngineFontCustomSize(int size) {
-		return engineFontBuilder.setFontSize(size).build();
-	}
+	FontBuilder getDefaultEngineFontBuilder();
 	
-	public void init() {
-		if (isInitialized()) {
-			throw new RuntimeException("Display already initialized.");
-		}
-		
-		resolution = new Resolution();
-		
-		Mouse.init();
-		Keyboard.init();
-		
-		engineFont = engineFontBuilder.setFontSize(20).build();
-		
-		logger.info("Display initialized.");
-		EventManager.getInstance().callEvent(new DisplayInitializedEvent());
-	}
+	boolean isInitialized();
 	
-	private void checkInit() {
-		if (!isInitialized()) {
-			throw new RuntimeException("Display not initialized. Wait for the game loop before calling this method or catch a " + DisplayInitializedEvent.class.getSimpleName());
-		}
-	}
+	long getWindowHandle();
 	
-	public boolean isInitialized() {
-		return resolution != null;
-	}
+	void setRenderState(RenderState state);
 	
-	public long getWindow() {
-		return Scheduler.getInstance().getGameLoop().getWindow();
-	}
+	RenderState getRenderState();
 	
-	public void setRenderState(RenderState state) {
-		Scheduler.getInstance().runLater(() -> {
-			DisplayGameStateChangeEvent e = new DisplayGameStateChangeEvent(renderState, state);
-			if (!EventManager.getInstance().callEvent(e)) {
-				if (renderState != null) {
-					renderState.exit();
-				}
-				
-				renderState = e.getNewState();
-				renderState.init();
-			}
-		});
-	}
+	void enableVsync(boolean vsync);
 	
-	public RenderState getRenderState() {
-		return renderState;
-	}
-	
-	public void enableVsync(boolean vsync) {
-		this.vsync = vsync;
-		glfwSwapInterval(vsync == true ? 1 : 0);
-	}
-	
-	public boolean isVsyncEnabled() {
-		return vsync;
-	}
-	
-	public Resolution getResolution() {
-		checkInit();
-		return resolution;
-	}
+	boolean isVsyncEnabled();
 	
 }

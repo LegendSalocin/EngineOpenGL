@@ -1,4 +1,4 @@
-package de.salocin.gl.util.font;
+package de.salocin.gl.impl.display;
 
 import static org.lwjgl.BufferUtils.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -20,15 +20,16 @@ import org.lwjgl.stb.STBTTPackedchar;
 import org.lwjgl.stb.STBTruetype;
 import org.lwjgl.system.MemoryUtil;
 
-import de.salocin.gl.util.Color;
+import de.salocin.gl.display.Color;
+import de.salocin.gl.display.Viewport;
 
 /**
  * Not part of the official API
  */
 public class TrueTypeFontRenderer {
 	
-	protected static final int BITMAP_WIDTH = 512;
-	protected static final int BITMAP_HEIGHT = 512;
+	protected final int BITMAP_WIDTH;
+	protected final int BITMAP_HEIGHT;
 	
 	protected final TrueTypeFont font;
 	protected final char[] usedChars;
@@ -45,11 +46,17 @@ public class TrueTypeFontRenderer {
 	
 	protected int fontTexture;
 	
+	private final Viewport viewport = Viewport.getInstance();
+	
 	public TrueTypeFontRenderer(TrueTypeFont font, char[] usedChars) {
 		Validate.notNull(usedChars);
 		if (usedChars.length == 0) {
 			throw new IllegalArgumentException("usedChars is empty.");
 		}
+		
+		int size = 512 + (int) ((float) font.getSize() / 50.0f) * 512;
+		BITMAP_WIDTH = size;
+		BITMAP_HEIGHT = size;
 		
 		this.font = font;
 		this.usedChars = usedChars;
@@ -65,7 +72,7 @@ public class TrueTypeFontRenderer {
 		fontInfo = STBTTFontinfo.malloc();
 		
 		try (STBTTPackContext pc = STBTTPackContext.malloc()) {
-			ByteBuffer ttf = ioResourceToByteBuffer(inputStream, 160 * 1024);
+			ByteBuffer ttf = ioResourceToByteBuffer(inputStream, 1024);
 			ByteBuffer bitmap = BufferUtils.createByteBuffer(BITMAP_WIDTH * BITMAP_HEIGHT);
 			
 			if (stbtt_InitFont(fontInfo, ttf) == GL_FALSE) {
@@ -102,8 +109,11 @@ public class TrueTypeFontRenderer {
 	}
 	
 	protected float getTextWidth(String text, float x, float y, boolean renderText) {
-		xPos.put(0, x);
-		yPos.put(0, y);
+		float unscaledX = viewport.unscaledWidth(x);
+		float unscaledY = viewport.unscaledHeight(y);
+		
+		xPos.put(0, unscaledX);
+		yPos.put(0, unscaledY);
 		chardata.position(0);
 		
 		textWidth = 0.0f;
@@ -139,7 +149,7 @@ public class TrueTypeFontRenderer {
 			glEnd();
 		}
 		
-		return textWidth;
+		return viewport.scaledWidth((int) textWidth);
 	}
 	
 	public boolean canRender(char ch) {
@@ -152,7 +162,12 @@ public class TrueTypeFontRenderer {
 		return false;
 	}
 	
-	protected static void drawBoxTex(float x0, float y0, float x1, float y1, float s0, float t0, float s1, float t1) {
+	protected void drawBoxTex(float x0, float y0, float x1, float y1, float s0, float t0, float s1, float t1) {
+		x0 = viewport.scaledWidth((int) x0);
+		y0 = viewport.scaledHeight((int) y0);
+		x1 = viewport.scaledWidth((int) x1);
+		y1 = viewport.scaledHeight((int) y1);
+		
 		glTexCoord2f(s0, t0);
 		glVertex2f(x0, y0);
 		glTexCoord2f(s1, t0);

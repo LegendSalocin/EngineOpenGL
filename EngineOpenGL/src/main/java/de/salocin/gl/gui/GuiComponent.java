@@ -2,13 +2,13 @@ package de.salocin.gl.gui;
 
 import org.apache.commons.lang3.Validate;
 
+import de.salocin.gl.display.Color;
+import de.salocin.gl.display.Texture;
 import de.salocin.gl.event.input.KeyPressedEvent;
 import de.salocin.gl.event.input.MouseButtonEvent;
 import de.salocin.gl.event.input.MouseMovedEvent;
-import de.salocin.gl.util.Color;
 import de.salocin.gl.util.Renderable;
 import de.salocin.gl.util.math.Rectangle;
-import de.salocin.gl.util.texture.Texture;
 
 public class GuiComponent implements Renderable {
 	

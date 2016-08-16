@@ -1,4 +1,4 @@
-package de.salocin.gl.util.texture;
+package de.salocin.gl.display;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 
+import de.salocin.gl.impl.display.TextureImpl;
 import de.salocin.gl.util.engine.ResourceLocation;
 import de.salocin.gl.util.exception.EngineException;
 
@@ -45,19 +46,19 @@ public class TextureManager {
 	}
 	
 	public static Texture loadTexture(ResourceLocation resourceLocation) throws IOException {
-		return new SimpleTexture(resourceLocation);
+		return new TextureImpl(resourceLocation);
 	}
 	
 	public static Texture loadTexture(URL url) throws IOException {
-		return new SimpleTexture(url);
+		return new TextureImpl(url);
 	}
 	
 	public static Texture loadTexture(InputStream inputStream) throws IOException {
-		return new SimpleTexture(inputStream);
+		return new TextureImpl(inputStream);
 	}
 	
 	public static Texture loadTexture(BufferedImage image) {
-		return new SimpleTexture(image);
+		return new TextureImpl(image);
 	}
 	
 }

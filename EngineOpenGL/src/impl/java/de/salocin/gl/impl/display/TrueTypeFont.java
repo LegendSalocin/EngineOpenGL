@@ -1,10 +1,14 @@
-package de.salocin.gl.util.font;
+package de.salocin.gl.impl.display;
 
 import static org.lwjgl.opengl.GL11.*;
 
 import java.io.InputStream;
 
-import de.salocin.gl.util.Color;
+import de.salocin.gl.display.Color;
+import de.salocin.gl.display.font.Font;
+import de.salocin.gl.display.font.FontBuilder;
+import de.salocin.gl.display.font.FontMetrics;
+import de.salocin.gl.display.font.FontStyle;
 
 /**
  * Not part of the official API
@@ -21,7 +25,11 @@ public class TrueTypeFont implements Font {
 	private boolean strikethrough;
 	private boolean overline;
 	
-	protected TrueTypeFont(FontBuilder builtFrom, InputStream ttf, FontStyle fontStyle, int size, char[] customChars) {
+	public TrueTypeFont(FontBuilder builtFrom, InputStream ttf, FontStyle fontStyle, int size, char[] customChars) {
+		if (size > 300) {
+			DisplayImpl.logger.warning("Font Size is greater than 300: Very big font bitmap! Be carful with these values.");
+		}
+		
 		this.builtFrom = builtFrom;
 		this.ttf = ttf;
 		this.customChars = customChars;
@@ -111,15 +119,15 @@ public class TrueTypeFont implements Font {
 		glDisable(GL_BLEND);
 		
 		if (underline && width > 0.0f) {
-			renderLine(x, y + 4, width + 3);
+			renderLine(x, y - metrics.getDescent(), width + width * 0.005f);
 		}
 		
 		if (strikethrough && width > 0.0f) {
-			renderLine(x, y - metrics.getAscent() * 0.3f, width + 3);
+			renderLine(x, y - metrics.getAscent() * 0.3f, width + width * 0.005f);
 		}
 		
 		if (overline && width > 0.0f) {
-			renderLine(x, y - metrics.getAscent(), width + 3);
+			renderLine(x, y - metrics.getAscent(), width + width * 0.005f);
 		}
 	}
 	

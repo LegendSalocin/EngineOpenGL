@@ -1,4 +1,4 @@
-package de.salocin.gl.util.font;
+package de.salocin.gl.impl.display;
 
 import java.awt.GraphicsEnvironment;
 import java.lang.reflect.Field;

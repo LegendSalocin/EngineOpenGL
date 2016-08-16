@@ -1,10 +1,12 @@
-package de.salocin.gl.util.font;
+package de.salocin.gl.display.font;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import org.apache.commons.lang3.Validate;
+
+import de.salocin.gl.impl.display.SupportedFonts;
+import de.salocin.gl.impl.display.TrueTypeFont;
 
 /**
  * With this class it is very easy to create new fonts.<br>
@@ -178,6 +180,7 @@ public class FontBuilder {
 	 */
 	public Font build() {
 		InputStream fontInputStream;
+		Font font;
 		
 		try {
 			if (fontFamily == null) {
@@ -185,14 +188,13 @@ public class FontBuilder {
 			}
 			
 			fontInputStream = new FileInputStream(SupportedFonts.getSupportedFont(fullFontName).path);
-		} catch (NullPointerException | FileNotFoundException e) {
+			font = new TrueTypeFont(this, fontInputStream, fontStyle, fontSize, chustomChars);
+			font.setUnderline(underline);
+			font.setStrikethrough(strikethrough);
+			font.setOverline(overline);
+		} catch (Exception e) {
 			throw new RuntimeException("This exception should not be thrown. Please send a bug report.", e);
 		}
-		
-		Font font = new TrueTypeFont(this, fontInputStream, fontStyle, fontSize, chustomChars);
-		font.setUnderline(underline);
-		font.setStrikethrough(strikethrough);
-		font.setOverline(overline);
 		return font;
 	}
 }
