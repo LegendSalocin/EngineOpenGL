@@ -1,5 +1,7 @@
 package de.salocin.gl.scheduler;
 
+import org.lwjgl.opengl.GL;
+
 import de.salocin.gl.Engine;
 
 public class Scheduler {
@@ -48,19 +50,27 @@ public class Scheduler {
 	
 	public EngineRunnable runRepeated(Runnable runnable, long delay, long repeatPeriod) {
 		EngineRunnable engineRunnable = new EngineRunnable(runnable, delay, repeatPeriod);
-		LoopSync.addEngineRunnable(engineRunnable);
+		LoopSynchronizer.addEngineRunnable(engineRunnable);
 		return engineRunnable;
 	}
 	
 	public EngineRunnable getRunnable(int runnableId) {
-		return LoopSync.getEngineRunnable(runnableId);
+		return LoopSynchronizer.getEngineRunnable(runnableId);
 	}
 	
 	public void cancelRepeatedRunnable(EngineRunnable runnable) {
 		if (!runnable.isRepeated()) {
 			throw new IllegalArgumentException("The EngineRunnable is not repeated.");
 		} else {
-			LoopSync.removeEngineRunnable(runnable);
+			LoopSynchronizer.removeEngineRunnable(runnable);
+		}
+	}
+	
+	public static boolean hasGLContext() {
+		try {
+			return GL.getCapabilities() != null;
+		} catch (IllegalStateException e) {
+			return false;
 		}
 	}
 	

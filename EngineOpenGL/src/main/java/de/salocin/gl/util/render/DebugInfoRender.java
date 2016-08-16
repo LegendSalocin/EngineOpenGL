@@ -2,20 +2,25 @@ package de.salocin.gl.util.render;
 
 import org.apache.commons.lang3.Validate;
 
+import de.salocin.gl.display.Display;
 import de.salocin.gl.scheduler.FPS;
+import de.salocin.gl.scheduler.TimeTracker;
+import de.salocin.gl.scheduler.TimeTracker.Mode;
+import de.salocin.gl.util.Color;
+import de.salocin.gl.util.font.Font;
 import de.salocin.gl.util.input.Mouse;
 
 public class DebugInfoRender {
 	
 	private Color color;
-	private TrueTypeFont font;
+	private Font font;
 	private float defaultXOffset;
 	private float defaultYOffset;
 	private float yOffset;
 	
 	public DebugInfoRender() {
 		setColor(Color.white);
-		setFont(TrueTypeFontDefaults.ENGINE_FONT_SMALL);
+		setFont(Display.getDefaultEngineFont());
 	}
 	
 	public Color getColor() {
@@ -26,11 +31,11 @@ public class DebugInfoRender {
 		this.color = color;
 	}
 	
-	public TrueTypeFont getFont() {
+	public Font getFont() {
 		return font;
 	}
 	
-	public void setFont(TrueTypeFont font) {
+	public void setFont(Font font) {
 		Validate.notNull(font);
 		this.font = font;
 	}
@@ -48,12 +53,17 @@ public class DebugInfoRender {
 		yOffset = defaultYOffset;
 		
 		renderLine("FPS: %d", FPS.getFPS());
+		renderLine("Threads: %d", Thread.activeCount());
+		renderLine("GameLoop Delta: %d", FPS.getDelta());
+		renderLine("    %s: %dms; %s: %dms; %s: %dms; %s: %dms", Mode.FPS_COUNTER, TimeTracker.getFpsCounterDelta(), Mode.RENDER_STATE, TimeTracker.getRenderStateDelta(),
+				Mode.LOOP_SYNCHRONIZER, TimeTracker.getLoopSyncDelta(), Mode.V_SYNC, TimeTracker.getVSyncDelta());
+		renderLine("V-Sync: " + Display.getInstance().isVsyncEnabled());
 		renderLine("Mouse: [%.2f|%.2f]", Mouse.getMousePos().getX(), Mouse.getMousePos().getY());
 	}
 	
 	private void renderLine(String lineFormat, Object... args) {
+		yOffset += font.getMetrics().getLineHeight();
 		font.renderText(String.format(lineFormat, args), defaultXOffset, yOffset);
-		yOffset += font.getLineHeight();
 	}
 	
 }

@@ -1,21 +1,21 @@
 package de.salocin.gl.scheduler;
 
-import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
+import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryUtil.NULL;
+import static org.lwjgl.system.MemoryUtil.*;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 
+import de.salocin.gl.display.Display;
+import de.salocin.gl.display.Resolution;
 import de.salocin.gl.event.EventManager;
 import de.salocin.gl.event.engine.EngineCLContextCreatedEvent;
-import de.salocin.gl.render.Display;
-import de.salocin.gl.render.Resolution;
-import de.salocin.gl.render.gui.RenderState;
+import de.salocin.gl.gui.RenderState;
+import de.salocin.gl.scheduler.TimeTracker.Mode;
 import de.salocin.gl.util.exception.EngineException;
-import de.salocin.gl.util.render.TrueTypeFontDefaults;
 
 public class GameLoop implements Runnable {
 	
@@ -67,7 +67,6 @@ public class GameLoop implements Runnable {
 		
 		GL.createCapabilities();
 		
-		TrueTypeFontDefaults.init();
 		Display.getInstance().init();
 		
 		EventManager.getInstance().callEvent(new EngineCLContextCreatedEvent());
@@ -77,19 +76,27 @@ public class GameLoop implements Runnable {
 		while (!glfwWindowShouldClose(window)) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			
+			TimeTracker.start(Mode.FPS_COUNTER);
 			FPS.run();
+			TimeTracker.end();
 			
 			glfwPollEvents();
 			
+			TimeTracker.start(Mode.RENDER_STATE);
 			RenderState current = Display.getInstance().getRenderState();
 			if (current != null) {
 				current.update(FPS.getCurrentTime(), FPS.getDelta());
 				current.render();
 			}
+			TimeTracker.end();
 			
-			LoopSync.run(FPS.getCurrentTime());
+			TimeTracker.start(Mode.LOOP_SYNCHRONIZER);
+			LoopSynchronizer.run(FPS.getCurrentTime());
+			TimeTracker.end();
 			
+			TimeTracker.start(Mode.V_SYNC);
 			glfwSwapBuffers(window);
+			TimeTracker.end();
 		}
 	}
 	
