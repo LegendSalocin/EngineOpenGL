@@ -2,7 +2,24 @@
 
 --
 
+
 ##Start Engine
+```java
+public class Test extends SimpleCorePlugin {
+	
+	public static void main(String[] args) {
+		Engine.simpleStart(new Test());
+	}
+	
+	@Override
+	protected void onEnable() {
+	}
+	
+	
+}
+```
+
+##Start Engine Advanced
 ```java
 public class Test extends CorePlugin {
 	
