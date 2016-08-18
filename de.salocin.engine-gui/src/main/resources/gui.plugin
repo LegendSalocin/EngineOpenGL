@@ -1,0 +1,3 @@
+main=de.salocin.engine.gui
+name=GUI Plugin for OpenGL Engine
+version=1.0

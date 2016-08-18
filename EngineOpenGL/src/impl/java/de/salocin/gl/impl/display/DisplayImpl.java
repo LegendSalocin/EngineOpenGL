@@ -12,7 +12,7 @@ import de.salocin.gl.display.Viewport;
 import de.salocin.gl.display.font.Font;
 import de.salocin.gl.display.font.FontBuilder;
 import de.salocin.gl.event.EventManager;
-import de.salocin.gl.event.display.DisplayGameStateChangeEvent;
+import de.salocin.gl.event.display.RenderStateChangeEvent;
 import de.salocin.gl.event.display.DisplayInitializedEvent;
 import de.salocin.gl.gui.RenderState;
 import de.salocin.gl.log.EngineLogger;
@@ -59,7 +59,7 @@ public class DisplayImpl implements Display {
 		Scheduler.getInstance().runLater(new Runnable() {
 			@Override
 			public void run() {
-				DisplayGameStateChangeEvent e = new DisplayGameStateChangeEvent(renderState, state);
+				RenderStateChangeEvent e = new RenderStateChangeEvent(renderState, state);
 				if (!EventManager.getInstance().callEvent(e)) {
 					if (renderState != null) {
 						renderState.exit();

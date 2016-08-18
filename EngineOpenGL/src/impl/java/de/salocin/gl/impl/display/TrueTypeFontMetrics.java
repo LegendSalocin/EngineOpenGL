@@ -16,7 +16,6 @@ public class TrueTypeFontMetrics implements FontMetrics, Cloneable {
 	
 	private final TrueTypeFont font;
 	private final int size;
-	private final float lineHeight;
 	private int ascent;
 	private int descent;
 	private int lineGap;
@@ -24,7 +23,6 @@ public class TrueTypeFontMetrics implements FontMetrics, Cloneable {
 	protected TrueTypeFontMetrics(TrueTypeFont font, int size) {
 		this.font = font;
 		this.size = size;
-		this.lineHeight = Viewport.getInstance().scaledHeight(size);
 	}
 	
 	protected void init(TrueTypeFontRenderer renderer, float scale) {

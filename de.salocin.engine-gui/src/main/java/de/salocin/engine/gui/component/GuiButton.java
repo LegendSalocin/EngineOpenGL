@@ -1,4 +1,4 @@
-package de.salocin.gl.gui;
+package de.salocin.engine.gui.component;
 
 import de.salocin.gl.event.input.MouseButtonEvent;
 import de.salocin.gl.util.input.Action;
@@ -25,7 +25,9 @@ public class GuiButton extends GuiTitle {
 	}
 	
 	public void click() {
-		onAction.onButtonPressed();
+		if (onAction != null) {
+			onAction.onButtonPressed();
+		}
 	}
 	
 	public static interface ActionListener {

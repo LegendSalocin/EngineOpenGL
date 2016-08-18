@@ -1,4 +1,4 @@
-package de.salocin.gl.gui;
+package de.salocin.engine.gui.component;
 
 import org.apache.commons.lang3.Validate;
 
@@ -8,13 +8,15 @@ import de.salocin.gl.display.font.Font;
 
 public class GuiTitle extends GuiComponent {
 	
-	protected CharSequence title;
-	protected Font titleFont;
-	protected Color titleColor;
-	protected float titleOffsetX;
-	protected float titleOffsetY;
-	protected float titleX;
-	protected float titleY;
+	private CharSequence title;
+	private Font titleFont;
+	private Color titleColor;
+	private float titleOffsetX;
+	private float titleOffsetY;
+	private AlignH alignH = AlignH.CENTER;
+	private AlignV alignV = AlignV.MIDDLE;
+	private float titleX;
+	private float titleY;
 	
 	public GuiTitle(CharSequence title, float x, float y, float width, float height) {
 		super(x, y, width, height);
@@ -65,6 +67,24 @@ public class GuiTitle extends GuiComponent {
 		return titleOffsetY;
 	}
 	
+	public void setAlignH(AlignH alignH) {
+		Validate.notNull(alignH);
+		this.alignH = alignH;
+	}
+	
+	public AlignH getAlignH() {
+		return alignH;
+	}
+	
+	public void setAlignV(AlignV alignV) {
+		Validate.notNull(alignV);
+		this.alignV = alignV;
+	}
+	
+	public AlignV getAlignV() {
+		return alignV;
+	}
+	
 	@Override
 	protected void onBoundsUpdated() {
 		updateTitlePos();
@@ -73,36 +93,34 @@ public class GuiTitle extends GuiComponent {
 	protected void updateTitlePos() {
 		if (titleFont != null && title != null && bounds.getWidth() >= 0.0f && bounds.getHeight() >= 0.0f) {
 			float titleWidth = titleFont.getMetrics().getWidth(title);
-			float titleHeight = titleFont.getMetrics().getLineHeight();
 			
 			titleX = bounds.getX() + titleOffsetX;
 			titleY = bounds.getY() + titleOffsetY;
 			
-			titleX += (bounds.getWidth() - titleWidth) / 2;
-			titleY += (bounds.getHeight() - titleHeight) / 2;
+			switch (alignH) {
+			case CENTER:
+				titleX += (bounds.getWidth() - titleWidth) / 2;
+				break;
+			case LEFT:
+				break;
+			case RIGHT:
+				titleX += bounds.getWidth();
+				break;
+			}
 			
-			// TODO align
-			// switch (titleHorAlign) {
-			// case CENTER:
-			// titleX += (bounds.getWidth() - titleWidth) / 2;
-			// break;
-			// case LEFT:
-			// break;
-			// case RIGHT:
-			// titleX += bounds.getWidth();
-			// break;
-			// }
-			//
-			// switch (titleVertAlign) {
-			// case CENTER:
-			// titleY += (bounds.getHeight() - titleHeight) / 2;
-			// break;
-			// case TOP:
-			// break;
-			// case BOTTOM:
-			// titleY += bounds.getHeight() - titleHeight;
-			// break;
-			// }
+			switch (alignV) {
+			case MIDDLE:
+				titleY += bounds.getHeight() / 2;
+				break;
+			case TOP:
+				titleY += titleFont.getMetrics().getAscent();
+				break;
+			case BOTTOM:
+				titleY += bounds.getHeight() - Math.abs(titleFont.getMetrics().getDescent());
+				break;
+			}
+			
+			System.out.println(titleX + " " + titleY);
 		}
 	}
 	
@@ -112,6 +130,18 @@ public class GuiTitle extends GuiComponent {
 		if (titleFont != null && title != null) {
 			titleFont.renderText(title, titleX, titleY, titleColor);
 		}
+	}
+	
+	public static enum AlignV {
+		TOP,
+		MIDDLE,
+		BOTTOM;
+	}
+	
+	public static enum AlignH {
+		LEFT,
+		CENTER,
+		RIGHT;
 	}
 	
 }
