@@ -1,19 +1,32 @@
 package de.salocin.engine.gui;
 
+import de.salocin.engine.utils.font.Font;
+import de.salocin.engine.utils.font.FontBuilder;
 import de.salocin.gl.plugin.SimplePlugin;
 
 public class GuiPlugin extends SimplePlugin {
 	
+	private static final FontBuilder defaultFontBuilder = new FontBuilder("Arial");
+	private static Font defaultFont;
+	
 	@Override
 	protected void onEnable() {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override
 	protected void onDisable() {
-		// TODO Auto-generated method stub
-		
+	}
+	
+	public static GuiRenderState getRenderState() {
+		return GuiRenderState.getCurrentState();
+	}
+	
+	public static FontBuilder getDefaultFontBuilder() {
+		return defaultFontBuilder;
+	}
+	
+	public static Font getDefaultFont() {
+		return defaultFont;
 	}
 	
 }

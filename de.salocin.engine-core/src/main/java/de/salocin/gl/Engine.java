@@ -1,12 +1,12 @@
 package de.salocin.gl;
 
-import java.util.logging.Logger;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 import org.apache.commons.lang3.Validate;
 
 import de.salocin.gl.event.EventManager;
 import de.salocin.gl.event.engine.EngineShutdownEvent;
-import de.salocin.gl.log.Log;
 import de.salocin.gl.plugin.CorePlugin;
 import de.salocin.gl.plugin.PluginManager;
 import de.salocin.gl.scheduler.Scheduler;
@@ -25,7 +25,10 @@ import de.salocin.gl.util.exception.EngineException;
  */
 public class Engine {
 	
-	public static final Logger ENGINE_LOGGER = Log.ENGINE_LOGGER;
+	public static final String REQUIRED_JRE = "1.8";
+	private static String JRE_VERSION;
+	private static String ENGINE_VERSION;
+	
 	private static boolean started = false;
 	
 	/**
@@ -50,20 +53,32 @@ public class Engine {
 	 *             if an fatal error on startup occurs
 	 */
 	public static void start(CorePlugin corePlugin) throws EngineException {
+		JRE_VERSION = System.getProperty("java.version");
+		ENGINE_VERSION = "1.0.0";
+		
+		if (JRE_VERSION.compareTo(REQUIRED_JRE) == -1) {
+			throw new RuntimeException("You need at least Java v" + REQUIRED_JRE + " to run the engine.");
+		}
+		
 		if (isStarted()) {
 			throw new RuntimeException("Engine already started.");
 		}
 		
-		Validate.notNull(corePlugin);
-		
-		if (corePlugin.getName() == null) {
+		if (Validate.notNull(corePlugin).getName() == null) {
 			throw new RuntimeException("CorePlugin name can't be null.");
 		}
 		
 		started = true;
 		
 		try {
-			Log.init();
+			File natives = new File("native");
+			
+			if (!natives.exists()) {
+				throw new FileNotFoundException("'native' folder could not be found.");
+			}
+			
+			System.setProperty("org.lwjgl.librarypath", natives.getAbsolutePath());
+			
 			EventManager.init();
 			Scheduler.init();
 			PluginManager.init(corePlugin);
@@ -75,23 +90,27 @@ public class Engine {
 	}
 	
 	public static void stop(ExitCode exitCode) {
-		EngineShutdownEvent requestEvent = new EngineShutdownEvent(EngineShutdownEvent.State.REQUEST, exitCode);
-		if (EventManager.getInstance().callEvent(requestEvent)) {
-			return;
+		if (EventManager.isInitialized()) {
+			EngineShutdownEvent requestEvent = new EngineShutdownEvent(EngineShutdownEvent.State.REQUEST, exitCode);
+			if (EventManager.getInstance().callEvent(requestEvent)) {
+				return;
+			}
 		}
 		
 		// TODO
 		// Scheduler.THREAD_GAME_LOOP.requestClose();
-		
-		EngineShutdownEvent preShutdownEvent = new EngineShutdownEvent(EngineShutdownEvent.State.PRE_SHUTDOWN, requestEvent.getExitCode());
-		if (!EventManager.getInstance().callEvent(preShutdownEvent)) {
-			exitCode = preShutdownEvent.getExitCode();
-			System.exit(exitCode.getCode());
-		}
 	}
 	
 	public static boolean isStarted() {
 		return started;
+	}
+	
+	public static String getJavaVersion() {
+		return JRE_VERSION;
+	}
+	
+	public static String getEngineVersion() {
+		return ENGINE_VERSION;
 	}
 	
 }

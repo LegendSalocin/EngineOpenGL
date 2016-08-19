@@ -54,7 +54,14 @@ public class ReflectionUtils {
 		setFieldValue(theClass, null, fieldName, value);
 	}
 	
-	private static void setFieldValue(Class<?> theClass, Object instance, String fieldName, Object value) {
+	/**
+	 * @param theClass
+	 * @param instance
+	 * @param fieldName
+	 * @param value
+	 * @throws IllegalArgumentException
+	 */
+	public static void setFieldValue(Class<?> theClass, Object instance, String fieldName, Object value) {
 		try {
 			Field field = theClass.getDeclaredField(fieldName);
 			field.setAccessible(true);

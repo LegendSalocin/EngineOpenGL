@@ -1,8 +1,5 @@
 package de.salocin.gl.util.exception;
 
-import de.salocin.gl.Engine;
-import de.salocin.gl.log.PluginLogger;
-
 public class EngineException extends Exception {
 	
 	private static final long serialVersionUID = 1L;
@@ -20,7 +17,7 @@ public class EngineException extends Exception {
 	}
 	
 	public void log() {
-		PluginLogger.logThrown(Engine.ENGINE_LOGGER, this);
+		printStackTrace();
 	}
 	
 }

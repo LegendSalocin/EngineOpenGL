@@ -10,11 +10,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 
 import de.salocin.gl.display.Display;
-import de.salocin.gl.display.Viewport;
-import de.salocin.gl.event.EventManager;
-import de.salocin.gl.event.engine.EngineGLContextCreatedEvent;
-import de.salocin.gl.gui.RenderState;
-import de.salocin.gl.impl.display.DisplayImpl;
+import de.salocin.gl.display.RenderState;
 import de.salocin.gl.scheduler.TimeTracker.Mode;
 import de.salocin.gl.util.exception.EngineException;
 
@@ -37,10 +33,12 @@ public class GameLoop implements Runnable {
 		} catch (Exception e) {
 			new EngineException(e).log();
 		} finally {
-			glfwFreeCallbacks(window);
-			glfwDestroyWindow(window);
-			glfwTerminate();
-			glfwSetErrorCallback(null).free();
+			if (window != 0) {
+				glfwFreeCallbacks(window);
+				glfwDestroyWindow(window);
+				glfwTerminate();
+				glfwSetErrorCallback(null).free();
+			}
 		}
 	}
 	
@@ -52,7 +50,7 @@ public class GameLoop implements Runnable {
 		}
 		
 		glfwDefaultWindowHints();
-		window = glfwCreateWindow(Viewport.DEFAULT_VIEWPORT_WIDTH, Viewport.DEFAULT_VIEWPORT_HEIGHT, "", NULL, NULL);
+		window = glfwCreateWindow(Display.DEFAULT_VIEWPORT_WIDTH, Display.DEFAULT_VIEWPORT_HEIGHT, "", NULL, NULL);
 		
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
@@ -61,16 +59,14 @@ public class GameLoop implements Runnable {
 		});
 		
 		GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		glfwSetWindowPos(window, (vidmode.width() - Viewport.DEFAULT_VIEWPORT_WIDTH) / 2, (vidmode.height() - Viewport.DEFAULT_VIEWPORT_HEIGHT) / 2);
+		glfwSetWindowPos(window, (vidmode.width() - Display.DEFAULT_VIEWPORT_WIDTH) / 2, (vidmode.height() - Display.DEFAULT_VIEWPORT_HEIGHT) / 2);
 		
 		glfwMakeContextCurrent(window);
 		glfwShowWindow(window);
 		
 		GL.createCapabilities();
 		
-		DisplayImpl.instance.init();
-		
-		EventManager.getInstance().callEvent(new EngineGLContextCreatedEvent());
+		Display.init();
 	}
 	
 	private void loop() {
@@ -84,7 +80,7 @@ public class GameLoop implements Runnable {
 			glfwPollEvents();
 			
 			TimeTracker.start(Mode.RENDER_STATE);
-			RenderState current = Display.getInstance().getRenderState();
+			RenderState current = Display.getRenderState();
 			if (current != null) {
 				current.update(FPS.getCurrentTime(), FPS.getDelta());
 				current.render();

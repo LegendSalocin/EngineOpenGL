@@ -1,6 +1,6 @@
 package de.salocin.gl.util.engine;
 
-import de.salocin.gl.impl.display.DisplayImpl;
+import de.salocin.gl.display.Display;
 
 public class Check {
 	
@@ -11,7 +11,7 @@ public class Check {
 	}
 	
 	public static void display() {
-		if (!DisplayImpl.instance.isInitialized()) {
+		if (!Display.isInitialized()) {
 			throw new RuntimeException("Display not initialized.");
 		}
 	}

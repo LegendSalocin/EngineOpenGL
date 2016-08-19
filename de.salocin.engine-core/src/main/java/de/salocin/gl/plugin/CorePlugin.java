@@ -1,8 +1,8 @@
 package de.salocin.gl.plugin;
 
 import de.salocin.gl.Engine;
-import de.salocin.gl.gui.RenderState;
-import de.salocin.gl.impl.display.DisplayImpl;
+import de.salocin.gl.display.Display;
+import de.salocin.gl.display.RenderState;
 import de.salocin.gl.util.engine.ExitCode;
 import de.salocin.gl.util.engine.StartArgument;
 
@@ -67,7 +67,7 @@ public abstract class CorePlugin extends SimplePlugin implements Plugin {
 	}
 	
 	public final void setState(RenderState state) {
-		DisplayImpl.instance.setRenderState(state);
+		Display.setRenderState(state);
 	}
 	
 }

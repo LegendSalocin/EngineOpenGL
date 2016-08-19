@@ -1,8 +1,6 @@
 package de.salocin.gl.util.math;
 
-import de.salocin.gl.util.Copyable;
-
-public class Point implements Copyable<Point> {
+public class Point implements Cloneable {
 	
 	private float x;
 	private float y;
@@ -35,7 +33,7 @@ public class Point implements Copyable<Point> {
 	}
 	
 	@Override
-	public Point copy() {
+	public Point clone() {
 		return new Point(x, y);
 	}
 	

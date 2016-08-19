@@ -22,5 +22,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/de.salocin.engine-core"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/de.salocin.engine-utils"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

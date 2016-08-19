@@ -18,14 +18,14 @@ public class Keyboard {
 		Check.init(initialized);
 		initialized = true;
 		
-		GLFW.glfwSetCharCallback(Display.getInstance().getWindowHandle(), new GLFWCharCallbackI() {
+		GLFW.glfwSetCharCallback(Display.getWindowHandle(), new GLFWCharCallbackI() {
 			@Override
 			public void invoke(long window, int codepoint) {
 				lastPressedChar = (char) codepoint;
 			}
 		});
 		
-		GLFW.glfwSetKeyCallback(Display.getInstance().getWindowHandle(), new GLFWKeyCallbackI() {
+		GLFW.glfwSetKeyCallback(Display.getWindowHandle(), new GLFWKeyCallbackI() {
 			@Override
 			public void invoke(long window, int key, int scancode, int action, int mods) {
 				EventManager.getInstance().callEvent(new KeyPressedEvent(Key.fromId(key), Action.fromOrdinal(action), Modifier.getModifiers(mods), lastPressedChar));

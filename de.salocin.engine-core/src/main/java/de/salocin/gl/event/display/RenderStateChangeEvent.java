@@ -1,6 +1,6 @@
 package de.salocin.gl.event.display;
 
-import de.salocin.gl.gui.RenderState;
+import de.salocin.gl.display.RenderState;
 
 public class RenderStateChangeEvent extends DisplayEvent {
 	

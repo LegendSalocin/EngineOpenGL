@@ -2,9 +2,7 @@ package de.salocin.gl.util.math;
 
 import org.apache.commons.lang3.Validate;
 
-import de.salocin.gl.util.Copyable;
-
-public class Rectangle implements Copyable<Rectangle> {
+public class Rectangle implements Cloneable {
 	
 	private Point point;
 	private Dimension dimension;
@@ -117,7 +115,7 @@ public class Rectangle implements Copyable<Rectangle> {
 	}
 	
 	@Override
-	public Rectangle copy() {
+	public Rectangle clone() {
 		return new Rectangle(point, dimension);
 	}
 	

@@ -1,10 +1,12 @@
 package de.salocin.gl.plugin;
 
-import de.salocin.gl.log.PluginLogger;
+import java.util.logging.Logger;
 
 public interface Plugin {
 	
-	PluginLogger getLogger();
+	Logger getLogger();
+	
+	String getId();
 	
 	String getName();
 	
@@ -17,5 +19,7 @@ public interface Plugin {
 	void enable();
 	
 	void disable();
+	
+	void reloadDescriptionFile();
 	
 }

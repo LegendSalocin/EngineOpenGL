@@ -1,8 +1,6 @@
 package de.salocin.gl.util.math;
 
-import de.salocin.gl.util.Copyable;
-
-public class Dimension implements Copyable<Dimension> {
+public class Dimension implements Cloneable {
 	
 	private float width;
 	private float height;
@@ -35,7 +33,7 @@ public class Dimension implements Copyable<Dimension> {
 	}
 	
 	@Override
-	public Dimension copy() {
+	public Dimension clone() {
 		return new Dimension(width, height);
 	}
 	
