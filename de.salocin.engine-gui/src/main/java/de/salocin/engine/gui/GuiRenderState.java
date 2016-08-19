@@ -1,8 +1,8 @@
 package de.salocin.engine.gui;
 
+import de.salocin.engine.display.RenderState;
 import de.salocin.engine.gui.component.pane.Pane;
 import de.salocin.engine.gui.util.DebugInfoRender;
-import de.salocin.gl.display.RenderState;
 
 public abstract class GuiRenderState implements RenderState {
 	

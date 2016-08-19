@@ -1,7 +1,7 @@
 package de.salocin.engine.utils.font;
 
+import de.salocin.engine.util.Viewport;
 import de.salocin.engine.utils.core.Color;
-import de.salocin.gl.util.Viewport;
 
 public interface Font {
 	

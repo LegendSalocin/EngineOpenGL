@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import de.salocin.gl.util.exception.EngineException;
+import de.salocin.engine.util.exception.EngineException;
 
 /**
  * A class to retrieve all supported fonts by the current OS.

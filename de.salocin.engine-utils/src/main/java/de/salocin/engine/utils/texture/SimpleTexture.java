@@ -13,8 +13,8 @@ import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL12;
 
+import de.salocin.engine.display.Render;
 import de.salocin.engine.utils.core.ResourceLocation;
-import de.salocin.gl.display.Render;
 
 public class SimpleTexture implements Texture {
 	

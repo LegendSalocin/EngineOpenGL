@@ -1,12 +1,12 @@
 package de.salocin.engine.gui.component;
 
+import de.salocin.engine.event.input.KeyPressedEvent;
+import de.salocin.engine.event.input.MouseButtonEvent;
+import de.salocin.engine.event.input.MouseMovedEvent;
+import de.salocin.engine.util.math.Dimension;
+import de.salocin.engine.util.math.Rectangle;
 import de.salocin.engine.utils.core.Color;
 import de.salocin.engine.utils.texture.Texture;
-import de.salocin.gl.event.input.KeyPressedEvent;
-import de.salocin.gl.event.input.MouseButtonEvent;
-import de.salocin.gl.event.input.MouseMovedEvent;
-import de.salocin.gl.util.math.Dimension;
-import de.salocin.gl.util.math.Rectangle;
 
 public abstract class Component {
 	

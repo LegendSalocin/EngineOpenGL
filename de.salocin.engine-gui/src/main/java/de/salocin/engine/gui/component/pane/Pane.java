@@ -9,7 +9,7 @@ import org.apache.commons.lang3.Validate;
 import de.salocin.engine.gui.component.Component;
 import de.salocin.engine.gui.layout.LayoutConstraint;
 import de.salocin.engine.gui.layout.LayoutManager;
-import de.salocin.gl.util.ReflectionUtils;
+import de.salocin.engine.util.ReflectionUtils;
 
 public abstract class Pane<T extends LayoutConstraint> extends Component {
 	

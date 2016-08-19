@@ -1,7 +1,7 @@
 package de.salocin.engine.gui.component;
 
-import de.salocin.gl.event.input.MouseButtonEvent;
-import de.salocin.gl.util.input.Action;
+import de.salocin.engine.event.input.MouseButtonEvent;
+import de.salocin.engine.util.input.Action;
 
 public class GuiButton extends GuiTitle {
 	

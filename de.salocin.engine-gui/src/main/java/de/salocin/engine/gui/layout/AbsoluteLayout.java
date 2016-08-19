@@ -4,8 +4,8 @@ import java.util.Map;
 
 import de.salocin.engine.gui.component.Component;
 import de.salocin.engine.gui.component.pane.Pane;
-import de.salocin.gl.util.math.Dimension;
-import de.salocin.gl.util.math.Rectangle;
+import de.salocin.engine.util.math.Dimension;
+import de.salocin.engine.util.math.Rectangle;
 
 public class AbsoluteLayout extends AbstractLayoutManager<AbsoluteLayoutConstraint> implements LayoutManager<AbsoluteLayoutConstraint> {
 	

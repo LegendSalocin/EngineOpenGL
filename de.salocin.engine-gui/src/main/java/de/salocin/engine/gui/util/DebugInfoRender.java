@@ -2,13 +2,13 @@ package de.salocin.engine.gui.util;
 
 import org.apache.commons.lang3.Validate;
 
+import de.salocin.engine.display.Display;
+import de.salocin.engine.scheduler.FPS;
+import de.salocin.engine.scheduler.TimeTracker;
+import de.salocin.engine.scheduler.TimeTracker.Mode;
+import de.salocin.engine.util.input.Mouse;
 import de.salocin.engine.utils.core.Color;
 import de.salocin.engine.utils.font.Font;
-import de.salocin.gl.display.Display;
-import de.salocin.gl.scheduler.FPS;
-import de.salocin.gl.scheduler.TimeTracker;
-import de.salocin.gl.scheduler.TimeTracker.Mode;
-import de.salocin.gl.util.input.Mouse;
 
 // TODO rework this class
 public class DebugInfoRender {

@@ -6,8 +6,8 @@ import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
 
+import de.salocin.engine.util.Viewport;
 import de.salocin.engine.utils.font.FontMetrics;
-import de.salocin.gl.util.Viewport;
 
 /**
  * Not part of the official API

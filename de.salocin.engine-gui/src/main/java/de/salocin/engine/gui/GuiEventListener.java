@@ -1,11 +1,11 @@
 package de.salocin.engine.gui;
 
-import de.salocin.gl.display.RenderState;
-import de.salocin.gl.event.EventHandler;
-import de.salocin.gl.event.EventManager;
-import de.salocin.gl.event.Listener;
-import de.salocin.gl.event.display.RenderStateChangeEvent;
-import de.salocin.gl.event.input.MouseButtonEvent;
+import de.salocin.engine.display.RenderState;
+import de.salocin.engine.event.EventHandler;
+import de.salocin.engine.event.EventManager;
+import de.salocin.engine.event.Listener;
+import de.salocin.engine.event.display.RenderStateChangeEvent;
+import de.salocin.engine.event.input.MouseButtonEvent;
 
 public class GuiEventListener implements Listener {
 	

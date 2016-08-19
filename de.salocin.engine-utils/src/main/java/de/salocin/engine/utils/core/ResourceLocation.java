@@ -8,7 +8,7 @@ import java.net.URL;
 
 import org.apache.commons.lang3.Validate;
 
-import de.salocin.gl.plugin.Plugin;
+import de.salocin.engine.plugin.Plugin;
 
 public class ResourceLocation {
 	

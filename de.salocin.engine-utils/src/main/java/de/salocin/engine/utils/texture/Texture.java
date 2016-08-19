@@ -2,7 +2,7 @@ package de.salocin.engine.utils.texture;
 
 import org.lwjgl.opengl.GL11;
 
-import de.salocin.gl.util.Viewport;
+import de.salocin.engine.util.Viewport;
 
 /**
  * Gives the ability to load and render textures and images in OpenGL. To create

@@ -1,7 +1,7 @@
 package de.salocin.engine.test;
 
-import de.salocin.gl.Engine;
-import de.salocin.gl.plugin.SimpleCorePlugin;
+import de.salocin.engine.Engine;
+import de.salocin.engine.plugin.SimpleCorePlugin;
 
 public class TestEngine extends SimpleCorePlugin {
 	

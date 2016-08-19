@@ -2,9 +2,9 @@ package de.salocin.engine.gui.component;
 
 import org.apache.commons.lang3.Validate;
 
+import de.salocin.engine.display.Display;
 import de.salocin.engine.utils.core.Color;
 import de.salocin.engine.utils.font.Font;
-import de.salocin.gl.display.Display;
 
 public class GuiTitle extends Component {
 	

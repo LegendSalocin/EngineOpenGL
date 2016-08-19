@@ -20,9 +20,9 @@ import org.lwjgl.stb.STBTTPackedchar;
 import org.lwjgl.stb.STBTruetype;
 import org.lwjgl.system.MemoryUtil;
 
+import de.salocin.engine.display.Render;
+import de.salocin.engine.util.Viewport;
 import de.salocin.engine.utils.core.Color;
-import de.salocin.gl.display.Render;
-import de.salocin.gl.util.Viewport;
 
 /**
  * Not part of the official API

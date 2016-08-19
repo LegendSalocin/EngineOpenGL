@@ -4,12 +4,12 @@ import static org.lwjgl.opengl.GL11.*;
 
 import java.io.InputStream;
 
+import de.salocin.engine.display.Render;
 import de.salocin.engine.utils.core.Color;
 import de.salocin.engine.utils.font.Font;
 import de.salocin.engine.utils.font.FontBuilder;
 import de.salocin.engine.utils.font.FontMetrics;
 import de.salocin.engine.utils.font.FontStyle;
-import de.salocin.gl.display.Render;
 
 /**
  * Not part of the official API

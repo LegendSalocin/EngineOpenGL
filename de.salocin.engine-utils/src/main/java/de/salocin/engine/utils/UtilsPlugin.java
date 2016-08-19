@@ -1,6 +1,6 @@
 package de.salocin.engine.utils;
 
-import de.salocin.gl.plugin.SimplePlugin;
+import de.salocin.engine.plugin.SimplePlugin;
 
 public class UtilsPlugin extends SimplePlugin {
 	

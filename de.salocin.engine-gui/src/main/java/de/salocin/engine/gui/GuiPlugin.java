@@ -1,8 +1,8 @@
 package de.salocin.engine.gui;
 
+import de.salocin.engine.plugin.SimplePlugin;
 import de.salocin.engine.utils.font.Font;
 import de.salocin.engine.utils.font.FontBuilder;
-import de.salocin.gl.plugin.SimplePlugin;
 
 public class GuiPlugin extends SimplePlugin {
 	
