@@ -17,7 +17,7 @@ public class Scheduler {
 			throw new RuntimeException("Scheduler already initialized.");
 		}
 		
-		if (!Engine.isStarted()) {
+		if (!Engine.isRunning()) {
 			throw new RuntimeException("You have to call Engine.start() to start the engine first.");
 		}
 		

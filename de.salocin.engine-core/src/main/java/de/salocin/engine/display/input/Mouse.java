@@ -6,7 +6,7 @@ import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
 
 import de.salocin.engine.display.Display;
 import de.salocin.engine.event.Callback;
-import de.salocin.engine.event.CallbackImpl;
+import de.salocin.engine.event.CallbackHandler;
 import de.salocin.engine.event.MouseButtonEvent;
 import de.salocin.engine.event.MouseMoveEvent;
 import de.salocin.engine.util.Viewport;
@@ -23,8 +23,8 @@ public class Mouse {
 		return Display.getMouse();
 	}
 	
-	private CallbackImpl<MouseButtonEvent> mouseButtonCallback = new CallbackImpl<MouseButtonEvent>();
-	private CallbackImpl<MouseMoveEvent> mouseMoveCallback = new CallbackImpl<MouseMoveEvent>();
+	private CallbackHandler<MouseButtonEvent> mouseButtonCallback = new CallbackHandler<MouseButtonEvent>();
+	private CallbackHandler<MouseMoveEvent> mouseMoveCallback = new CallbackHandler<MouseMoveEvent>();
 	private Point mousePos;
 	
 	public Mouse(long window) {

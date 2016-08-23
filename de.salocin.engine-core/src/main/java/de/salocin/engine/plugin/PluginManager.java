@@ -44,7 +44,7 @@ public class PluginManager {
 			throw new RuntimeException("PluginManager already initialized.");
 		}
 		
-		if (!Engine.isStarted()) {
+		if (!Engine.isRunning()) {
 			throw new RuntimeException("You have to call Engine.start() to start the engine first.");
 		}
 		
@@ -196,6 +196,28 @@ public class PluginManager {
 		}
 		
 		return null;
+	}
+	
+	public void enablePlugin(Plugin plugin) {
+		plugin.enable();
+	}
+	
+	public void disablePlugin(Plugin plugin) {
+		plugin.disable();
+	}
+	
+	public void disableAllPlugins() {
+		for (Plugin plugin : plugins) {
+			disablePlugin(plugin);
+		}
+		
+		plugins.clear();
+		
+		if (corePlugin != null) {
+			disablePlugin(corePlugin);
+		}
+		
+		corePlugin = null;
 	}
 	
 }

@@ -2,7 +2,7 @@ package de.salocin.engine.event;
 
 import java.util.ArrayList;
 
-public class CallbackImpl<E extends Event> {
+public class CallbackHandler<E extends Event> {
 	
 	private ArrayList<Callback<E>> callbacks = new ArrayList<Callback<E>>();
 	

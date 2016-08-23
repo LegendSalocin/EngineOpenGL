@@ -6,7 +6,7 @@ import org.lwjgl.glfw.GLFWKeyCallbackI;
 
 import de.salocin.engine.display.Display;
 import de.salocin.engine.event.Callback;
-import de.salocin.engine.event.CallbackImpl;
+import de.salocin.engine.event.CallbackHandler;
 import de.salocin.engine.event.KeyEvent;
 
 public class Keyboard {
@@ -20,7 +20,7 @@ public class Keyboard {
 		return Display.getKeyboard();
 	}
 	
-	private final CallbackImpl<KeyEvent> keyCallback = new CallbackImpl<KeyEvent>();
+	private final CallbackHandler<KeyEvent> keyCallback = new CallbackHandler<KeyEvent>();
 	private char lastPressedChar;
 	
 	public Keyboard(long window) {

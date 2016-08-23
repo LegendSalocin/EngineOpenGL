@@ -73,20 +73,18 @@ public abstract class SimplePlugin implements Plugin {
 			return;
 		}
 		
-		Scheduler.getInstance().runLater(() -> {
-			// TODO reimplement PluginDisable callback
-			// if (EventManager.getInstance().callEvent(new
-			// PluginDisableEvent(PluginDisableEvent.State.PRE_DISABLE, this)))
-			// {
-			// return;
-			// }
-			
-			enabled = false;
-			onDisable();
-			
-			// EventManager.getInstance().callEvent(new
-			// PluginDisableEvent(PluginDisableEvent.State.POST_DISABLE, this));
-		});
+		// TODO reimplement PluginDisable callback
+		// if (EventManager.getInstance().callEvent(new
+		// PluginDisableEvent(PluginDisableEvent.State.PRE_DISABLE, this)))
+		// {
+		// return;
+		// }
+		
+		enabled = false;
+		onDisable();
+		
+		// EventManager.getInstance().callEvent(new
+		// PluginDisableEvent(PluginDisableEvent.State.POST_DISABLE, this));
 	}
 	
 	protected abstract void onDisable();

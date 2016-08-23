@@ -40,7 +40,6 @@ public class Engine {
 			start(corePlugin);
 		} catch (EngineException e) {
 			e.log();
-			ExitCode.ENGINE_START_ERROR.shutdownEngine();
 		}
 	}
 	
@@ -58,7 +57,7 @@ public class Engine {
 			throw new RuntimeException("You need at least Java v" + REQUIRED_JRE + " to run the engine.");
 		}
 		
-		if (isStarted()) {
+		if (started) {
 			throw new RuntimeException("Engine already started.");
 		}
 		
@@ -87,11 +86,16 @@ public class Engine {
 	}
 	
 	public static void stop(ExitCode exitCode) {
-		// TODO
-		// Scheduler.THREAD_GAME_LOOP.requestClose();
+		if (!started) {
+			throw new RuntimeException("Engine is not running.");
+		}
+		
+		PluginManager.getInstance().disableAllPlugins();
+		
+		Scheduler.getInstance().getGameLoop().requestClose();
 	}
 	
-	public static boolean isStarted() {
+	public static boolean isRunning() {
 		return started;
 	}
 	

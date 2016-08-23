@@ -9,16 +9,25 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 
+import de.salocin.engine.Engine;
 import de.salocin.engine.display.Display;
 import de.salocin.engine.display.RenderState;
 import de.salocin.engine.scheduler.TimeTracker.Mode;
+import de.salocin.engine.util.engine.ExitCode;
 import de.salocin.engine.util.exception.EngineException;
 
 public class GameLoop implements Runnable {
 	
 	private long window;
+	private boolean closed = false;
 	
 	protected GameLoop() {
+	}
+	
+	public void requestClose() {
+		if (!closed) {
+			glfwSetWindowShouldClose(window, true);
+		}
 	}
 	
 	public long getWindow() {
@@ -33,6 +42,12 @@ public class GameLoop implements Runnable {
 		} catch (Exception e) {
 			new EngineException(e).log();
 		} finally {
+			closed = true;
+			
+			if (Engine.isRunning()) {
+				Engine.stop(ExitCode.NORMAL_EXIT);
+			}
+			
 			if (window != 0) {
 				glfwFreeCallbacks(window);
 				glfwDestroyWindow(window);
