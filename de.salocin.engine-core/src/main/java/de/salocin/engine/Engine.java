@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 
 import org.apache.commons.lang3.Validate;
 
-import de.salocin.engine.event.EventManager;
-import de.salocin.engine.event.engine.EngineShutdownEvent;
 import de.salocin.engine.plugin.CorePlugin;
 import de.salocin.engine.plugin.PluginManager;
 import de.salocin.engine.scheduler.Scheduler;
@@ -79,7 +77,6 @@ public class Engine {
 			
 			System.setProperty("org.lwjgl.librarypath", natives.getAbsolutePath());
 			
-			EventManager.init();
 			Scheduler.init();
 			PluginManager.init(corePlugin);
 			Scheduler.getInstance().getGameLoop().run();
@@ -90,13 +87,6 @@ public class Engine {
 	}
 	
 	public static void stop(ExitCode exitCode) {
-		if (EventManager.isInitialized()) {
-			EngineShutdownEvent requestEvent = new EngineShutdownEvent(EngineShutdownEvent.State.REQUEST, exitCode);
-			if (EventManager.getInstance().callEvent(requestEvent)) {
-				return;
-			}
-		}
-		
 		// TODO
 		// Scheduler.THREAD_GAME_LOOP.requestClose();
 	}

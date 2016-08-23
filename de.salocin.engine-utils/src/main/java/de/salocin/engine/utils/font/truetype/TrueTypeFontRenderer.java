@@ -20,7 +20,7 @@ import org.lwjgl.stb.STBTTPackedchar;
 import org.lwjgl.stb.STBTruetype;
 import org.lwjgl.system.MemoryUtil;
 
-import de.salocin.engine.display.Render;
+import de.salocin.engine.display.Renderer;
 import de.salocin.engine.util.Viewport;
 import de.salocin.engine.utils.core.Color;
 
@@ -63,7 +63,7 @@ public class TrueTypeFontRenderer {
 	}
 	
 	protected void loadFont(InputStream inputStream) {
-		Render.enableTexture();
+		Renderer.enableTexture();
 		
 		fontTexture = glGenTextures();
 		chardata = STBTTPackedchar.malloc(usedChars.length);
@@ -99,7 +99,7 @@ public class TrueTypeFontRenderer {
 			throw new RuntimeException(e);
 		}
 		
-		Render.disableTexture();
+		Renderer.disableTexture();
 	}
 	
 	protected float renderText(String text, float x, float y, Color color) {

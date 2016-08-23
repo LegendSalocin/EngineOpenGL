@@ -4,7 +4,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 import de.salocin.engine.util.math.Rectangle;
 
-public class Render {
+public class Renderer {
 	
 	public static void enableAlpha() {
 		glEnable(GL_BLEND);

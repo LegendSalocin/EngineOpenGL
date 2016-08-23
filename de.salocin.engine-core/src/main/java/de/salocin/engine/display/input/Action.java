@@ -1,4 +1,4 @@
-package de.salocin.engine.util.input;
+package de.salocin.engine.display.input;
 
 public enum Action {
 	

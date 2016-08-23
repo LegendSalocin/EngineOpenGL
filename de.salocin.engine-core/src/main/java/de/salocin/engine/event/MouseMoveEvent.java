@@ -1,13 +1,13 @@
-package de.salocin.engine.event.input;
+package de.salocin.engine.event;
 
 import de.salocin.engine.util.math.Point;
 
-public class MouseMovedEvent extends InputEvent {
+public class MouseMoveEvent extends Event {
 	
 	private final Point oldPos;
 	private final Point newPos;
 	
-	public MouseMovedEvent(Point oldPos, Point newPos) {
+	public MouseMoveEvent(Point oldPos, Point newPos) {
 		this.oldPos = oldPos;
 		this.newPos = newPos;
 	}
@@ -18,6 +18,11 @@ public class MouseMovedEvent extends InputEvent {
 	
 	public Point getNewPos() {
 		return newPos;
+	}
+	
+	@Override
+	public boolean isCancelable() {
+		return false;
 	}
 	
 }

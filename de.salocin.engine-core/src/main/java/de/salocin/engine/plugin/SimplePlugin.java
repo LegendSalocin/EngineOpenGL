@@ -3,10 +3,7 @@ package de.salocin.engine.plugin;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import de.salocin.engine.event.EventManager;
 import de.salocin.engine.event.PluginException;
-import de.salocin.engine.event.plugin.PluginDisableEvent;
-import de.salocin.engine.event.plugin.PluginEnableEvent;
 import de.salocin.engine.scheduler.Scheduler;
 
 public abstract class SimplePlugin implements Plugin {
@@ -52,16 +49,19 @@ public abstract class SimplePlugin implements Plugin {
 		}
 		
 		Scheduler.getInstance().runLater(() -> {
-			if (EventManager.getInstance().callEvent(new PluginEnableEvent(PluginEnableEvent.State.PRE_ENABLE, this))) {
-				return;
-			}
+			// TODO reimplement PluginEnable callback
+			// if (EventManager.getInstance().callEvent(new
+			// PluginEnableEvent(PluginEnableEvent.State.PRE_ENABLE, this))) {
+			// return;
+			// }
 			
 			logger = Logger.getLogger(getName());
 			
 			enabled = true;
 			onEnable();
 			
-			EventManager.getInstance().callEvent(new PluginEnableEvent(PluginEnableEvent.State.POST_ENABLE, this));
+			// EventManager.getInstance().callEvent(new
+			// PluginEnableEvent(PluginEnableEvent.State.POST_ENABLE, this));
 		});
 	}
 	
@@ -74,14 +74,18 @@ public abstract class SimplePlugin implements Plugin {
 		}
 		
 		Scheduler.getInstance().runLater(() -> {
-			if (EventManager.getInstance().callEvent(new PluginDisableEvent(PluginDisableEvent.State.PRE_DISABLE, this))) {
-				return;
-			}
+			// TODO reimplement PluginDisable callback
+			// if (EventManager.getInstance().callEvent(new
+			// PluginDisableEvent(PluginDisableEvent.State.PRE_DISABLE, this)))
+			// {
+			// return;
+			// }
 			
 			enabled = false;
 			onDisable();
 			
-			EventManager.getInstance().callEvent(new PluginDisableEvent(PluginDisableEvent.State.POST_DISABLE, this));
+			// EventManager.getInstance().callEvent(new
+			// PluginDisableEvent(PluginDisableEvent.State.POST_DISABLE, this));
 		});
 	}
 	

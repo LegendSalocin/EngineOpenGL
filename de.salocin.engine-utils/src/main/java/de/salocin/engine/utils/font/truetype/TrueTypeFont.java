@@ -4,7 +4,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 import java.io.InputStream;
 
-import de.salocin.engine.display.Render;
+import de.salocin.engine.display.Renderer;
 import de.salocin.engine.utils.core.Color;
 import de.salocin.engine.utils.font.Font;
 import de.salocin.engine.utils.font.FontBuilder;
@@ -106,13 +106,13 @@ public class TrueTypeFont implements Font {
 	
 	@Override
 	public void renderText(CharSequence text, float x, float y, Color color) {
-		Render.enableTexture();
-		Render.enableAlpha();
+		Renderer.enableTexture();
+		Renderer.enableAlpha();
 		
 		float width = renderer.renderText(text.toString(), x, y, color);
 		
-		Render.disableAlpha();
-		Render.disableTexture();
+		Renderer.disableAlpha();
+		Renderer.disableTexture();
 		
 		if (underline && width > 0.0f) {
 			renderLine(x, y - metrics.getDescent(), width + width * 0.005f);

@@ -1,4 +1,4 @@
-package de.salocin.engine.util.input;
+package de.salocin.engine.display.input;
 
 public enum MouseButton {
 	LEFT, MIDDLE, RIGHT, BUTTON_4, BUTTON_5, BUTTON_6, BUTTON_7, BUTTON_8;

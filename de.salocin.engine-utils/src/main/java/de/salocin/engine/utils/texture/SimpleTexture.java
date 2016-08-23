@@ -13,7 +13,7 @@ import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL12;
 
-import de.salocin.engine.display.Render;
+import de.salocin.engine.display.Renderer;
 import de.salocin.engine.utils.core.ResourceLocation;
 
 public class SimpleTexture implements Texture {
@@ -154,7 +154,7 @@ public class SimpleTexture implements Texture {
 		glEnable(GL_TEXTURE_2D);
 		bind();
 		
-		Render.renderTexture(x, y, width, height, u / this.textureWidth, v / this.textureHeight, textureWidth / this.textureWidth, textureHeight / this.textureHeight);
+		Renderer.renderTexture(x, y, width, height, u / this.textureWidth, v / this.textureHeight, textureWidth / this.textureWidth, textureHeight / this.textureHeight);
 		glDisable(GL_TEXTURE_2D);
 	}
 	
