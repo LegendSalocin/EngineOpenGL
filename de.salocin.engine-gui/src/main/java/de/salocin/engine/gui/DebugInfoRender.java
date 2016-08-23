@@ -1,4 +1,4 @@
-package de.salocin.engine.gui.util;
+package de.salocin.engine.gui;
 
 import org.apache.commons.lang3.Validate;
 
@@ -10,9 +10,9 @@ import de.salocin.engine.util.input.Mouse;
 import de.salocin.engine.utils.core.Color;
 import de.salocin.engine.utils.font.Font;
 
-// TODO rework this class
 public class DebugInfoRender {
 	
+	private boolean enabled;
 	private Color color;
 	private Font font;
 	private float defaultXOffset;
@@ -20,8 +20,16 @@ public class DebugInfoRender {
 	private float yOffset;
 	
 	public DebugInfoRender() {
-		setColor(Color.white);
-		setFont(Display.getInstance().getDefaultEngineFont());
+		setColor(Color.WHITE);
+		setFont(GuiPlugin.getDefaultFont());
+	}
+	
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+	
+	public boolean isEnabled() {
+		return enabled;
 	}
 	
 	public Color getColor() {
@@ -58,7 +66,7 @@ public class DebugInfoRender {
 		renderLine("GameLoop Delta: %d", FPS.getDelta());
 		renderLine("    %s: %dms; %s: %dms; %s: %dms; %s: %dms", Mode.FPS_COUNTER, TimeTracker.getFpsCounterDelta(), Mode.RENDER_STATE, TimeTracker.getRenderStateDelta(),
 				Mode.LOOP_SYNCHRONIZER, TimeTracker.getLoopSyncDelta(), Mode.V_SYNC, TimeTracker.getVSyncDelta());
-		renderLine("V-Sync: " + Display.getInstance().isVsyncEnabled());
+		renderLine("V-Sync: " + Display.isVsyncEnabled());
 		renderLine("Mouse: [%.2f|%.2f]", Mouse.getMousePos().getX(), Mouse.getMousePos().getY());
 	}
 	

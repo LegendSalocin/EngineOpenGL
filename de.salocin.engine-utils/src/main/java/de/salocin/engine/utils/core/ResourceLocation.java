@@ -23,6 +23,10 @@ public class ResourceLocation {
 		Validate.notNull(owner);
 		Validate.notNull(file);
 		
+		if (file.exists()) {
+			throw new IllegalArgumentException("File " + file.getAbsolutePath() + " does not exist");
+		}
+		
 		ResourceLocation loc = new ResourceLocation();
 		loc.type = Type.FILE_SYSTEM;
 		loc.owner = owner;
@@ -33,6 +37,10 @@ public class ResourceLocation {
 	public static ResourceLocation newInstance(Plugin owner, String packagePath) {
 		Validate.notNull(owner);
 		Validate.notBlank(packagePath);
+		
+		if (owner.getClass().getResource(packagePath) == null) {
+			throw new IllegalArgumentException("Resource " + packagePath + " does not exist");
+		}
 		
 		ResourceLocation loc = new ResourceLocation();
 		loc.type = Type.PACKAGE;
@@ -58,7 +66,7 @@ public class ResourceLocation {
 		case FILE_SYSTEM:
 			return new URL(path);
 		case PACKAGE:
-			return ResourceLocation.class.getResource("/" + path.replace("/", "."));
+			return owner.getClass().getResource(path);
 		default:
 			return null;
 		}
@@ -79,7 +87,8 @@ public class ResourceLocation {
 	}
 	
 	public static enum Type {
-		FILE_SYSTEM, PACKAGE;
+		FILE_SYSTEM,
+		PACKAGE;
 	}
 	
 }

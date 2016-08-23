@@ -3,6 +3,8 @@ package de.salocin.engine.plugin;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashSet;
@@ -48,6 +50,7 @@ public class PluginManager {
 		
 		instance = new PluginManager();
 		instance.corePlugin = corePlugin;
+		instance.loadAnnotations(corePlugin);
 		instance.corePlugin.enable();
 		
 		instance.loadEnginePlugins();
@@ -128,8 +131,44 @@ public class PluginManager {
 			}
 			
 			plugins.add(plugin);
+			loadAnnotations(plugin);
 			plugin.enable();
 			return plugin;
+		}
+	}
+	
+	private void loadAnnotations(Plugin plugin) {
+		for (Field field : plugin.getClass().getDeclaredFields()) {
+			if (field.isAnnotationPresent(Instance.class)) {
+				try {
+					field.setAccessible(true);
+					
+					if (Modifier.isFinal(field.getModifiers())) {
+						throw new PluginException("Field is final.");
+					}
+				} catch (SecurityException e) {
+					throw new PluginException("Security Manager request denied. Make the field public.", e);
+				}
+				
+				Instance inst = field.getAnnotation(Instance.class);
+				Plugin p = null;
+				
+				if (inst.value().equalsIgnoreCase(corePlugin.getId())) {
+					p = corePlugin;
+				} else {
+					p = getPlugin(inst.value());
+				}
+				
+				if (p != null) {
+					try {
+						field.set(plugin, p);
+					} catch (IllegalArgumentException | IllegalAccessException e) {
+						throw new PluginException(e);
+					}
+				} else {
+					throw new PluginException("Could not found plugin '" + inst.value() + "' for field '" + field.getName() + "' in " + plugin.getClass().getName());
+				}
+			}
 		}
 	}
 	

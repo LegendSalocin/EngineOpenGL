@@ -101,7 +101,7 @@ public class TrueTypeFont implements Font {
 	
 	@Override
 	public void renderText(CharSequence text, float x, float y) {
-		renderText(text, x, y, Color.white);
+		renderText(text, x, y, Color.WHITE);
 	}
 	
 	@Override

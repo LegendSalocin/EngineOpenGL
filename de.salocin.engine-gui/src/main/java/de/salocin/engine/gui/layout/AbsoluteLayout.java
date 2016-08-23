@@ -1,24 +1,49 @@
 package de.salocin.engine.gui.layout;
 
-import java.util.Map;
+import java.util.ArrayList;
 
-import de.salocin.engine.gui.component.Component;
-import de.salocin.engine.gui.component.pane.Pane;
-import de.salocin.engine.util.math.Dimension;
-import de.salocin.engine.util.math.Rectangle;
+import de.salocin.engine.gui.util.LayoutUtil;
+import de.salocin.engine.gui.widget.Pane;
+import de.salocin.engine.gui.widget.Widget;
 
-public class AbsoluteLayout extends AbstractLayoutManager<AbsoluteLayoutConstraint> implements LayoutManager<AbsoluteLayoutConstraint> {
+public class AbsoluteLayout implements LayoutManager<AbsoluteConstraint> {
+	
+	private static final AbsoluteLayout instance = new AbsoluteLayout();
+	
+	public static AbsoluteLayout getInstance() {
+		return instance;
+	}
 	
 	@Override
-	public void layoutComponents(Pane<AbsoluteLayoutConstraint> root, Map<Component, AbsoluteLayoutConstraint> children) {
-		for (Map.Entry<Component, AbsoluteLayoutConstraint> entry : children.entrySet()) {
-			final Component key = entry.getKey();
-			final Dimension size = key.getPrefSize();
-			final AbsoluteLayoutConstraint value = entry.getValue();
+	public void layoutWidgets(Pane root, ArrayList<Widget> children) {
+		float rootX = 0.0f;
+		float rootY = 0.0f;
+		
+		if (root.hasParent()) {
+			Widget parent = root.getParent();
 			
-			Rectangle bounds = new Rectangle(value.x, value.y, size.getWidth(), size.getHeight());
-			applyLayout(root, bounds);
+			rootX = parent.getPosX();
+			rootY = parent.getPosY();
+			
+			if (root.getLayoutConstraint() != null) {
+				AbsoluteConstraint a = (AbsoluteConstraint) root.getLayoutConstraint();
+				
+				rootX += a.x;
+				rootY += a.y;
+			}
 		}
+		
+		LayoutUtil.setWidgetPos(root, rootX, rootY);
+	}
+	
+	@Override
+	public AbsoluteConstraint getDefaultConstraint() {
+		return AbsoluteConstraint.DEFAULT;
+	}
+	
+	@Override
+	public Class<AbsoluteConstraint> getConstraintClass() {
+		return AbsoluteConstraint.class;
 	}
 	
 }

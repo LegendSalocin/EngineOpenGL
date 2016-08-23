@@ -4,7 +4,6 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWWindowSizeCallbackI;
 
 import de.salocin.engine.event.EventManager;
-import de.salocin.engine.event.display.DisplayInitializedEvent;
 import de.salocin.engine.event.display.DisplaySizeChangeEvent;
 import de.salocin.engine.event.display.RenderStateChangeEvent;
 import de.salocin.engine.scheduler.Scheduler;
@@ -27,9 +26,6 @@ public class Display {
 	/**
 	 * A method that returns <code>true</code> when the GL context was
 	 * created.<br>
-	 * You can also listen to the {@link DisplayInitializedEvent} or call
-	 * {@link Scheduler#runLater(Runnable)} to make some GL settings after the
-	 * context creation.
 	 * 
 	 * @return <code>true</code> if the GL context is created, otherwise
 	 *         <code>false</code>
@@ -97,9 +93,6 @@ public class Display {
 				this.oldHeight = height;
 			}
 		});
-		
-		// TODO remove
-		EventManager.getInstance().callEvent(new DisplayInitializedEvent());
 	}
 	
 }

@@ -1,20 +1,24 @@
 package de.salocin.engine.gui.layout;
 
-import java.util.Map;
+import java.util.ArrayList;
 
-import de.salocin.engine.gui.component.Component;
-import de.salocin.engine.gui.component.pane.Pane;
-import de.salocin.engine.util.ReflectionUtils;
-import de.salocin.engine.util.math.Rectangle;
+import de.salocin.engine.gui.widget.Pane;
+import de.salocin.engine.gui.widget.Widget;
 
 public interface LayoutManager<T extends LayoutConstraint> {
 	
-	void layoutRoot(Pane<T> root);
+	void layoutWidgets(Pane root, ArrayList<Widget> children);
 	
-	void layoutComponents(Pane<T> root, Map<Component, T> children);
+	Class<T> getConstraintClass();
 	
-	default void applyLayout(Component component, Rectangle componentBounds) {
-		ReflectionUtils.setFieldValue(component, "bounds", componentBounds);
+	T getDefaultConstraint();
+	
+	default boolean isConstraintNeeded() {
+		return getConstraintClass() != null && !getConstraintClass().equals(LayoutConstraint.class);
+	}
+	
+	default boolean hasDefaultConstraint() {
+		return isConstraintNeeded() && getDefaultConstraint() != null;
 	}
 	
 }

@@ -1,23 +1,12 @@
 package de.salocin.engine.gui;
 
 import de.salocin.engine.display.RenderState;
-import de.salocin.engine.gui.component.pane.Pane;
-import de.salocin.engine.gui.util.DebugInfoRender;
+import de.salocin.engine.gui.widget.Pane;
 
 public abstract class GuiRenderState implements RenderState {
 	
 	protected static GuiRenderState current;
-	private Pane<?> rootPane;
-	private DebugInfoRender debugInfoRender;
-	private boolean renderDebugInfo;
-	
-	public GuiRenderState() {
-		this(true);
-	}
-	
-	public GuiRenderState(boolean renderDebugInfo) {
-		this.renderDebugInfo = renderDebugInfo;
-	}
+	private Pane rootPane;
 	
 	public static GuiRenderState getCurrentState() {
 		if (current == null) {
@@ -27,17 +16,16 @@ public abstract class GuiRenderState implements RenderState {
 		return current;
 	}
 	
-	public DebugInfoRender getDebugInfoRenderer() {
-		return debugInfoRender;
-	}
-	
-	public void setRoot(Pane<?> rootPane) {
+	public void setRoot(Pane rootPane) {
+		rootPane.pack();
 		this.rootPane = rootPane;
 	}
 	
+	public Pane getRootPane() {
+		return rootPane;
+	}
+	
 	public void init() {
-		debugInfoRender = new DebugInfoRender();
-		
 		onInit();
 	}
 	
@@ -57,8 +45,8 @@ public abstract class GuiRenderState implements RenderState {
 			rootPane.render();
 		}
 		
-		if (renderDebugInfo) {
-			debugInfoRender.render();
+		if (GuiPlugin.getDebugInfoRender().isEnabled()) {
+			GuiPlugin.getDebugInfoRender().render();
 		}
 	}
 	

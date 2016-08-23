@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 
+import org.apache.commons.lang3.Validate;
+
 import de.salocin.engine.utils.core.ResourceLocation;
 
 /**
@@ -29,6 +31,8 @@ public class TextureManager {
 	 * @return The loaded texture
 	 */
 	public static Texture getTexture(ResourceLocation resourceLocation) {
+		Validate.notNull(resourceLocation);
+		
 		if (textures.containsKey(resourceLocation)) {
 			return textures.get(resourceLocation);
 		} else {
