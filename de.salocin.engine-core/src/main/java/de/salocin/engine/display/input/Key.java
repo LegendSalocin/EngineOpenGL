@@ -103,21 +103,21 @@ public enum Key {
 	KEY_F23(312),
 	KEY_F24(313),
 	KEY_F25(314),
-	KEY_NUMPAD_0(320),
-	KEY_NUMPAD_1(321),
-	KEY_NUMPAD_2(322),
-	KEY_NUMPAD_3(323),
-	KEY_NUMPAD_4(324),
-	KEY_NUMPAD_5(325),
-	KEY_NUMPAD_6(326),
-	KEY_NUMPAD_7(327),
-	KEY_NUMPAD_8(328),
-	KEY_NUMPAD_9(329),
+	KEY_NUMPAD_0(320, '0'),
+	KEY_NUMPAD_1(321, '1'),
+	KEY_NUMPAD_2(322, '2'),
+	KEY_NUMPAD_3(323, '3'),
+	KEY_NUMPAD_4(324, '4'),
+	KEY_NUMPAD_5(325, '5'),
+	KEY_NUMPAD_6(326, '6'),
+	KEY_NUMPAD_7(327, '7'),
+	KEY_NUMPAD_8(328, '8'),
+	KEY_NUMPAD_9(329, '9'),
 	KEY_NUMPAD_DECIMAL(330),
-	KEY_NUMPAD_DIVIDE(331),
-	KEY_NUMPAD_MULTIPLY(332),
-	KEY_NUMPAD_SUBTRACT(333),
-	KEY_NUMPAD_ADD(334),
+	KEY_NUMPAD_DIVIDE(331, '/'),
+	KEY_NUMPAD_MULTIPLY(332, '*'),
+	KEY_NUMPAD_SUBTRACT(333, '-'),
+	KEY_NUMPAD_ADD(334, '+'),
 	KEY_NUMPAD_ENTER(335),
 	KEY_NUMPAD_EQUAL(336),
 	KEY_LEFT_SHIFT(340),
@@ -132,6 +132,7 @@ public enum Key {
 	
 	private int id;
 	private boolean printable;
+	private char ch;
 	
 	private Key(int id) {
 		this(id, false);
@@ -142,12 +143,21 @@ public enum Key {
 		this.printable = printable;
 	}
 	
+	private Key(int id, char ch) {
+		this(id, true);
+		this.ch = ch;
+	}
+	
 	public int getId() {
 		return id;
 	}
 	
 	public boolean isPrintable() {
 		return printable;
+	}
+	
+	public char getCustonChar() {
+		return ch;
 	}
 	
 	public String getLocalizedName() {

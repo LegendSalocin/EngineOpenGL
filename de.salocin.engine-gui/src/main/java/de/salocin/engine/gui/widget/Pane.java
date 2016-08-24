@@ -75,6 +75,10 @@ public class Pane extends Widget {
 		return children.contains(child);
 	}
 	
+	public ArrayList<Widget> getChildren() {
+		return children;
+	}
+	
 	@Override
 	public void pack() {
 		float maxWidth = 0.0f;
@@ -92,8 +96,17 @@ public class Pane extends Widget {
 			}
 		}
 		
-		setPackSize(maxWidth, maxHeight);
+		setSize(maxWidth, maxHeight);
 		layoutManager.layoutWidgets(this, children);
+	}
+	
+	@Override
+	public void render() {
+		super.render();
+		
+		for (Widget widget : children) {
+			widget.render();
+		}
 	}
 	
 }

@@ -1,11 +1,16 @@
 package de.salocin.engine.examples;
 
 import de.salocin.engine.Engine;
+import de.salocin.engine.display.Display;
 import de.salocin.engine.gui.GuiPlugin;
 import de.salocin.engine.gui.GuiRenderState;
-import de.salocin.engine.gui.widget.Button;
+import de.salocin.engine.gui.layout.AbsoluteConstraint;
+import de.salocin.engine.gui.layout.AbsoluteLayout;
 import de.salocin.engine.gui.widget.Pane;
+import de.salocin.engine.gui.widget.TextField;
 import de.salocin.engine.plugin.SimpleCorePlugin;
+import de.salocin.engine.utils.core.Color;
+import de.salocin.engine.utils.font.Font;
 
 public class BasicGui extends SimpleCorePlugin {
 	
@@ -17,6 +22,8 @@ public class BasicGui extends SimpleCorePlugin {
 	protected void onEnable() {
 		setState(new TestGui());
 		
+		Display.enableVsync(false);
+		
 		GuiPlugin.setDebugInfoEnabled(true);
 	}
 	
@@ -24,13 +31,13 @@ public class BasicGui extends SimpleCorePlugin {
 		
 		@Override
 		protected void onInit() {
-			Pane root = new Pane();
-			Button test = new Button("Test");
+			Pane root = new Pane(AbsoluteLayout.getInstance());
+			TextField test = new TextField("Test_");
+			test.setTextFont(Font.newBuilder("Arial").setFontSize(100).build());
+			test.setBackgroundColor(Color.RED);
 			
-			root.add(test);
+			root.add(test, new AbsoluteConstraint(0.5f, 0.5f));
 			setRoot(root);
-			
-			System.out.println("root: " + root.getPosX() + " " + root.getPosY() + " " + root.getWidth() + " " + root.getHeight());
 		}
 		
 		@Override

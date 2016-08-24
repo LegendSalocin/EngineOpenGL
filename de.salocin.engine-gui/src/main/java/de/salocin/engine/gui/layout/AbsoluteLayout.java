@@ -2,9 +2,9 @@ package de.salocin.engine.gui.layout;
 
 import java.util.ArrayList;
 
-import de.salocin.engine.gui.util.LayoutUtil;
 import de.salocin.engine.gui.widget.Pane;
 import de.salocin.engine.gui.widget.Widget;
+import de.salocin.engine.util.exception.EngineException;
 
 public class AbsoluteLayout implements LayoutManager<AbsoluteConstraint> {
 	
@@ -33,7 +33,16 @@ public class AbsoluteLayout implements LayoutManager<AbsoluteConstraint> {
 			}
 		}
 		
-		LayoutUtil.setWidgetPos(root, rootX, rootY);
+		root.setPos(rootX, rootY);
+		
+		for (Widget widget : children) {
+			try {
+				AbsoluteConstraint c = (AbsoluteConstraint) widget.getLayoutConstraint();
+				widget.setPos(rootX + c.x, rootY + c.y);
+			} catch (ClassCastException e) {
+				new EngineException("This error should not occur. Please create a bug report.", e).printStackTrace();
+			}
+		}
 	}
 	
 	@Override

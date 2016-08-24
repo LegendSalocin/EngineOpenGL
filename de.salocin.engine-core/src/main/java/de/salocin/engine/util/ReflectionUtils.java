@@ -93,7 +93,14 @@ public class ReflectionUtils {
 		return invokeMethod(theClass, null, methodName, args);
 	}
 	
-	private static Object invokeMethod(Class<?> theClass, Object instance, String methodName, Object... args) {
+	/**
+	 * @param theClass
+	 * @param instance
+	 * @param methodName
+	 * @param args
+	 * @return
+	 */
+	public static Object invokeMethod(Class<?> theClass, Object instance, String methodName, Object... args) {
 		Class<?>[] types = new Class<?>[args.length];
 		for (int i = 0; i < types.length; i++) {
 			types[i] = args[i].getClass();

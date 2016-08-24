@@ -7,20 +7,14 @@ package de.salocin.engine.utils.config;
 public class BooleanProperty extends AbstractProperty<Boolean> {
 	
 	/**
-	 * Creates a new instance of this property.
-	 * 
-	 * @param name
-	 *            The property's name. This can not be changed.
-	 * @param defaultValue
-	 *            The property's default value. This can not be changed.
+	 * Creates a new instance of this property with an empty name and none
+	 * default value. Not recommended for use with a {@link Configuration},
+	 * because values can not be retrieved.
 	 * 
 	 * @return A new instance of this property
-	 * 
-	 * @see #getName()
-	 * @see #getDefaultValue()
 	 */
-	public BooleanProperty(String name, Boolean defaultValue) {
-		super(name, defaultValue);
+	public BooleanProperty() {
+		this(null, false);
 	}
 	
 	/**
@@ -36,7 +30,7 @@ public class BooleanProperty extends AbstractProperty<Boolean> {
 	 * @see #getName()
 	 * @see #getDefaultValue()
 	 */
-	public BooleanProperty(String name, boolean defaultValue) {
+	public BooleanProperty(String name, Boolean defaultValue) {
 		super(name, defaultValue);
 	}
 	

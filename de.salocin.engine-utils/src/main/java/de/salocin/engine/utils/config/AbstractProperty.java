@@ -1,16 +1,19 @@
 package de.salocin.engine.utils.config;
 
-import org.apache.commons.lang3.Validate;
+import de.salocin.engine.event.Callback;
+import de.salocin.engine.event.CallbackHandler;
+import de.salocin.engine.event.ValueChangeEvent;
 
 public abstract class AbstractProperty<T> implements Property<T> {
 	
+	private final CallbackHandler<ValueChangeEvent<T>> callback = new CallbackHandler<ValueChangeEvent<T>>();
 	private final String name;
 	private final T defaultValue;
 	private T value;
 	
 	protected AbstractProperty(String name, T defaultValue) {
-		this.name = Validate.notNull(name);
-		this.defaultValue = Validate.notNull(defaultValue);
+		this.name = name;
+		this.defaultValue = defaultValue;
 		setValue(null);
 	}
 	
@@ -35,7 +38,11 @@ public abstract class AbstractProperty<T> implements Property<T> {
 	 */
 	@Override
 	public void setValue(T value) {
-		this.value = value == null ? defaultValue : value;
+		ValueChangeEvent<T> e = new ValueChangeEvent<T>(this.value, value == null ? defaultValue : value);
+		callback.call(e);
+		if (!e.isCanceled()) {
+			this.value = e.getNewValue();
+		}
 	}
 	
 	/**
@@ -51,6 +58,14 @@ public abstract class AbstractProperty<T> implements Property<T> {
 	 */
 	@Override
 	public abstract void setObject(Object value) throws Exception;
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void addValueChangeCallback(Callback<ValueChangeEvent<T>> callback) {
+		this.callback.add(callback);
+	}
 	
 	/**
 	 * {@inheritDoc}

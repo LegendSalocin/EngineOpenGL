@@ -7,6 +7,17 @@ package de.salocin.engine.utils.config;
 public class LongProperty extends AbstractProperty<Long> {
 	
 	/**
+	 * Creates a new instance of this property with an empty name and none
+	 * default value. Not recommended for use with a {@link Configuration},
+	 * because values can not be retrieved.
+	 * 
+	 * @return A new instance of this property
+	 */
+	public LongProperty() {
+		this(null, 0);
+	}
+	
+	/**
 	 * Creates a new instance of this property.
 	 * 
 	 * @param name

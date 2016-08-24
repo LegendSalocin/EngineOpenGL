@@ -25,7 +25,7 @@ public class Mouse {
 	
 	private CallbackHandler<MouseButtonEvent> mouseButtonCallback = new CallbackHandler<MouseButtonEvent>();
 	private CallbackHandler<MouseMoveEvent> mouseMoveCallback = new CallbackHandler<MouseMoveEvent>();
-	private Point mousePos;
+	private Point mousePos = new Point(0.0f, 0.0f);
 	
 	public Mouse(long window) {
 		GLFW.glfwSetMouseButtonCallback(window, new GLFWMouseButtonCallbackI() {
@@ -52,6 +52,18 @@ public class Mouse {
 	
 	public void addMouseMoveCallback(Callback<MouseMoveEvent> callback) {
 		mouseMoveCallback.add(callback);
+	}
+	
+	public Point getMousePos() {
+		return mousePos;
+	}
+	
+	public float getMouseX() {
+		return mousePos.getX();
+	}
+	
+	public float getMouseY() {
+		return mousePos.getY();
 	}
 	
 }

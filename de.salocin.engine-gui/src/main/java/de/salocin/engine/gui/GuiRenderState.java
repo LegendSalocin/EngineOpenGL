@@ -9,10 +9,6 @@ public abstract class GuiRenderState implements RenderState {
 	private Pane rootPane;
 	
 	public static GuiRenderState getCurrentState() {
-		if (current == null) {
-			throw new RuntimeException("Current RenderState is not instance of GuiRenderState");
-		}
-		
 		return current;
 	}
 	

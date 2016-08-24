@@ -3,10 +3,10 @@ package de.salocin.engine.gui;
 import org.apache.commons.lang3.Validate;
 
 import de.salocin.engine.display.Display;
+import de.salocin.engine.display.input.Mouse;
 import de.salocin.engine.scheduler.FPS;
 import de.salocin.engine.scheduler.TimeTracker;
 import de.salocin.engine.scheduler.TimeTracker.Mode;
-import de.salocin.engine.util.input.Mouse;
 import de.salocin.engine.utils.core.Color;
 import de.salocin.engine.utils.font.Font;
 
@@ -67,7 +67,7 @@ public class DebugInfoRender {
 		renderLine("    %s: %dms; %s: %dms; %s: %dms; %s: %dms", Mode.FPS_COUNTER, TimeTracker.getFpsCounterDelta(), Mode.RENDER_STATE, TimeTracker.getRenderStateDelta(),
 				Mode.LOOP_SYNCHRONIZER, TimeTracker.getLoopSyncDelta(), Mode.V_SYNC, TimeTracker.getVSyncDelta());
 		renderLine("V-Sync: " + Display.isVsyncEnabled());
-		renderLine("Mouse: [%.2f|%.2f]", Mouse.getMousePos().getX(), Mouse.getMousePos().getY());
+		renderLine("Mouse: [%.2f|%.2f]", Mouse.getMouse().getMouseX(), Mouse.getMouse().getMouseY());
 	}
 	
 	private void renderLine(String lineFormat, Object... args) {

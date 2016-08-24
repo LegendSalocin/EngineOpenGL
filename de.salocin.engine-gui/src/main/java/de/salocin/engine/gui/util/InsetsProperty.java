@@ -4,12 +4,12 @@ import de.salocin.engine.utils.config.AbstractProperty;
 
 public class InsetsProperty extends AbstractProperty<Insets> {
 	
-	public InsetsProperty(String name) {
-		super(name, Insets.NONE);
+	public InsetsProperty() {
+		this(Insets.NONE);
 	}
 	
-	public InsetsProperty(String name, Insets defaultValue) {
-		super(name, defaultValue);
+	public InsetsProperty(Insets defaultValue) {
+		super(null, defaultValue);
 	}
 	
 	@Override

@@ -7,6 +7,17 @@ package de.salocin.engine.utils.config;
 public class StringProperty extends AbstractProperty<String> {
 	
 	/**
+	 * Creates a new instance of this property with an empty name and none
+	 * default value. Not recommended for use with a {@link Configuration},
+	 * because values can not be retrieved.
+	 * 
+	 * @return A new instance of this property
+	 */
+	public StringProperty() {
+		this(null, null);
+	}
+	
+	/**
 	 * Creates a new instance of this property.
 	 * 
 	 * @param name

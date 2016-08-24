@@ -2,17 +2,18 @@ package de.salocin.engine.gui.widget;
 
 import de.salocin.engine.gui.GuiPlugin;
 import de.salocin.engine.gui.util.Align;
+import de.salocin.engine.utils.config.StringProperty;
 import de.salocin.engine.utils.core.Color;
 import de.salocin.engine.utils.font.Font;
 
 public class Text extends Widget {
 	
-	private String text;
+	private StringProperty text = new StringProperty();
 	private Font textFont;
 	private Color textColor;
 	private Align textAlign;
-	private float textPosX;
-	private float textPosY;
+	protected float textOffsetX;
+	protected float textOffsetY;
 	
 	public Text(CharSequence text) {
 		setText(text);
@@ -22,15 +23,15 @@ public class Text extends Widget {
 	}
 	
 	public void setText(CharSequence text) {
-		this.text = text.toString();
+		this.text.setString(text == null ? "" : text.toString());
 	}
 	
 	public void setText(char... text) {
-		this.text = new String(text);
+		this.text.setString(new String(text));
 	}
 	
 	public String getText() {
-		return text;
+		return text.getString();
 	}
 	
 	public void setTextFont(Font textFont) {
@@ -57,19 +58,23 @@ public class Text extends Widget {
 		return textAlign;
 	}
 	
+	public StringProperty propertyText() {
+		return text;
+	}
+	
 	@Override
 	public void pack() {
-		final float textWidth = textFont.getMetrics().getWidth(text);
+		final float textWidth = textFont.getMetrics().getWidth(text.getString());
 		final float textHeight = textFont.getMetrics().getLineHeight();
 		final float baselineOffset = textFont.getMetrics().getAscent();
 		
 		float prefWidth = textWidth + getPadding().left + getPadding().right;
 		float prefHeight = textHeight + getPadding().top + getPadding().bottom;
 		
-		setPackSize(prefWidth, prefHeight);
+		setSize(prefWidth, prefHeight);
 		
-		float x = getPosX() + textAlign.getHorizontalOffset();
-		float y = getPosY() + textAlign.getVerticalOffset() + baselineOffset;
+		float x = textAlign.getHorizontalOffset();
+		float y = textAlign.getVerticalOffset() + baselineOffset;
 		
 		Align.Horizontal h = textAlign.getHorizontal();
 		Align.Vertical v = textAlign.getVertical();
@@ -96,15 +101,15 @@ public class Text extends Widget {
 			break;
 		}
 		
-		textPosX = x;
-		textPosY = y;
+		textOffsetX = x;
+		textOffsetY = y;
 	}
 	
 	@Override
 	public void render() {
 		super.render();
 		
-		textFont.renderText(text, textPosX, textPosY, textColor);
+		textFont.renderText(text.getString(), getPosX() + textOffsetX, getPosY() + textOffsetY, textColor);
 	}
 	
 }

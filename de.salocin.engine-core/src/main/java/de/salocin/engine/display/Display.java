@@ -5,6 +5,9 @@ import org.lwjgl.glfw.GLFWWindowSizeCallbackI;
 
 import de.salocin.engine.display.input.Keyboard;
 import de.salocin.engine.display.input.Mouse;
+import de.salocin.engine.event.Callback;
+import de.salocin.engine.event.CallbackHandler;
+import de.salocin.engine.event.ValueChangeEvent;
 import de.salocin.engine.scheduler.Scheduler;
 import de.salocin.engine.util.Viewport;
 import de.salocin.engine.util.math.Dimension;
@@ -17,6 +20,7 @@ public class Display {
 	public static final int DEFAULT_VIEWPORT_HEIGHT = 600;
 	
 	private static boolean init = false;
+	private static CallbackHandler<ValueChangeEvent<RenderState>> renderStateCallback = new CallbackHandler<ValueChangeEvent<RenderState>>();
 	private static RenderState renderState;
 	private static boolean vsync;
 	private static Mouse mouse;
@@ -49,23 +53,30 @@ public class Display {
 		Scheduler.getInstance().runLater(new Runnable() {
 			@Override
 			public void run() {
-				// TODO add RenderStateChange callback
-				// RenderStateChangeEvent e = new
-				// RenderStateChangeEvent(renderState, state);
-				// if (!EventManager.getInstance().callEvent(e)) {
-				if (renderState != null) {
-					renderState.exit();
-				}
+				ValueChangeEvent<RenderState> e = new ValueChangeEvent<RenderState>(renderState, state);
+				renderStateCallback.call(e);
 				
-				renderState = state;
-				renderState.init();
-				// }
+				if (!e.isCanceled()) {
+					if (renderState != null) {
+						renderState.exit();
+					}
+					
+					renderState = e.getNewValue();
+					
+					if (renderState != null) {
+						renderState.init();
+					}
+				}
 			}
 		});
 	}
 	
 	public static RenderState getRenderState() {
 		return renderState;
+	}
+	
+	public static void addRenderStateCallback(Callback<ValueChangeEvent<RenderState>> callback) {
+		renderStateCallback.add(callback);
 	}
 	
 	public static void enableVsync(boolean vsync) {
@@ -91,6 +102,8 @@ public class Display {
 		
 		mouse = new Mouse(window);
 		keyboard = new Keyboard(window);
+		
+		enableVsync(true);
 		
 		GLFW.glfwSetWindowSizeCallback(getWindowHandle(), new GLFWWindowSizeCallbackI() {
 			@Override

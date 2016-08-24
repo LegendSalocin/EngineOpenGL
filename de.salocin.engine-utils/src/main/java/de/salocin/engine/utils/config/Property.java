@@ -1,5 +1,8 @@
 package de.salocin.engine.utils.config;
 
+import de.salocin.engine.event.Callback;
+import de.salocin.engine.event.ValueChangeEvent;
+
 /**
  * Represents a single property in a configuration file.
  * <p>
@@ -73,5 +76,14 @@ public interface Property<T> {
 	default Object getObject() {
 		return getValue();
 	}
+	
+	/**
+	 * Adds a callback to catch events if the {@link #setValue(Object)} method
+	 * is called and the value will be changed
+	 * 
+	 * @param callback
+	 *            the callback
+	 */
+	void addValueChangeCallback(Callback<ValueChangeEvent<T>> callback);
 	
 }

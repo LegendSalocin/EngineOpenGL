@@ -13,6 +13,13 @@ public class Color implements Cloneable {
 	public static final Color BLUE = Color.fromRGB(0x0000ff);
 	public static final Color GREEN = Color.fromRGB(0x00ff00);
 	public static final Color YELLOW = Color.fromRGB(0xffff00);
+	public static final Color GRAY = Color.fromRGB(0x808080);
+	public static final Color LIGHT_GRAY = Color.fromRGB(0xc0c0c0);
+	public static final Color DARK_GRAY = Color.fromRGB(0x404040);
+	public static final Color PINK = Color.fromRGB(0xffc0cb);
+	public static final Color ORANGE = Color.fromRGB(0xffaa00);
+	public static final Color MAGENTA = Color.fromRGB(0xff00ff);
+	public static final Color CYAN = Color.fromRGB(0x00ffff);
 	
 	private float r;
 	private float g;
@@ -54,6 +61,13 @@ public class Color implements Cloneable {
 		return ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF) << 0);
 	}
 	
+	/**
+	 * ARGB format
+	 */
+	public String getHexString() {
+		return "0x" + Integer.toHexString((int) (a * 255)) + Integer.toHexString((int) (r * 255)) + Integer.toHexString((int) (g * 255)) + Integer.toHexString((int) (b * 255));
+	}
+	
 	public void bind() {
 		GL11.glColor4f(r, g, b, a);
 	}
@@ -61,6 +75,21 @@ public class Color implements Cloneable {
 	@Override
 	public Color clone() {
 		return new Color(r, g, b, a);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Color) {
+			Color c = (Color) obj;
+			return c.r == r && c.g == g && c.b == b && c.a == a;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return Color.class.getSimpleName() + "[" + getHexString() + "]";
 	}
 	
 	private float checkFloat(float color) {
@@ -102,6 +131,10 @@ public class Color implements Cloneable {
 		c.g = ((argb >> 8) & 0xFF) / 255.0f;
 		c.b = ((argb >> 0) & 0xFF) / 255.0f;
 		return c;
+	}
+	
+	public static Color fromHSB(float hue, float saturation, float brightness) {
+		return fromARGB(java.awt.Color.HSBtoRGB(hue, saturation, brightness));
 	}
 	
 	public static Color fromName(String colorName) {
