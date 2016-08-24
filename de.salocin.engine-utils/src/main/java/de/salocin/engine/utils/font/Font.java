@@ -2,6 +2,7 @@ package de.salocin.engine.utils.font;
 
 import de.salocin.engine.util.Viewport;
 import de.salocin.engine.utils.core.Color;
+import de.salocin.engine.utils.core.ResourceLocation;
 
 public interface Font {
 	
@@ -91,6 +92,13 @@ public interface Font {
 	 */
 	public static FontBuilder newBuilder(String fontFamily, FontStyle fontStyle) {
 		return new FontBuilder(fontFamily, fontStyle);
+	}
+	
+	/**
+	 * @see FontBuilder#FontBuilder(ResourceLocation)
+	 */
+	public static FontBuilder newBuilder(ResourceLocation customFontLocation) {
+		return new FontBuilder(customFontLocation);
 	}
 	
 }

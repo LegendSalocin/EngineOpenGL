@@ -5,6 +5,7 @@ import java.io.InputStream;
 
 import org.apache.commons.lang3.Validate;
 
+import de.salocin.engine.utils.core.ResourceLocation;
 import de.salocin.engine.utils.font.truetype.TrueTypeFont;
 
 /**
@@ -15,6 +16,7 @@ import de.salocin.engine.utils.font.truetype.TrueTypeFont;
  */
 public class FontBuilder {
 	
+	private ResourceLocation customFont;
 	private String fontFamily;
 	private FontStyle fontStyle;
 	private String fullFontName;
@@ -61,8 +63,20 @@ public class FontBuilder {
 	}
 	
 	/**
+	 * Creates a new {@link FontBuilder} using the specified input data using
+	 * the found font input data of the current system.
+	 * 
+	 * @param customFontResource
+	 *            The font's location
+	 */
+	public FontBuilder(ResourceLocation customFontResource) {
+		setCustomFontResource(customFontResource);
+	}
+	
+	/**
 	 * Changes the font family to the given value. If the fontFamily is not
-	 * supported, an {@link IllegalArgumentException} will be thrown.
+	 * supported, an {@link IllegalArgumentException} will be thrown.<br>
+	 * This will reset the custom font resource location.
 	 * 
 	 * @param fontFamily
 	 * @return The current instance
@@ -76,6 +90,7 @@ public class FontBuilder {
 			throw new IllegalArgumentException("This font family is not supported: " + fontFamily);
 		}
 		
+		this.customFont = null;
 		this.fontFamily = fontFamily;
 		
 		if (fontStyle == null) {
@@ -90,7 +105,8 @@ public class FontBuilder {
 	/**
 	 * Changes the font style to the given value. If the current font family
 	 * does not support this style, an {@link IllegalArgumentException} will be
-	 * thrown.
+	 * thrown.<br>
+	 * This will reset the custom font resource location.
 	 * 
 	 * @param fontStyle
 	 *            The new font style
@@ -101,14 +117,36 @@ public class FontBuilder {
 	public FontBuilder setFontStyle(FontStyle fontStyle) {
 		Validate.notNull(fontStyle);
 		
+		if (fontFamily == null) {
+			throw new RuntimeException("Set the font family first");
+		}
+		
 		String fullName = fontFamily + fontStyle.getFontFamilySuffix();
 		
 		if (!SupportedFonts.isFontSupported(fullName)) {
 			throw new IllegalArgumentException("This font style is not supported for '" + fontFamily + "': " + fontStyle.name());
 		}
 		
+		this.customFont = null;
 		this.fontStyle = fontStyle;
 		this.fullFontName = fullName;
+		return this;
+	}
+	
+	/**
+	 * Changes the custom font resource location. This will automatically reset
+	 * the set font family and the font style.
+	 * 
+	 * @param fontLocation
+	 *            The font's location
+	 * @return The current instance
+	 */
+	public FontBuilder setCustomFontResource(ResourceLocation fontLocation) {
+		Validate.notNull(fontLocation);
+		this.customFont = fontLocation;
+		this.fontFamily = null;
+		this.fontStyle = null;
+		this.fullFontName = null;
 		return this;
 	}
 	
@@ -163,11 +201,16 @@ public class FontBuilder {
 		Font font;
 		
 		try {
-			if (fontFamily == null) {
-				throw new NullPointerException("fontFamily == null");
+			if (customFont == null) {
+				if (fontFamily == null) {
+					throw new RuntimeException(new NullPointerException("fontFamily & customFont = null"));
+				}
+				
+				fontInputStream = new FileInputStream(SupportedFonts.getSupportedFont(fullFontName).path);
+			} else {
+				fontInputStream = customFont.openStream();
 			}
 			
-			fontInputStream = new FileInputStream(SupportedFonts.getSupportedFont(fullFontName).path);
 			font = new TrueTypeFont(this, fontInputStream, fontStyle, fontSize, chustomChars);
 			font.setUnderline(underline);
 			font.setStrikethrough(strikethrough);

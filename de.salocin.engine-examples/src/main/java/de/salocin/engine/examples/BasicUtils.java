@@ -4,6 +4,7 @@ import de.salocin.engine.Engine;
 import de.salocin.engine.display.Display;
 import de.salocin.engine.display.RenderState;
 import de.salocin.engine.plugin.SimpleCorePlugin;
+import de.salocin.engine.utils.core.ResourceLocation;
 import de.salocin.engine.utils.font.Font;
 
 public class BasicUtils extends SimpleCorePlugin {
@@ -24,6 +25,7 @@ public class BasicUtils extends SimpleCorePlugin {
 		private Font comicSans;
 		private Font calibri;
 		private Font consolas;
+		private Font custom;
 		
 		@Override
 		public void init() {
@@ -32,6 +34,7 @@ public class BasicUtils extends SimpleCorePlugin {
 			comicSans = Font.newBuilder("Comic Sans MS").setFontSize(50).build();
 			calibri = Font.newBuilder("Calibri").setFontSize(50).build();
 			consolas = Font.newBuilder("Consolas").setFontSize(50).build();
+			custom = Font.newBuilder(ResourceLocation.newInstance(BasicUtils.this, "/digital-r.ttf")).setFontSize(30).build();
 		}
 		
 		@Override
@@ -45,17 +48,20 @@ public class BasicUtils extends SimpleCorePlugin {
 			
 			arial.renderText("Arial", x, y);
 			
-			y += arial.getMetrics().getLineHeight();
+			y += times.getMetrics().getLineHeight();
 			times.renderText("Times New Roman", x, y);
 			
-			y += times.getMetrics().getLineHeight();
+			y += comicSans.getMetrics().getLineHeight();
 			comicSans.renderText("Comic Sans", x, y);
 			
-			y += comicSans.getMetrics().getLineHeight();
+			y += calibri.getMetrics().getLineHeight();
 			calibri.renderText("Calibri", x, y);
 			
-			y += calibri.getMetrics().getLineHeight();
+			y += consolas.getMetrics().getLineHeight();
 			consolas.renderText("Consolas", x, y);
+			
+			y += custom.getMetrics().getLineHeight() * 1.75f;
+			custom.renderText("Digital 0123456789", x, y);
 		}
 		
 		@Override
