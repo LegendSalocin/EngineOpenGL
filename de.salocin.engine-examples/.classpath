@@ -24,5 +24,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/de.salocin.engine-core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/de.salocin.engine-gui"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/de.salocin.engine-utils"/>
+	<classpathentry kind="lib" path="lib/lwjgl.jar" sourcepath="lib/lwjgl-src.zip"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

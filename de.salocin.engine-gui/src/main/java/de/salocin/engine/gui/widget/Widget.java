@@ -171,6 +171,10 @@ public abstract class Widget {
 	}
 	
 	public void render() {
+		renderBackground();
+	}
+	
+	protected void renderBackground() {
 		if (backgroundColor != null) {
 			backgroundColor.bind();
 		}

@@ -38,7 +38,7 @@ public class TrueTypeFont implements Font {
 	private char[] buildChars(char[] customChars) {
 		char[] all = new char[256 + customChars.length];
 		
-		for (int i = 0; i < all.length; i++) {
+		for (int i = 32; i < all.length; i++) {
 			if (i < 256) {
 				all[i] = (char) i;
 			} else {

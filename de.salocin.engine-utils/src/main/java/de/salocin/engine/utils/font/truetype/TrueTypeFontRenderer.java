@@ -123,14 +123,8 @@ public class TrueTypeFontRenderer {
 		}
 		
 		for (char ch : text.toString().toCharArray()) {
-			if (!canRender(ch)) {
-				new RuntimeException("Cannot render char: " + ch + "(" + ((int) ch) + ")").printStackTrace();
-				
-				if (canRender('?')) {
-					ch = '?';
-				} else {
-					continue;
-				}
+			if ((int) ch < 32 || (int) ch == 127 || !canRender(ch)) {
+				continue;
 			}
 			
 			textX = xPos.get(0);

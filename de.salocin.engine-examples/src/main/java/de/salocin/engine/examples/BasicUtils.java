@@ -4,6 +4,7 @@ import de.salocin.engine.Engine;
 import de.salocin.engine.display.Display;
 import de.salocin.engine.display.RenderState;
 import de.salocin.engine.plugin.SimpleCorePlugin;
+import de.salocin.engine.utils.core.Color;
 import de.salocin.engine.utils.core.ResourceLocation;
 import de.salocin.engine.utils.font.Font;
 
@@ -26,6 +27,7 @@ public class BasicUtils extends SimpleCorePlugin {
 		private Font calibri;
 		private Font consolas;
 		private Font custom;
+		private Font customMono;
 		
 		@Override
 		public void init() {
@@ -35,6 +37,7 @@ public class BasicUtils extends SimpleCorePlugin {
 			calibri = Font.newBuilder("Calibri").setFontSize(50).build();
 			consolas = Font.newBuilder("Consolas").setFontSize(50).build();
 			custom = Font.newBuilder(ResourceLocation.newInstance(BasicUtils.this, "/digital-r.ttf")).setFontSize(30).build();
+			customMono = Font.newBuilder(ResourceLocation.newInstance(BasicUtils.this, "/digital-mono.ttf")).setFontSize(30).build();
 		}
 		
 		@Override
@@ -61,7 +64,11 @@ public class BasicUtils extends SimpleCorePlugin {
 			consolas.renderText("Consolas", x, y);
 			
 			y += custom.getMetrics().getLineHeight() * 1.75f;
-			custom.renderText("Digital 0123456789", x, y);
+			custom.renderText("Digital", x, y);
+			
+			y += customMono.getMetrics().getLineHeight() * 1.75f;
+			customMono.renderText("8888888888", x, y, Color.fromRGB(0x222222));
+			customMono.renderText("0123456789", x, y, Color.WHITE);
 		}
 		
 		@Override

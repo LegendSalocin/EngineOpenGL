@@ -72,6 +72,10 @@ public class Color implements Cloneable {
 		GL11.glColor4f(r, g, b, a);
 	}
 	
+	public Color invert() {
+		return new Color(1.0f - r, 1.0f - g, 1.0f - b, 1.0f - a);
+	}
+	
 	@Override
 	public Color clone() {
 		return new Color(r, g, b, a);

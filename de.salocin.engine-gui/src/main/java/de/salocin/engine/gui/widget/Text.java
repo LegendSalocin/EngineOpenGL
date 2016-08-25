@@ -109,7 +109,12 @@ public class Text extends Widget {
 	public void render() {
 		super.render();
 		
-		textFont.renderText(text.getString(), getPosX() + textOffsetX, getPosY() + textOffsetY, textColor);
+		textColor.bind();
+		renderText();
+	}
+	
+	protected void renderText() {
+		textFont.renderText(text.getString(), getPosX() + textOffsetX, getPosY() + textOffsetY);
 	}
 	
 }
