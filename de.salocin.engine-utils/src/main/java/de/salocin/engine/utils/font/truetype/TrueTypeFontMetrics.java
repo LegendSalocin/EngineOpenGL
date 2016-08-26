@@ -69,7 +69,7 @@ public class TrueTypeFontMetrics implements FontMetrics, Cloneable {
 	
 	@Override
 	public float getWidth(CharSequence text) {
-		return font.renderer.getTextWidth(text.toString(), 0, 0, false);
+		return font.renderer.getTextWidth(text.toString(), 0, 0, null, false);
 	}
 	
 }

@@ -69,6 +69,8 @@ public class BasicUtils extends SimpleCorePlugin {
 			y += customMono.getMetrics().getLineHeight() * 1.75f;
 			customMono.renderText("8888888888", x, y, Color.fromRGB(0x222222));
 			customMono.renderText("0123456789", x, y, Color.WHITE);
+			
+			customMono.getRenderer().renderText("Test", 0.1f, 0.7f, Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW);
 		}
 		
 		@Override

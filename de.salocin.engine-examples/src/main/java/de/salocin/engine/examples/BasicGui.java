@@ -2,6 +2,7 @@ package de.salocin.engine.examples;
 
 import de.salocin.engine.Engine;
 import de.salocin.engine.display.Display;
+import de.salocin.engine.display.Renderer;
 import de.salocin.engine.gui.GuiPlugin;
 import de.salocin.engine.gui.GuiRenderState;
 import de.salocin.engine.gui.layout.AbsoluteConstraint;
@@ -32,9 +33,9 @@ public class BasicGui extends SimpleCorePlugin {
 		@Override
 		protected void onInit() {
 			Pane root = new Pane(AbsoluteLayout.getInstance());
-			TextField test = new TextField("Test_");
+			TextField test = new TextField("Test");
 			test.setTextFont(Font.newBuilder("Arial").setFontSize(100).build());
-			test.setBackgroundColor(Color.RED);
+			test.select(1, 2);
 			
 			root.add(test, new AbsoluteConstraint(0.5f, 0.5f));
 			setRoot(root);
@@ -46,6 +47,8 @@ public class BasicGui extends SimpleCorePlugin {
 		
 		@Override
 		protected void onRender() {
+			Color.WHITE.bind();
+			Renderer.renderQuad(0, 0, 1, 1);
 		}
 		
 		@Override

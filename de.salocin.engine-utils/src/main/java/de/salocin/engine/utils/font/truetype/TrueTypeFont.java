@@ -9,6 +9,7 @@ import de.salocin.engine.utils.core.Color;
 import de.salocin.engine.utils.font.Font;
 import de.salocin.engine.utils.font.FontBuilder;
 import de.salocin.engine.utils.font.FontMetrics;
+import de.salocin.engine.utils.font.FontRenderer;
 import de.salocin.engine.utils.font.FontStyle;
 
 /**
@@ -57,6 +58,11 @@ public class TrueTypeFont implements Font {
 	@Override
 	public FontMetrics getMetrics() {
 		return metrics;
+	}
+	
+	@Override
+	public FontRenderer getRenderer() {
+		return renderer;
 	}
 	
 	@Override
@@ -109,7 +115,8 @@ public class TrueTypeFont implements Font {
 		Renderer.enableTexture();
 		Renderer.enableAlpha();
 		
-		float width = renderer.renderText(text.toString(), x, y, color);
+		color.bind();
+		float width = renderer.getTextWidth(text.toString(), x, y, null, true);
 		
 		Renderer.disableAlpha();
 		Renderer.disableTexture();

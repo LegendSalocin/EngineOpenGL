@@ -24,6 +24,14 @@ public interface Font {
 	FontMetrics getMetrics();
 	
 	/**
+	 * Returns the {@link FontRenderer} of this font. It has some advanced
+	 * rendering methods.
+	 * 
+	 * @return The font renderer
+	 */
+	FontRenderer getRenderer();
+	
+	/**
 	 * Returns the current {@link FontStyle}
 	 * 
 	 * @return The font style

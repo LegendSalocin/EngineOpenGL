@@ -38,39 +38,15 @@ public class SimpleTexture implements Texture {
 	}
 	
 	public SimpleTexture(BufferedImage image) {
-		this.textureId = glGenTextures();
-		this.texture = imageToByteBuffer(image);
-		this.textureWidth = image.getWidth();
-		this.textureHeight = image.getHeight();
-		
-		loadTexture(image.getWidth(), image.getHeight());
+		this(imageToByteBuffer(image), image.getWidth(), image.getHeight());
 	}
 	
-	protected ByteBuffer imageToByteBuffer(BufferedImage image) {
-		final int width = image.getWidth();
-		final int height = image.getHeight();
-		ByteBuffer buffer = BufferUtils.createByteBuffer(4 * width * height);
-		
-		int[] pixels = new int[width * height];
-		image.getRGB(0, 0, width, height, pixels, 0, width);
-		
-		for (int y = 0; y < image.getHeight(); y++) {
-			for (int x = 0; x < width; x++) {
-				int pixel = pixels[y * width + x];
-				byte r = (byte) ((pixel >> 16) & 0xFF);
-				byte g = (byte) ((pixel >> 8) & 0xFF);
-				byte b = (byte) (pixel & 0xFF);
-				byte a = (byte) ((pixel >> 24) & 0xFF);
-				
-				buffer.put(r);
-				buffer.put(g);
-				buffer.put(b);
-				buffer.put(a);
-			}
-		}
-		
-		buffer.flip();
-		return buffer;
+	public SimpleTexture(ByteBuffer buffer, int width, int height) {
+		this.textureId = glGenTextures();
+		this.texture = buffer;
+		this.textureWidth = width;
+		this.textureHeight = height;
+		loadTexture(width, height);
 	}
 	
 	protected void loadTexture(int widthInPixel, int heightInPixel) {
@@ -158,4 +134,30 @@ public class SimpleTexture implements Texture {
 		glDisable(GL_TEXTURE_2D);
 	}
 	
+	public static ByteBuffer imageToByteBuffer(BufferedImage image) {
+		final int width = image.getWidth();
+		final int height = image.getHeight();
+		ByteBuffer buffer = BufferUtils.createByteBuffer(4 * width * height);
+		
+		int[] pixels = new int[width * height];
+		image.getRGB(0, 0, width, height, pixels, 0, width);
+		
+		for (int y = 0; y < image.getHeight(); y++) {
+			for (int x = 0; x < width; x++) {
+				int pixel = pixels[y * width + x];
+				byte r = (byte) ((pixel >> 16) & 0xFF);
+				byte g = (byte) ((pixel >> 8) & 0xFF);
+				byte b = (byte) (pixel & 0xFF);
+				byte a = (byte) ((pixel >> 24) & 0xFF);
+				
+				buffer.put(r);
+				buffer.put(g);
+				buffer.put(b);
+				buffer.put(a);
+			}
+		}
+		
+		buffer.flip();
+		return buffer;
+	}
 }

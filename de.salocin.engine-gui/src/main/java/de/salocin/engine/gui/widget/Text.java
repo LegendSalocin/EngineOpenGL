@@ -18,7 +18,7 @@ public class Text extends Widget {
 	public Text(CharSequence text) {
 		setText(text);
 		setTextFont(GuiPlugin.getDefaultFont());
-		setTextColor(Color.WHITE);
+		setTextColor(Color.BLACK);
 		setTextAlign(Align.NONE);
 	}
 	

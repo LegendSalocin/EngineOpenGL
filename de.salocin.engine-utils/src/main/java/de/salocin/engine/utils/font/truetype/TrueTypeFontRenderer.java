@@ -23,14 +23,13 @@ import org.lwjgl.system.MemoryUtil;
 import de.salocin.engine.display.Renderer;
 import de.salocin.engine.util.Viewport;
 import de.salocin.engine.utils.core.Color;
+import de.salocin.engine.utils.font.FontRenderer;
+import de.salocin.engine.utils.texture.Texture;
 
 /**
  * Not part of the official API
  */
-public class TrueTypeFontRenderer {
-	
-	protected final int BITMAP_WIDTH;
-	protected final int BITMAP_HEIGHT;
+public class TrueTypeFontRenderer implements FontRenderer {
 	
 	protected final TrueTypeFont font;
 	protected final char[] usedChars;
@@ -45,7 +44,9 @@ public class TrueTypeFontRenderer {
 	protected float textWidth;
 	protected float textX;
 	
-	protected int fontTexture;
+	protected int fontBitmap;
+	protected final int bitmapWidth;
+	protected final int bitmapHeight;
 	
 	public TrueTypeFontRenderer(TrueTypeFont font, char[] usedChars) {
 		Validate.notNull(usedChars);
@@ -54,8 +55,8 @@ public class TrueTypeFontRenderer {
 		}
 		
 		int size = 512 + (int) ((float) font.getSize() / 50.0f) * 512;
-		BITMAP_WIDTH = size;
-		BITMAP_HEIGHT = size;
+		bitmapWidth = size;
+		bitmapHeight = size;
 		
 		this.font = font;
 		this.usedChars = usedChars;
@@ -65,14 +66,14 @@ public class TrueTypeFontRenderer {
 	protected void loadFont(InputStream inputStream) {
 		Renderer.enableTexture();
 		
-		fontTexture = glGenTextures();
+		fontBitmap = glGenTextures();
 		chardata = STBTTPackedchar.malloc(usedChars.length);
 		
 		fontInfo = STBTTFontinfo.malloc();
 		
 		try (STBTTPackContext pc = STBTTPackContext.malloc()) {
 			ByteBuffer ttf = ioResourceToByteBuffer(inputStream, 1024);
-			ByteBuffer bitmap = BufferUtils.createByteBuffer(BITMAP_WIDTH * BITMAP_HEIGHT);
+			ByteBuffer bitmap = BufferUtils.createByteBuffer(bitmapWidth * bitmapHeight);
 			
 			if (stbtt_InitFont(fontInfo, ttf) == GL_FALSE) {
 				throw new RuntimeException("Couldn't init font");
@@ -82,7 +83,7 @@ public class TrueTypeFontRenderer {
 			
 			font.metrics.init(this, scale);
 			
-			stbtt_PackBegin(pc, bitmap, BITMAP_WIDTH, BITMAP_HEIGHT, 0, 1, null);
+			stbtt_PackBegin(pc, bitmap, bitmapWidth, bitmapHeight, 0, 1, null);
 			{
 				chardata.position(0);
 				stbtt_PackSetOversampling(pc, 1, 1);
@@ -91,8 +92,8 @@ public class TrueTypeFontRenderer {
 			}
 			stbtt_PackEnd(pc);
 			
-			glBindTexture(GL_TEXTURE_2D, fontTexture);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, BITMAP_WIDTH, BITMAP_HEIGHT, 0, GL_ALPHA, GL_UNSIGNED_BYTE, bitmap);
+			glBindTexture(GL_TEXTURE_2D, fontBitmap);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, bitmapWidth, bitmapHeight, 0, GL_ALPHA, GL_UNSIGNED_BYTE, bitmap);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		} catch (IOException e) {
@@ -102,12 +103,16 @@ public class TrueTypeFontRenderer {
 		Renderer.disableTexture();
 	}
 	
-	protected float renderText(String text, float x, float y, Color color) {
-		color.bind();
-		return getTextWidth(text, x, y, true);
+	@Override
+	public void renderText(String text, float x, float y, Color... colorPerChar) {
+		Renderer.enableAlpha();
+		Renderer.enableTexture();
+		getTextWidth(text, x, y, colorPerChar, true);
+		Renderer.disableTexture();
+		Renderer.disableAlpha();
 	}
 	
-	protected float getTextWidth(String text, float x, float y, boolean renderText) {
+	protected float getTextWidth(String text, float x, float y, Color[] charColor, boolean renderText) {
 		float unscaledX = Viewport.unscaledWidth(x);
 		float unscaledY = Viewport.unscaledHeight(y);
 		
@@ -118,24 +123,35 @@ public class TrueTypeFontRenderer {
 		textWidth = 0.0f;
 		
 		if (renderText) {
-			glBindTexture(GL_TEXTURE_2D, fontTexture);
+			glBindTexture(GL_TEXTURE_2D, fontBitmap);
 			glBegin(GL_QUADS);
 		}
 		
+		int index = 0;
 		for (char ch : text.toString().toCharArray()) {
 			if ((int) ch < 32 || (int) ch == 127 || !canRender(ch)) {
 				continue;
 			}
 			
+			if (charColor != null) {
+				for (int i = 0; i < charColor.length; i++) {
+					if (i == index) {
+						charColor[i].bind();
+					}
+				}
+			}
+			
 			textX = xPos.get(0);
 			
-			STBTruetype.stbtt_GetPackedQuad(chardata, BITMAP_WIDTH, BITMAP_HEIGHT, (int) ch, xPos, yPos, quad, true);
+			STBTruetype.stbtt_GetPackedQuad(chardata, bitmapWidth, bitmapHeight, (int) ch, xPos, yPos, quad, true);
 			
 			textWidth += xPos.get(0) - textX;
 			
 			if (renderText) {
 				drawBoxTex(quad.x0(), quad.y0(), quad.x1(), quad.y1(), quad.s0(), quad.t0(), quad.s1(), quad.t1());
 			}
+			
+			index++;
 		}
 		
 		if (renderText) {
@@ -143,16 +159,6 @@ public class TrueTypeFontRenderer {
 		}
 		
 		return Viewport.scaledWidth((int) textWidth);
-	}
-	
-	public boolean canRender(char ch) {
-		for (char c : usedChars) {
-			if (c == ch) {
-				return true;
-			}
-		}
-		
-		return false;
 	}
 	
 	protected void drawBoxTex(float x0, float y0, float x1, float y1, float s0, float t0, float s1, float t1) {
@@ -192,5 +198,34 @@ public class TrueTypeFontRenderer {
 		
 		buffer.flip();
 		return buffer;
+	}
+	
+	public boolean canRender(char ch) {
+		for (char c : usedChars) {
+			if (c == ch) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public void renderBitmap(float x, float y) {
+		Renderer.enableAlpha();
+		Renderer.enableTexture();
+		
+		glBindTexture(GL_TEXTURE_2D, fontBitmap);
+		glBegin(GL_QUADS);
+		Renderer.renderTexture(x, y, Viewport.scaledWidth(bitmapWidth), Viewport.scaledHeight(bitmapHeight), 0.0f, 0.0f, 1.0f, 1.0f);
+		glEnd();
+		
+		Renderer.disableTexture();
+		Renderer.disableAlpha();
+	}
+	
+	@Override
+	public void setBitmap(Texture newBitmap) {
+		// TODO
 	}
 }
