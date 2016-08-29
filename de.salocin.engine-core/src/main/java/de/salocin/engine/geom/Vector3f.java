@@ -1,4 +1,4 @@
-package de.salocin.engine.util.math;
+package de.salocin.engine.geom;
 
 public class Vector3f {
 	
@@ -102,16 +102,20 @@ public class Vector3f {
 		return (x * x) + (y * y) + (z * z);
 	}
 	
-	public float distance(Vector3f to) {
-		return distance(to, this).length();
+	public float distanceTo(Vector3f to) {
+		return distance(this, to).length();
 	}
 	
-	public float distanceSquared(Vector3f to) {
-		return distance(to, this).lengthSquared();
+	public float distanceToSquared(Vector3f to) {
+		return distance(this, to).lengthSquared();
 	}
 	
 	public Vector3f copy() {
 		return new Vector3f(x, y, z);
+	}
+	
+	public Vector2f toVector2f() {
+		return new Vector2f(x, y);
 	}
 	
 	@Override

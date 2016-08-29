@@ -8,9 +8,9 @@ import de.salocin.engine.display.input.Mouse;
 import de.salocin.engine.event.Callback;
 import de.salocin.engine.event.CallbackHandler;
 import de.salocin.engine.event.ValueChangeEvent;
+import de.salocin.engine.geom.Dimension;
 import de.salocin.engine.scheduler.Scheduler;
 import de.salocin.engine.util.Viewport;
-import de.salocin.engine.util.math.Dimension;
 
 public class Display {
 	

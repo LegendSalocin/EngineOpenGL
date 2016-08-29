@@ -2,7 +2,7 @@ package de.salocin.engine.util;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import de.salocin.engine.util.math.Dimension;
+import de.salocin.engine.geom.Dimension;
 
 public class Viewport {
 	

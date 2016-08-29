@@ -2,11 +2,11 @@ package de.salocin.engine.examples;
 
 import de.salocin.engine.Engine;
 import de.salocin.engine.display.Display;
+import de.salocin.engine.geom.Insets;
 import de.salocin.engine.gui.GuiPlugin;
 import de.salocin.engine.gui.GuiRenderState;
 import de.salocin.engine.gui.layout.AbsoluteConstraint;
 import de.salocin.engine.gui.layout.AbsoluteLayout;
-import de.salocin.engine.gui.util.Insets;
 import de.salocin.engine.gui.widget.Pane;
 import de.salocin.engine.gui.widget.Spinner;
 import de.salocin.engine.plugin.SimpleCorePlugin;

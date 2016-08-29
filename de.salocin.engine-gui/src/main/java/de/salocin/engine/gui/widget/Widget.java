@@ -6,11 +6,11 @@ import de.salocin.engine.display.Renderer;
 import de.salocin.engine.event.KeyEvent;
 import de.salocin.engine.event.MouseButtonEvent;
 import de.salocin.engine.event.MouseMoveEvent;
+import de.salocin.engine.geom.Insets;
+import de.salocin.engine.geom.Point;
+import de.salocin.engine.geom.Rectangle;
 import de.salocin.engine.gui.layout.LayoutConstraint;
-import de.salocin.engine.gui.util.Insets;
 import de.salocin.engine.gui.util.InsetsProperty;
-import de.salocin.engine.util.math.Point;
-import de.salocin.engine.util.math.Rectangle;
 import de.salocin.engine.utils.config.BooleanProperty;
 import de.salocin.engine.utils.config.DoubleProperty;
 import de.salocin.engine.utils.core.Color;
@@ -30,8 +30,8 @@ public abstract class Widget {
 	private DoubleProperty minHeight = new DoubleProperty();
 	private DoubleProperty maxWidth = new DoubleProperty(null, Float.MAX_VALUE);
 	private DoubleProperty maxHeight = new DoubleProperty(null, Float.MAX_VALUE);
-	private InsetsProperty padding = new InsetsProperty();
-	private InsetsProperty margin = new InsetsProperty();
+	private InsetsProperty padding = new InsetsProperty(new Insets());
+	private InsetsProperty margin = new InsetsProperty(new Insets());
 	private BooleanProperty mouseOver = new BooleanProperty();
 	private BooleanProperty focus = new BooleanProperty();
 	
@@ -155,14 +155,6 @@ public abstract class Widget {
 		}
 	}
 	
-	public BooleanProperty propertyMouseOver() {
-		return mouseOver;
-	}
-	
-	public BooleanProperty propertyFocus() {
-		return focus;
-	}
-	
 	public void setPos(float x, float y) {
 		posX.setDouble(x);
 		posY.setDouble(y);
@@ -183,6 +175,30 @@ public abstract class Widget {
 		
 		width.setDouble(prefWidth);
 		height.setDouble(prefHeight);
+	}
+	
+	public DoubleProperty propertyPosX() {
+		return posX;
+	}
+	
+	public DoubleProperty propertyPosY() {
+		return posY;
+	}
+	
+	public DoubleProperty propertyWidth() {
+		return width;
+	}
+	
+	public DoubleProperty propertyHeight() {
+		return height;
+	}
+	
+	public BooleanProperty propertyMouseOver() {
+		return mouseOver;
+	}
+	
+	public BooleanProperty propertyFocus() {
+		return focus;
 	}
 	
 	public void render() {

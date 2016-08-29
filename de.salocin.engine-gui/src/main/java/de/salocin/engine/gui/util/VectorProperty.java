@@ -1,11 +1,15 @@
 package de.salocin.engine.gui.util;
 
-import de.salocin.engine.geom.Insets;
+import de.salocin.engine.geom.Vector3f;
 import de.salocin.engine.utils.config.AbstractProperty;
 
-public class InsetsProperty extends AbstractProperty<Insets> {
+public class VectorProperty extends AbstractProperty<Vector3f> {
 	
-	public InsetsProperty(Insets defaultValue) {
+	public VectorProperty() {
+		this(new Vector3f());
+	}
+	
+	public VectorProperty(Vector3f defaultValue) {
 		super(null, defaultValue);
 	}
 	
@@ -14,6 +18,8 @@ public class InsetsProperty extends AbstractProperty<Insets> {
 		if (value == null) {
 			return;
 		}
-		setValue((Insets) value);
+		
+		setValue((Vector3f) value);
 	}
+	
 }

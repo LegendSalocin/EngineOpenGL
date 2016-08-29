@@ -9,8 +9,8 @@ import de.salocin.engine.event.Callback;
 import de.salocin.engine.event.CallbackHandler;
 import de.salocin.engine.event.MouseButtonEvent;
 import de.salocin.engine.event.MouseMoveEvent;
+import de.salocin.engine.geom.Point;
 import de.salocin.engine.util.Viewport;
-import de.salocin.engine.util.math.Point;
 
 public class Mouse {
 	

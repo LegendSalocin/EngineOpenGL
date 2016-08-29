@@ -2,7 +2,7 @@ package de.salocin.engine.display;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import de.salocin.engine.util.math.Rectangle;
+import de.salocin.engine.geom.Rectangle;
 
 public class Renderer {
 	

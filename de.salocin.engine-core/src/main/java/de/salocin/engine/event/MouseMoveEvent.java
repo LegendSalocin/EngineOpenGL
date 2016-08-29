@@ -1,6 +1,6 @@
 package de.salocin.engine.event;
 
-import de.salocin.engine.util.math.Point;
+import de.salocin.engine.geom.Point;
 
 public class MouseMoveEvent extends Event {
 	
