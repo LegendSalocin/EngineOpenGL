@@ -1,37 +1,33 @@
-package de.salocin.engine.utils.config;
+package de.salocin.engine.utils.property;
 
 /**
- * Represents a single property in a configuration file. The value type is a
- * {@link Boolean}
+ * Represents a single property. The value type is a {@link Boolean}
  */
-public class BooleanProperty extends AbstractProperty<Boolean> {
+public class BooleanProperty extends SimpleProperty<Boolean> {
 	
 	/**
-	 * Creates a new instance of this property with an empty name and none
-	 * default value. Not recommended for use with a {@link Configuration},
-	 * because values can not be retrieved.
+	 * Creates a new instance of this property with no default value.
 	 * 
 	 * @return A new instance of this property
+	 * 
+	 * @see #getDefaultValue()
 	 */
 	public BooleanProperty() {
-		this(null, false);
+		this(false);
 	}
 	
 	/**
 	 * Creates a new instance of this property.
 	 * 
-	 * @param name
-	 *            The property's name. This can not be changed.
 	 * @param defaultValue
 	 *            The property's default value. This can not be changed.
 	 * 
 	 * @return A new instance of this property
 	 * 
-	 * @see #getName()
 	 * @see #getDefaultValue()
 	 */
-	public BooleanProperty(String name, Boolean defaultValue) {
-		super(name, defaultValue);
+	public BooleanProperty(Boolean defaultValue) {
+		super(defaultValue);
 	}
 	
 	/**
@@ -57,12 +53,20 @@ public class BooleanProperty extends AbstractProperty<Boolean> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setObject(Object value) throws Exception {
+	public void load(String value) throws Exception {
 		if (value == null) {
 			return;
 		}
 		
-		setBoolean(Boolean.parseBoolean(value.toString()));
+		setValue(Boolean.parseBoolean(value));
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String save() {
+		return String.valueOf(getBoolean());
 	}
 	
 }

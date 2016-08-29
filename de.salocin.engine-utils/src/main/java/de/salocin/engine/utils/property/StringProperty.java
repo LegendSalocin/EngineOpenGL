@@ -1,37 +1,33 @@
-package de.salocin.engine.utils.config;
+package de.salocin.engine.utils.property;
 
 /**
- * Represents a single property in a configuration file. The value type is a
- * {@link String}
+ * Represents a single property. The value type is a {@link String}
  */
-public class StringProperty extends AbstractProperty<String> {
+public class StringProperty extends SimpleProperty<String> {
 	
 	/**
-	 * Creates a new instance of this property with an empty name and none
-	 * default value. Not recommended for use with a {@link Configuration},
-	 * because values can not be retrieved.
+	 * Creates a new instance of this property with no default value.
 	 * 
 	 * @return A new instance of this property
+	 * 
+	 * @see #getDefaultValue()
 	 */
 	public StringProperty() {
-		this(null, null);
+		this("");
 	}
 	
 	/**
 	 * Creates a new instance of this property.
 	 * 
-	 * @param name
-	 *            The property's name. This can not be changed.
 	 * @param defaultValue
 	 *            The property's default value. This can not be changed.
 	 * 
 	 * @return A new instance of this property
 	 * 
-	 * @see #getName()
 	 * @see #getDefaultValue()
 	 */
-	public StringProperty(String name, String defaultValue) {
-		super(name, defaultValue);
+	public StringProperty(String defaultValue) {
+		super(defaultValue);
 	}
 	
 	/**
@@ -57,12 +53,20 @@ public class StringProperty extends AbstractProperty<String> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setObject(Object value) throws Exception {
+	public void load(String value) throws Exception {
 		if (value == null) {
 			return;
 		}
 		
 		setString(value.toString());
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String save() {
+		return getString();
 	}
 	
 }

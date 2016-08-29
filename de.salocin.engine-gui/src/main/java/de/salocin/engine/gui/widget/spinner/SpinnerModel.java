@@ -1,6 +1,6 @@
 package de.salocin.engine.gui.widget.spinner;
 
-import de.salocin.engine.utils.config.Property;
+import de.salocin.engine.utils.property.Property;
 
 public interface SpinnerModel<T> {
 	

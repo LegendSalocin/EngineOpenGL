@@ -9,10 +9,10 @@ import de.salocin.engine.display.input.Modifier;
 import de.salocin.engine.event.KeyEvent;
 import de.salocin.engine.scheduler.FPS;
 import de.salocin.engine.util.Viewport;
-import de.salocin.engine.utils.config.LongProperty;
 import de.salocin.engine.utils.core.Color;
 import de.salocin.engine.utils.core.ColoredString;
 import de.salocin.engine.utils.font.FontMetrics;
+import de.salocin.engine.utils.property.LongProperty;
 
 public class TextField extends Text {
 	

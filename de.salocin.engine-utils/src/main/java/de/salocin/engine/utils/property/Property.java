@@ -1,10 +1,10 @@
-package de.salocin.engine.utils.config;
+package de.salocin.engine.utils.property;
 
 import de.salocin.engine.event.Callback;
 import de.salocin.engine.event.ValueChangeEvent;
 
 /**
- * Represents a single property in a configuration file.
+ * Represents a single property.
  * <p>
  * Available properties:
  * </p>
@@ -19,14 +19,6 @@ import de.salocin.engine.event.ValueChangeEvent;
  *            The type of value the property stores.
  */
 public interface Property<T> {
-	
-	/**
-	 * Returns the name of the property. This is something like the id of this
-	 * property and is unique in a configuration file.
-	 * 
-	 * @return The property's name
-	 */
-	String getName();
 	
 	/**
 	 * Returns the default value of the property. If the value in the
@@ -56,26 +48,29 @@ public interface Property<T> {
 	T getValue();
 	
 	/**
-	 * Sets the value to the given object. All subclasses have to implement this
-	 * method. They convert the given object to the property's value type. If
-	 * that fails, an exception is thrown.
+	 * <b>This method is only required for configurations.</b><br>
+	 * Parses a string and sets the string as the new value. All subclasses have
+	 * to implement this method. They convert the given configuration value to
+	 * the property's value type. If that fails, an exception is thrown.
 	 * 
 	 * @param value
-	 *            The new property's value
+	 *            The property's value
 	 * @throws Exception
 	 *             if there is a convert error from <code>Object</code> to
 	 *             <code>T</code>.
+	 * @throws UnsupportedOperationException
+	 *             if the property does not support configuration
 	 */
-	void setObject(Object value) throws Exception;
+	void load(String value) throws Exception;
 	
 	/**
-	 * Alias for {@link #getValue()}
+	 * <b>This method is only required for configurations.</b><br>
+	 * Parses the value to a string, so it can easily be stored within a
+	 * configuration file.
 	 * 
-	 * @return The property's current value
+	 * @return The property's value
 	 */
-	default Object getObject() {
-		return getValue();
-	}
+	String save();
 	
 	/**
 	 * Adds a callback to catch events if the {@link #setValue(Object)} method
@@ -83,6 +78,8 @@ public interface Property<T> {
 	 * 
 	 * @param callback
 	 *            the callback
+	 * @throws UnsupportedOperationException
+	 *             if the property does not support configuration
 	 */
 	void addValueChangeCallback(Callback<ValueChangeEvent<T>> callback);
 	

@@ -3,7 +3,10 @@ package de.salocin.engine.utils.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Set;
+import java.util.Collection;
+import java.util.Map;
+
+import de.salocin.engine.utils.property.Property;
 
 /**
  * Represents a configuration with multiple properties.
@@ -33,21 +36,20 @@ public interface Configuration {
 	void save(OutputStream output) throws IOException;
 	
 	/**
-	 * Returns a {@link Set} containing all properties that are registered.
+	 * Returns a {@link Map} containing all properties that are registered.
 	 * 
 	 * @return All properties
 	 */
-	Set<Property<?>> getProperties();
+	
+	Map<String, Property<?>> getProperties();
 	
 	/**
-	 * Returns <code>true</code> if a property exists.
+	 * Returns a {@link Collection} containing all properties that are
+	 * registered.
 	 * 
-	 * @param property
-	 *            The property to check
-	 * @return <code>true</code> if the property exists, otherwise
-	 *         <code>false</code>
+	 * @return All properties
 	 */
-	boolean isPropertyPresent(Property<?> property);
+	Collection<Property<?>> getPropertyValues();
 	
 	/**
 	 * Returns <code>true</code> if a property exists.
@@ -74,13 +76,16 @@ public interface Configuration {
 	
 	/**
 	 * Registers a new property. If a property with this name already exists,
-	 * its value will automatically be copied and it will be removed.
+	 * its value will automatically be copied and the old property will be
+	 * removed.
 	 * 
+	 * @param Registers
+	 *            a property for the given name
 	 * @param property
 	 *            The property to register
 	 * @return The same property instance for further use
 	 */
-	<T extends Property<?>> T registerProperty(T property);
+	<T extends Property<?>> T registerProperty(String name, T property);
 	
 	/**
 	 * Deletes all registered properties, the configuration keys and values will

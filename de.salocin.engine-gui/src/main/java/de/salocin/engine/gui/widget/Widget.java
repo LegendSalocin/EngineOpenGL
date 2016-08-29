@@ -2,7 +2,6 @@ package de.salocin.engine.gui.widget;
 
 import org.apache.commons.lang3.Validate;
 
-import de.salocin.engine.display.Renderer;
 import de.salocin.engine.event.KeyEvent;
 import de.salocin.engine.event.MouseButtonEvent;
 import de.salocin.engine.event.MouseMoveEvent;
@@ -10,28 +9,19 @@ import de.salocin.engine.geom.Insets;
 import de.salocin.engine.geom.Point;
 import de.salocin.engine.geom.Rectangle;
 import de.salocin.engine.gui.layout.LayoutConstraint;
-import de.salocin.engine.gui.util.InsetsProperty;
-import de.salocin.engine.utils.config.BooleanProperty;
-import de.salocin.engine.utils.config.DoubleProperty;
-import de.salocin.engine.utils.core.Color;
-import de.salocin.engine.utils.texture.Texture;
+import de.salocin.engine.utils.property.BooleanProperty;
+import de.salocin.engine.utils.property.DoubleProperty;
+import de.salocin.engine.utils.property.SimpleProperty;
 
 public abstract class Widget {
 	
 	protected Pane parent;
 	protected LayoutConstraint layoutConstraint;
-	private Texture background;
-	private Color backgroundColor;
-	private DoubleProperty posX = new DoubleProperty();
+	private DoubleProperty posX = new DoubleProperty(new Double(1));
 	private DoubleProperty posY = new DoubleProperty();
 	private DoubleProperty width = new DoubleProperty();
 	private DoubleProperty height = new DoubleProperty();
-	private DoubleProperty minWidth = new DoubleProperty();
-	private DoubleProperty minHeight = new DoubleProperty();
-	private DoubleProperty maxWidth = new DoubleProperty(null, Float.MAX_VALUE);
-	private DoubleProperty maxHeight = new DoubleProperty(null, Float.MAX_VALUE);
-	private InsetsProperty padding = new InsetsProperty(new Insets());
-	private InsetsProperty margin = new InsetsProperty(new Insets());
+	private SimpleProperty<Insets> padding = new SimpleProperty<Insets>(new Insets());
 	private BooleanProperty mouseOver = new BooleanProperty();
 	private BooleanProperty focus = new BooleanProperty();
 	
@@ -45,22 +35,6 @@ public abstract class Widget {
 	
 	public LayoutConstraint getLayoutConstraint() {
 		return layoutConstraint;
-	}
-	
-	public Texture getBackground() {
-		return background;
-	}
-	
-	public void setBackground(Texture background) {
-		this.background = background;
-	}
-	
-	public Color getBackgroundColor() {
-		return backgroundColor;
-	}
-	
-	public void setBackgroundColor(Color backgroundColor) {
-		this.backgroundColor = backgroundColor;
 	}
 	
 	public float getPosX() {
@@ -85,19 +59,19 @@ public abstract class Widget {
 	}
 	
 	public void setMinWidth(float width) {
-		minWidth.setDouble(width);
+		this.width.setMin((double) width);
 	}
 	
 	public void setMinHeight(float height) {
-		minHeight.setDouble(height);
+		this.height.setMin((double) height);
 	}
 	
 	public float getMinWidth() {
-		return minWidth.getValue().floatValue();
+		return width.getMin().floatValue();
 	}
 	
 	public float getMinHeight() {
-		return minHeight.getValue().floatValue();
+		return height.getMin().floatValue();
 	}
 	
 	public void setMaxSize(float width, float height) {
@@ -106,19 +80,19 @@ public abstract class Widget {
 	}
 	
 	public void setMaxWidth(float width) {
-		maxWidth.setDouble(width);
+		this.width.setMax((double) width);
 	}
 	
 	public void setMaxHeight(float height) {
-		maxHeight.setDouble(height);
+		this.height.setMax((double) height);
 	}
 	
 	public float getMaxWidth() {
-		return maxWidth.getValue().floatValue();
+		return width.getMax().floatValue();
 	}
 	
 	public float getMaxHeight() {
-		return maxHeight.getValue().floatValue();
+		return height.getMax().floatValue();
 	}
 	
 	public boolean isInside(float x, float y) {
@@ -131,14 +105,6 @@ public abstract class Widget {
 	
 	public Insets getPadding() {
 		return padding.getValue();
-	}
-	
-	public void setMargin(Insets margin) {
-		this.margin.setValue(Validate.notNull(margin, "margin"));
-	}
-	
-	public Insets getMargin() {
-		return margin.getValue();
 	}
 	
 	public boolean isMouseOver() {
@@ -202,22 +168,9 @@ public abstract class Widget {
 	}
 	
 	public void render() {
-		renderBackground();
 	}
 	
-	protected void renderBackground() {
-		if (backgroundColor != null) {
-			backgroundColor.bind();
-		}
-		
-		if (background != null) {
-			background.render(getPosX(), getPosY(), getWidth(), getHeight());
-		} else if (backgroundColor != null) {
-			Renderer.renderQuad(getPosX() - getPadding().left, getPosY() - getPadding().top, getWidth() + getPadding().right, getHeight() + getPadding().bottom);
-		}
-	}
-	
-	protected void pack() {
+	public void pack() {
 	}
 	
 	protected void onMouseMove(MouseMoveEvent e, boolean hasFocus) {

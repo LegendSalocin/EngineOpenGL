@@ -1,7 +1,7 @@
 package de.salocin.engine.gui.widget.spinner;
 
-import de.salocin.engine.utils.config.LongProperty;
-import de.salocin.engine.utils.config.Property;
+import de.salocin.engine.utils.property.LongProperty;
+import de.salocin.engine.utils.property.Property;
 
 public class LongNumberModel implements SpinnerNumberModel<Long> {
 	

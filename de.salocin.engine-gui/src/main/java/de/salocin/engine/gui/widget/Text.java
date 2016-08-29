@@ -2,11 +2,11 @@ package de.salocin.engine.gui.widget;
 
 import de.salocin.engine.gui.GuiPlugin;
 import de.salocin.engine.gui.util.Align;
-import de.salocin.engine.utils.config.StringProperty;
 import de.salocin.engine.utils.core.Color;
 import de.salocin.engine.utils.font.Font;
+import de.salocin.engine.utils.property.StringProperty;
 
-public class Text extends Widget {
+public class Text extends WidgetBackground {
 	
 	private StringProperty text = new StringProperty();
 	private Font textFont;

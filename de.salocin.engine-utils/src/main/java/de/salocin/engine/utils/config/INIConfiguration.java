@@ -3,16 +3,19 @@ package de.salocin.engine.utils.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+
+import de.salocin.engine.utils.property.Property;
 
 public class INIConfiguration implements Configuration {
 	
 	private final Properties config = new Properties();
-	private final Set<Property<?>> properties = new HashSet<Property<?>>();
+	private final Map<String, Property<?>> properties = new HashMap<String, Property<?>>();
 	
 	/**
 	 * {@inheritDoc}
@@ -34,7 +37,7 @@ public class INIConfiguration implements Configuration {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<Property<?>> getProperties() {
+	public Map<String, Property<?>> getProperties() {
 		return properties;
 	}
 	
@@ -42,8 +45,8 @@ public class INIConfiguration implements Configuration {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isPropertyPresent(Property<?> property) {
-		return properties.contains(property);
+	public Collection<Property<?>> getPropertyValues() {
+		return properties.values();
 	}
 	
 	/**
@@ -51,7 +54,7 @@ public class INIConfiguration implements Configuration {
 	 */
 	@Override
 	public boolean isPropertyPresent(String propertyName) {
-		return getProperty(propertyName) != null;
+		return properties.containsKey(propertyName);
 	}
 	
 	/**
@@ -62,12 +65,10 @@ public class INIConfiguration implements Configuration {
 	public <T extends Property<?>> T getProperty(String propertyName) {
 		Validate.notNull(propertyName);
 		
-		for (Property<?> property : properties) {
-			if (property.getName().equalsIgnoreCase(propertyName)) {
-				try {
-					return (T) property;
-				} catch (ClassCastException e) {
-					throw new IllegalArgumentException("The given type conflicts with the property's value.");
+		if (isPropertyPresent(propertyName)) {
+			for (Map.Entry<String, Property<?>> entry : properties.entrySet()) {
+				if (entry.getKey().equalsIgnoreCase(propertyName)) {
+					return (T) entry.getValue();
 				}
 			}
 		}
@@ -79,19 +80,19 @@ public class INIConfiguration implements Configuration {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <T extends Property<?>> T registerProperty(T property) {
-		T old = this.<T> getProperty(property.getName());
+	public <T extends Property<?>> T registerProperty(String name, T property) {
+		T old = this.<T> getProperty(name);
 		
 		if (old != null) {
 			try {
-				property.setObject(old.getObject());
+				property.load(old.save());
 			} catch (Exception e) {
 				throw new IllegalArgumentException("Wrong generic type", e);
 			}
 			properties.remove(old);
 		}
 		
-		properties.add(property);
+		properties.put(name, property);
 		
 		return property;
 	}
