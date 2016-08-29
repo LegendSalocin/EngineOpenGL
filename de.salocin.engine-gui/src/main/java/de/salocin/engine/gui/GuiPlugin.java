@@ -5,11 +5,9 @@ import org.apache.commons.lang3.Validate;
 import de.salocin.engine.display.Display;
 import de.salocin.engine.display.input.Keyboard;
 import de.salocin.engine.display.input.Mouse;
-import de.salocin.engine.event.Event;
-import de.salocin.engine.gui.widget.Widget;
+import de.salocin.engine.gui.widget.Pane;
 import de.salocin.engine.plugin.Instance;
 import de.salocin.engine.plugin.SimplePlugin;
-import de.salocin.engine.util.ReflectionUtils;
 import de.salocin.engine.utils.font.Font;
 import de.salocin.engine.utils.font.FontBuilder;
 
@@ -28,15 +26,33 @@ public class GuiPlugin extends SimplePlugin {
 		render = new DebugInfoRender();
 		
 		Mouse.getMouse().addMouseMoveCallback(e -> {
-			callWidgetEvent("onMouseMove", e);
+			final GuiRenderState state = GuiRenderState.getCurrentState();
+			if (state != null) {
+				final Pane root = state.getRootPane();
+				if (root != null) {
+					root.simulateMouseMoveEvent(e);
+				}
+			}
 		});
 		
 		Mouse.getMouse().addMouseButtonCallback(e -> {
-			callWidgetEvent("onMouseButton", e);
+			final GuiRenderState state = GuiRenderState.getCurrentState();
+			if (state != null) {
+				final Pane root = state.getRootPane();
+				if (root != null) {
+					root.simulateMouseButtonEvent(e);
+				}
+			}
 		});
 		
 		Keyboard.getKeyboard().addKeyCallback(e -> {
-			callWidgetEvent("onKey", e);
+			final GuiRenderState state = GuiRenderState.getCurrentState();
+			if (state != null) {
+				final Pane root = state.getRootPane();
+				if (root != null) {
+					root.simulateKeyEvent(e);
+				}
+			}
 		});
 		
 		Display.addRenderStateCallback(e -> {
@@ -48,16 +64,6 @@ public class GuiPlugin extends SimplePlugin {
 	
 	@Override
 	protected void onDisable() {
-	}
-	
-	private <T extends Event> void callWidgetEvent(String methodName, T e) {
-		GuiRenderState state = GuiRenderState.getCurrentState();
-		
-		if (state != null) {
-			for (Widget widget : state.getRootPane().getChildren()) {
-				ReflectionUtils.invokeMethod(Widget.class, widget, methodName, e);
-			}
-		}
 	}
 	
 	public static GuiRenderState getRenderState() {

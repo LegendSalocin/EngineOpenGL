@@ -18,7 +18,7 @@ import de.salocin.engine.utils.texture.Texture;
 
 public abstract class Widget {
 	
-	protected Widget parent;
+	protected Pane parent;
 	protected LayoutConstraint layoutConstraint;
 	private Texture background;
 	private Color backgroundColor;
@@ -33,6 +33,7 @@ public abstract class Widget {
 	private InsetsProperty padding = new InsetsProperty();
 	private InsetsProperty margin = new InsetsProperty();
 	private BooleanProperty mouseOver = new BooleanProperty();
+	private BooleanProperty focus = new BooleanProperty();
 	
 	public Widget getParent() {
 		return parent;
@@ -144,8 +145,22 @@ public abstract class Widget {
 		return mouseOver.getBoolean();
 	}
 	
+	public boolean hasFocus() {
+		return focus.getBoolean();
+	}
+	
+	public void requestFocus() {
+		if (parent != null) {
+			parent.requestFocus(this);
+		}
+	}
+	
 	public BooleanProperty propertyMouseOver() {
 		return mouseOver;
+	}
+	
+	public BooleanProperty propertyFocus() {
+		return focus;
 	}
 	
 	public void setPos(float x, float y) {
@@ -182,21 +197,24 @@ public abstract class Widget {
 		if (background != null) {
 			background.render(getPosX(), getPosY(), getWidth(), getHeight());
 		} else if (backgroundColor != null) {
-			Renderer.renderQuad(getPosX() + getPadding().left, getPosY() + getPadding().top, getWidth() + getPadding().right, getHeight() + getPadding().bottom);
+			Renderer.renderQuad(getPosX() - getPadding().left, getPosY() - getPadding().top, getWidth() + getPadding().right, getHeight() + getPadding().bottom);
 		}
 	}
 	
 	protected void pack() {
 	}
 	
-	protected void onMouseMove(MouseMoveEvent e) {
+	protected void onMouseMove(MouseMoveEvent e, boolean hasFocus) {
 		mouseOver.setBoolean(isInside(e.getNewPos().getX(), e.getNewPos().getY()));
 	}
 	
-	protected void onMouseButton(MouseButtonEvent e) {
+	protected void onMouseButton(MouseButtonEvent e, boolean hasFocus) {
+		if (!hasFocus && isMouseOver()) {
+			requestFocus();
+		}
 	}
 	
-	protected void onKey(KeyEvent e) {
+	protected void onKey(KeyEvent e, boolean hasFocus) {
 	}
 	
 }

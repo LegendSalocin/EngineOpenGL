@@ -23,8 +23,8 @@ public class Button extends Text {
 	}
 	
 	@Override
-	protected void onMouseButton(MouseButtonEvent e) {
-		super.onMouseButton(e);
+	protected void onMouseButton(MouseButtonEvent e, boolean hasFocus) {
+		super.onMouseButton(e, hasFocus);
 		
 		if (e.getAction() == Action.RELEASED && isMouseOver()) {
 			click();

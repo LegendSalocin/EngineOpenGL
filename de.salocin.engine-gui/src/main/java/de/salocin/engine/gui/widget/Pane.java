@@ -2,6 +2,9 @@ package de.salocin.engine.gui.widget;
 
 import java.util.ArrayList;
 
+import de.salocin.engine.event.KeyEvent;
+import de.salocin.engine.event.MouseButtonEvent;
+import de.salocin.engine.event.MouseMoveEvent;
 import de.salocin.engine.gui.layout.AbsoluteLayout;
 import de.salocin.engine.gui.layout.LayoutConstraint;
 import de.salocin.engine.gui.layout.LayoutManager;
@@ -10,12 +13,14 @@ public class Pane extends Widget {
 	
 	private LayoutManager<?> layoutManager;
 	private ArrayList<Widget> children = new ArrayList<Widget>();
+	private Widget focused;
 	
 	public Pane() {
 		this(AbsoluteLayout.getInstance());
 	}
 	
 	public Pane(LayoutManager<?> layoutManager) {
+		super.propertyFocus().setBoolean(true);
 		setLayoutManager(layoutManager);
 	}
 	
@@ -52,6 +57,7 @@ public class Pane extends Widget {
 			child.parent = this;
 			child.layoutConstraint = constraint;
 			children.add(child);
+			// child.requestFocus();
 			
 			return true;
 		}
@@ -106,6 +112,68 @@ public class Pane extends Widget {
 		
 		for (Widget widget : children) {
 			widget.render();
+		}
+	}
+	
+	@Override
+	public void requestFocus() {
+		requestFocus(null);
+	}
+	
+	public void requestFocus(Widget child) {
+		if (focused != null) {
+			if (child.equals(focused)) {
+				return;
+			} else {
+				focused.propertyFocus().setValue(false);
+				focused = null;
+			}
+		}
+		
+		for (Widget widget : children) {
+			if (widget.equals(child)) {
+				widget.propertyFocus().setBoolean(true);
+				focused = widget;
+			}
+		}
+	}
+	
+	public void simulateMouseMoveEvent(MouseMoveEvent e) {
+		onMouseMove(e, hasFocus());
+	}
+	
+	public void simulateMouseButtonEvent(MouseButtonEvent e) {
+		onMouseButton(e, hasFocus());
+	}
+	
+	public void simulateKeyEvent(KeyEvent e) {
+		onKey(e, hasFocus());
+	}
+	
+	@Override
+	protected void onMouseMove(MouseMoveEvent e, boolean hasFocus) {
+		super.onMouseMove(e, hasFocus);
+		
+		for (Widget widget : children) {
+			widget.onMouseMove(e, widget.hasFocus());
+		}
+	}
+	
+	@Override
+	protected void onMouseButton(MouseButtonEvent e, boolean hasFocus) {
+		super.onMouseButton(e, hasFocus);
+		
+		for (Widget widget : children) {
+			widget.onMouseButton(e, widget.hasFocus());
+		}
+	}
+	
+	@Override
+	protected void onKey(KeyEvent e, boolean hasFocus) {
+		super.onKey(e, hasFocus);
+		
+		for (Widget widget : children) {
+			widget.onKey(e, widget.hasFocus());
 		}
 	}
 	

@@ -64,6 +64,10 @@ public class Text extends Widget {
 	
 	@Override
 	public void pack() {
+		if (text.getString() == null) {
+			return;
+		}
+		
 		final float textWidth = textFont.getMetrics().getWidth(text.getString());
 		final float textHeight = textFont.getMetrics().getLineHeight();
 		final float baselineOffset = textFont.getMetrics().getAscent();
