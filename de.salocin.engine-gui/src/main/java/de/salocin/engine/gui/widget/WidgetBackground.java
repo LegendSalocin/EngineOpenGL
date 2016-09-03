@@ -38,7 +38,7 @@ public abstract class WidgetBackground extends Widget {
 		if (background != null) {
 			background.render(getPosX(), getPosY(), getWidth(), getHeight());
 		} else if (backgroundColor != null) {
-			Renderer.renderQuad(getPosX() - getPadding().left, getPosY() - getPadding().top, getWidth() + getPadding().right, getHeight() + getPadding().bottom);
+			Renderer.renderQuad(getPosX(), getPosY(), getWidth(), getHeight());
 		}
 	}
 	

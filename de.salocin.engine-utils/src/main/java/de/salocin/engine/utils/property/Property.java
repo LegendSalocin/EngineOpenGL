@@ -1,14 +1,12 @@
 package de.salocin.engine.utils.property;
 
-import de.salocin.engine.event.Callback;
-import de.salocin.engine.event.ValueChangeEvent;
-
 /**
  * Represents a single property.
  * <p>
  * Available properties:
  * </p>
  * <ul>
+ * <li>{@link SimpleProperty}</li>
  * <li>{@link StringProperty}</li>
  * <li>{@link BooleanProperty}</li>
  * <li>{@link LongProperty}</li>
@@ -18,7 +16,7 @@ import de.salocin.engine.event.ValueChangeEvent;
  * @param <T>
  *            The type of value the property stores.
  */
-public interface Property<T> {
+public interface Property<T> extends ReadOnlyProperty<T> {
 	
 	/**
 	 * Returns the default value of the property. If the value in the
@@ -38,14 +36,6 @@ public interface Property<T> {
 	 *            The new property's value
 	 */
 	void setValue(T value);
-	
-	/**
-	 * Returns the current value of the property. This will never be null: If
-	 * there is no value set, then {@link #getDefaultValue()} will be returned.
-	 * 
-	 * @return The property's current value
-	 */
-	T getValue();
 	
 	/**
 	 * <b>This method is only required for configurations.</b><br>
@@ -73,14 +63,10 @@ public interface Property<T> {
 	String save();
 	
 	/**
-	 * Adds a callback to catch events if the {@link #setValue(Object)} method
-	 * is called and the value will be changed
+	 * Copies the property and makes it read only.
 	 * 
-	 * @param callback
-	 *            the callback
-	 * @throws UnsupportedOperationException
-	 *             if the property does not support configuration
+	 * @return A copy which can only be read
 	 */
-	void addValueChangeCallback(Callback<ValueChangeEvent<T>> callback);
+	ReadOnlyProperty<T> readOnly();
 	
 }

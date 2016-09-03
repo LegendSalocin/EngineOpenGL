@@ -1,8 +1,10 @@
 package de.salocin.engine.gui.widget;
 
+import de.salocin.engine.geom.Dimension;
 import de.salocin.engine.gui.GuiPlugin;
 import de.salocin.engine.gui.util.Align;
 import de.salocin.engine.utils.core.Color;
+import de.salocin.engine.utils.core.ColoredString;
 import de.salocin.engine.utils.font.Font;
 import de.salocin.engine.utils.property.StringProperty;
 
@@ -63,62 +65,67 @@ public class Text extends WidgetBackground {
 	}
 	
 	@Override
-	public void pack() {
-		if (text.getString() == null) {
-			return;
+	protected Dimension computeSize() {
+		Dimension dim = new Dimension();
+		if (text.getString() != null) {
+			dim.setWidth(textFont.getMetrics().getWidth(text.getString()));
+			dim.setHeight(textFont.getMetrics().getLineHeight());
 		}
 		
-		final float textWidth = textFont.getMetrics().getWidth(text.getString());
-		final float textHeight = textFont.getMetrics().getLineHeight();
-		final float baselineOffset = textFont.getMetrics().getAscent();
-		
-		float prefWidth = textWidth + getPadding().left + getPadding().right;
-		float prefHeight = textHeight + getPadding().top + getPadding().bottom;
-		
-		setSize(prefWidth, prefHeight);
-		
-		float x = textAlign.getHorizontalOffset();
-		float y = textAlign.getVerticalOffset() + baselineOffset;
-		
-		Align.Horizontal h = textAlign.getHorizontal();
-		Align.Vertical v = textAlign.getVertical();
-		
-		switch (h) {
-		case LEFT:
-			break;
-		case CENTER:
-			x += (prefWidth - textWidth) / 2.0f;
-			break;
-		case RIGHT:
-			x += prefWidth - textWidth;
-			break;
+		return dim;
+	}
+	
+	@Override
+	protected void onLayout() {
+		if (text.getString() != null) {
+			final float textWidth = textFont.getMetrics().getWidth(text.getString());
+			final float textHeight = textFont.getMetrics().getLineHeight();
+			final float baselineOffset = textFont.getMetrics().getAscent();
+			
+			float x = textAlign.getHorizontalOffset();
+			float y = textAlign.getVerticalOffset() + baselineOffset;
+			
+			Align.Horizontal h = textAlign.getHorizontal();
+			Align.Vertical v = textAlign.getVertical();
+			
+			switch (h) {
+			case LEFT:
+				break;
+			case CENTER:
+				x += (getWidth() - textWidth) / 2.0f;
+				break;
+			case RIGHT:
+				x += getHeight() - textWidth;
+				break;
+			}
+			
+			switch (v) {
+			case TOP:
+				break;
+			case MIDDLE:
+				y += (getWidth() - textHeight) / 2.0f;
+				break;
+			case BOTTOM:
+				y += getHeight() - textHeight;
+				break;
+			}
+			
+			textOffsetX = x;
+			textOffsetY = y;
 		}
-		
-		switch (v) {
-		case TOP:
-			break;
-		case MIDDLE:
-			y += (prefHeight - textHeight) / 2.0f;
-			break;
-		case BOTTOM:
-			y += prefHeight - textHeight;
-			break;
-		}
-		
-		textOffsetX = x;
-		textOffsetY = y;
 	}
 	
 	@Override
 	public void render() {
 		super.render();
 		
-		textColor.bind();
-		renderText();
+		renderText(new ColoredString().add(getText(), textColor));
 	}
 	
-	protected void renderText() {
-		textFont.renderText(text.getString(), getPosX() + textOffsetX, getPosY() + textOffsetY);
+	protected void renderText(ColoredString text) {
+		text.render(textFont, getPosX() + textOffsetX, getPosY() + textOffsetY);
+		// textFont.renderText(this.text.getString(), getPosX() + textOffsetX,
+		// getPosY() + textOffsetY);
 	}
 	
 }

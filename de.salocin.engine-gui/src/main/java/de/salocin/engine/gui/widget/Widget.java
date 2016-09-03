@@ -1,31 +1,29 @@
 package de.salocin.engine.gui.widget;
 
-import org.apache.commons.lang3.Validate;
-
 import de.salocin.engine.event.KeyEvent;
 import de.salocin.engine.event.MouseButtonEvent;
 import de.salocin.engine.event.MouseMoveEvent;
+import de.salocin.engine.geom.Dimension;
 import de.salocin.engine.geom.Insets;
 import de.salocin.engine.geom.Point;
-import de.salocin.engine.geom.Rectangle;
-import de.salocin.engine.gui.layout.LayoutConstraint;
 import de.salocin.engine.utils.property.BooleanProperty;
 import de.salocin.engine.utils.property.DoubleProperty;
+import de.salocin.engine.utils.property.ReadOnlyProperty;
 import de.salocin.engine.utils.property.SimpleProperty;
 
 public abstract class Widget {
 	
 	protected Pane parent;
-	protected LayoutConstraint layoutConstraint;
-	private DoubleProperty posX = new DoubleProperty(new Double(1));
-	private DoubleProperty posY = new DoubleProperty();
-	private DoubleProperty width = new DoubleProperty();
-	private DoubleProperty height = new DoubleProperty();
-	private SimpleProperty<Insets> padding = new SimpleProperty<Insets>(new Insets());
-	private BooleanProperty mouseOver = new BooleanProperty();
-	private BooleanProperty focus = new BooleanProperty();
+	protected DoubleProperty posX = new DoubleProperty();
+	protected DoubleProperty posY = new DoubleProperty();
+	protected DoubleProperty width = new DoubleProperty();
+	protected DoubleProperty height = new DoubleProperty();
+	protected SimpleProperty<Insets> padding = new SimpleProperty<Insets>(new Insets());
+	protected BooleanProperty mouseOver = new BooleanProperty();
+	protected BooleanProperty focus = new BooleanProperty();
 	
-	public Widget getParent() {
+	/* Basic methods */
+	public Pane getParent() {
 		return parent;
 	}
 	
@@ -33,10 +31,50 @@ public abstract class Widget {
 		return parent != null;
 	}
 	
-	public LayoutConstraint getLayoutConstraint() {
-		return layoutConstraint;
+	public boolean isInside(Point point) {
+		return isInside(point.getX(), point.getY());
 	}
 	
+	public boolean isInside(float x, float y) {
+		return x >= getPosX() && y >= getPosY() && x <= getPosX() + getWidth() && y <= getPosY() + getHeight();
+	}
+	
+	public void requestFocus() {
+		if (parent != null) {
+			parent.requestFocus(this);
+		}
+	}
+	
+	/* Property Getter */
+	public ReadOnlyProperty<Double> propertyPosX() {
+		return posX.readOnly();
+	}
+	
+	public ReadOnlyProperty<Double> propertyPosY() {
+		return posY.readOnly();
+	}
+	
+	public ReadOnlyProperty<Double> propertyWidth() {
+		return width.readOnly();
+	}
+	
+	public ReadOnlyProperty<Double> propertyHeight() {
+		return height.readOnly();
+	}
+	
+	public ReadOnlyProperty<Boolean> propertyMouseOver() {
+		return mouseOver.readOnly();
+	}
+	
+	public ReadOnlyProperty<Boolean> propertyFocus() {
+		return focus.readOnly();
+	}
+	
+	public SimpleProperty<Insets> propertyPadding() {
+		return padding;
+	}
+	
+	/* Getter */
 	public float getPosX() {
 		return posX.getValue().floatValue();
 	}
@@ -53,60 +91,6 @@ public abstract class Widget {
 		return height.getValue().floatValue();
 	}
 	
-	public void setMinSize(float width, float height) {
-		setMinWidth(width);
-		setMinHeight(height);
-	}
-	
-	public void setMinWidth(float width) {
-		this.width.setMin((double) width);
-	}
-	
-	public void setMinHeight(float height) {
-		this.height.setMin((double) height);
-	}
-	
-	public float getMinWidth() {
-		return width.getMin().floatValue();
-	}
-	
-	public float getMinHeight() {
-		return height.getMin().floatValue();
-	}
-	
-	public void setMaxSize(float width, float height) {
-		setMinWidth(width);
-		setMinHeight(height);
-	}
-	
-	public void setMaxWidth(float width) {
-		this.width.setMax((double) width);
-	}
-	
-	public void setMaxHeight(float height) {
-		this.height.setMax((double) height);
-	}
-	
-	public float getMaxWidth() {
-		return width.getMax().floatValue();
-	}
-	
-	public float getMaxHeight() {
-		return height.getMax().floatValue();
-	}
-	
-	public boolean isInside(float x, float y) {
-		return new Rectangle(getPosX(), getPosY(), getWidth(), getHeight()).contains(new Point(x, y));
-	}
-	
-	public void setPadding(Insets padding) {
-		this.padding.setValue(Validate.notNull(padding, "padding"));
-	}
-	
-	public Insets getPadding() {
-		return padding.getValue();
-	}
-	
 	public boolean isMouseOver() {
 		return mouseOver.getBoolean();
 	}
@@ -115,62 +99,24 @@ public abstract class Widget {
 		return focus.getBoolean();
 	}
 	
-	public void requestFocus() {
-		if (parent != null) {
-			parent.requestFocus(this);
-		}
+	/* Setter */
+	public void setMinSize(float minWidth, float minHeight) {
+		width.setMin((double) minWidth);
+		height.setMin((double) minHeight);
 	}
 	
-	public void setPos(float x, float y) {
-		posX.setDouble(x);
-		posY.setDouble(y);
+	public void setMaxSize(float maxWidth, float maxHeight) {
+		width.setMax((double) maxWidth);
+		height.setMax((double) maxHeight);
 	}
 	
-	public void setSize(float prefWidth, float prefHeight) {
-		if (prefWidth < getMinWidth()) {
-			prefWidth = getMinWidth();
-		} else if (prefWidth > getMaxWidth()) {
-			prefWidth = getMaxWidth();
-		}
-		
-		if (prefHeight < getMinHeight()) {
-			prefHeight = getMinHeight();
-		} else if (prefHeight > getMaxHeight()) {
-			prefHeight = getMaxHeight();
-		}
-		
-		width.setDouble(prefWidth);
-		height.setDouble(prefHeight);
-	}
-	
-	public DoubleProperty propertyPosX() {
-		return posX;
-	}
-	
-	public DoubleProperty propertyPosY() {
-		return posY;
-	}
-	
-	public DoubleProperty propertyWidth() {
-		return width;
-	}
-	
-	public DoubleProperty propertyHeight() {
-		return height;
-	}
-	
-	public BooleanProperty propertyMouseOver() {
-		return mouseOver;
-	}
-	
-	public BooleanProperty propertyFocus() {
-		return focus;
-	}
+	/* Methods for subclasses */
+	protected abstract Dimension computeSize();
 	
 	public void render() {
 	}
 	
-	public void pack() {
+	protected void onLayout() {
 	}
 	
 	protected void onMouseMove(MouseMoveEvent e, boolean hasFocus) {

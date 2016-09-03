@@ -45,7 +45,7 @@ public class TextField extends Text {
 	
 	public TextField(CharSequence text) {
 		super(text);
-		setCursorBlinkRate(530l);
+		setCursorBlinkRate(BLINK_RATE_DEFAULT);
 	}
 	
 	public int getCursorPos() {

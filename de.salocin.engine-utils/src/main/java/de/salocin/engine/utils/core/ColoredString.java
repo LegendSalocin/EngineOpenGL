@@ -11,7 +11,7 @@ public class ColoredString implements CharSequence {
 	private StringBuilder sb = new StringBuilder();
 	private ArrayList<Color> colors = new ArrayList<Color>();
 	
-	public void add(CharSequence string, Color color) {
+	public ColoredString add(CharSequence string, Color color) {
 		Validate.notNull(string, "string");
 		Validate.notNull(color, "color");
 		
@@ -19,10 +19,11 @@ public class ColoredString implements CharSequence {
 		for (int i = 0; i < string.length(); i++) {
 			colors.add(color);
 		}
+		return this;
 	}
 	
-	public void add(char c, Color color) {
-		add(String.valueOf(c), color);
+	public ColoredString add(char c, Color color) {
+		return add(String.valueOf(c), color);
 	}
 	
 	@Override

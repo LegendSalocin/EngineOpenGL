@@ -25,10 +25,6 @@ public class TimeTracker {
 		}
 	}
 	
-	public static long getFpsCounterDelta() {
-		return getDeltaTime(Mode.FPS_COUNTER);
-	}
-	
 	public static long getRenderStateDelta() {
 		return getDeltaTime(Mode.RENDER_STATE);
 	}
@@ -42,7 +38,6 @@ public class TimeTracker {
 	}
 	
 	public static enum Mode {
-		FPS_COUNTER("FPS_COUNT"),
 		RENDER_STATE(),
 		LOOP_SYNCHRONIZER("LOOP_SYNC"),
 		V_SYNC();

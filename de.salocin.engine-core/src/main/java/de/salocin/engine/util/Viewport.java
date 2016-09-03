@@ -2,10 +2,15 @@ package de.salocin.engine.util;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import de.salocin.engine.event.Callback;
+import de.salocin.engine.event.CallbackHandler;
+import de.salocin.engine.event.ValueChangeEvent;
 import de.salocin.engine.geom.Dimension;
 
 public class Viewport {
 	
+	private static final CallbackHandler<ValueChangeEvent<Dimension>> orthoSizeCallback = new CallbackHandler<ValueChangeEvent<Dimension>>();
+	private static final CallbackHandler<ValueChangeEvent<Dimension>> viewportSizeCallback = new CallbackHandler<ValueChangeEvent<Dimension>>();
 	private static Dimension ortho;
 	private static Dimension windowSize;
 	
@@ -15,7 +20,13 @@ public class Viewport {
 	}
 	
 	public static void setOrthoSize(Dimension ortho) {
-		Viewport.ortho = ortho;
+		ValueChangeEvent<Dimension> event = new ValueChangeEvent<Dimension>(Viewport.ortho, ortho);
+		orthoSizeCallback.call(event);
+		if (event.isCanceled()) {
+			return;
+		}
+		
+		Viewport.ortho = event.getNewValue();
 		
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -28,13 +39,27 @@ public class Viewport {
 	}
 	
 	public static void setViewport(Dimension viewport) {
-		Viewport.windowSize = viewport;
+		ValueChangeEvent<Dimension> event = new ValueChangeEvent<Dimension>(Viewport.windowSize, viewport);
+		viewportSizeCallback.call(event);
+		if (event.isCanceled()) {
+			return;
+		}
+		
+		Viewport.windowSize = event.getNewValue();
 		
 		glViewport(0, 0, (int) viewport.getWidth(), (int) viewport.getHeight());
 	}
 	
 	public static Dimension getViewport() {
 		return windowSize;
+	}
+	
+	public static void addOrthoCallback(Callback<ValueChangeEvent<Dimension>> callback) {
+		orthoSizeCallback.add(callback);
+	}
+	
+	public static void addViewportCallback(Callback<ValueChangeEvent<Dimension>> callback) {
+		viewportSizeCallback.add(callback);
 	}
 	
 	public static float scaledWidth(int pixelWidth) {

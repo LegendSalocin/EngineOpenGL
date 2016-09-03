@@ -1,116 +1,95 @@
 package de.salocin.engine.gui.widget;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 import de.salocin.engine.event.KeyEvent;
 import de.salocin.engine.event.MouseButtonEvent;
 import de.salocin.engine.event.MouseMoveEvent;
-import de.salocin.engine.gui.layout.AbsoluteLayout;
-import de.salocin.engine.gui.layout.LayoutConstraint;
-import de.salocin.engine.gui.layout.LayoutManager;
+import de.salocin.engine.geom.Dimension;
+import de.salocin.engine.geom.Insets;
+import de.salocin.engine.geom.Point;
+import de.salocin.engine.utils.core.Color;
 
-public class Pane extends Widget {
+public abstract class Pane extends WidgetBackground {
 	
-	private LayoutManager<?> layoutManager;
-	private ArrayList<Widget> children = new ArrayList<Widget>();
 	private Widget focused;
 	
 	public Pane() {
-		this(AbsoluteLayout.getInstance());
+		setBackgroundColor(Color.fromRGB(0xeeeeee));
+		focus.setBoolean(true);
 	}
 	
-	public Pane(LayoutManager<?> layoutManager) {
-		super.propertyFocus().setBoolean(true);
-		setLayoutManager(layoutManager);
-	}
+	public abstract void add(Widget child);
 	
-	/**
-	 * All children will be removed!
-	 * 
-	 * @param layoutManager
-	 */
-	public void setLayoutManager(LayoutManager<?> layoutManager) {
-		this.layoutManager = layoutManager == null ? AbsoluteLayout.getInstance() : layoutManager;
-		children.clear();
-	}
+	public abstract Collection<Widget> getChildren();
 	
-	public LayoutManager<?> getLayoutManager() {
-		return layoutManager;
-	}
+	protected abstract Point computeChildPos(Widget child);
 	
-	public boolean add(Widget child) {
-		return add(child, null);
-	}
+	protected abstract Point childPosWithinParent(Widget child);
 	
-	public boolean add(Widget child, LayoutConstraint constraint) {
-		if (!contains(child)) {
-			if (layoutManager.isConstraintNeeded()) {
-				if (layoutManager.hasDefaultConstraint() && constraint == null) {
-					constraint = layoutManager.getDefaultConstraint();
-				}
-				
-				if (constraint == null || !layoutManager.getConstraintClass().isAssignableFrom(constraint.getClass())) {
-					throw new IllegalArgumentException("Wrong LayoutConstraint! Needed '" + layoutManager.getConstraintClass() + "' but was '" + constraint.getClass() + "'.");
-				}
+	public void layout() {
+		float x = 0.0f;
+		float y = 0.0f;
+		
+		if (hasParent()) {
+			Point p = getParent().computeChildPos(this);
+			x = p.getX();
+			y = p.getY();
+		}
+		
+		posX.setValue((double) x);
+		posY.setValue((double) y);
+		
+		float maxX = x;
+		float maxY = y;
+		
+		for (Widget child : getChildren()) {
+			if (Pane.class.isAssignableFrom(child.getClass())) {
+				((Pane) child).layout();
+				continue;
 			}
 			
-			child.parent = this;
-			child.layoutConstraint = constraint;
-			children.add(child);
-			// child.requestFocus();
+			final Insets padding = child.padding.getValue();
+			final Dimension dim = child.computeSize();
+			final Point childPos = childPosWithinParent(child);
 			
-			return true;
+			double childX = (double) (getPosX() + childPos.getX() - padding.getLeft());
+			double childY = (double) (getPosY() + childPos.getY() - padding.getTop());
+			double childWidth = (double) (dim.getWidth() + padding.getLeft() + padding.getRight());
+			double childHeight = (double) (dim.getHeight() + padding.getTop() + padding.getBottom());
+			
+			child.posX.setValue(childX);
+			child.posY.setValue(childY);
+			child.width.setValue(childWidth);
+			child.height.setValue(childHeight);
+			child.onLayout();
+			
+			if (childX + childWidth > maxX) {
+				maxX = (float) (childX + childWidth);
+			}
+			
+			if (childY + childHeight > maxY) {
+				maxY = (float) (childY + childHeight);
+			}
 		}
 		
-		return false;
-	}
-	
-	public boolean remove(Widget child) {
-		if (contains(child)) {
-			child.parent = null;
-			child.layoutConstraint = null;
-			children.remove(child);
-			
-			return true;
-		}
+		double width = maxX - x;
+		double height = maxY - y;
 		
-		return false;
-	}
-	
-	public boolean contains(Widget child) {
-		return children.contains(child);
-	}
-	
-	public ArrayList<Widget> getChildren() {
-		return children;
+		super.width.setValue(width);
+		super.height.setValue(height);
 	}
 	
 	@Override
-	public void pack() {
-		float maxWidth = 0.0f;
-		float maxHeight = 0.0f;
-		
-		for (Widget widget : children) {
-			widget.pack();
-			
-			if (widget.getWidth() > maxWidth) {
-				maxWidth = widget.getWidth();
-			}
-			
-			if (widget.getHeight() > maxHeight) {
-				maxHeight = widget.getHeight();
-			}
-		}
-		
-		setSize(maxWidth, maxHeight);
-		layoutManager.layoutWidgets(this, children);
+	protected final Dimension computeSize() {
+		throw new UnsupportedOperationException("Unsupported for panes");
 	}
 	
 	@Override
 	public void render() {
 		super.render();
 		
-		for (Widget widget : children) {
+		for (Widget widget : getChildren()) {
 			widget.render();
 		}
 	}
@@ -125,14 +104,14 @@ public class Pane extends Widget {
 			if (child.equals(focused)) {
 				return;
 			} else {
-				focused.propertyFocus().setValue(false);
+				focused.focus.setValue(false);
 				focused = null;
 			}
 		}
 		
-		for (Widget widget : children) {
+		for (Widget widget : getChildren()) {
 			if (widget.equals(child)) {
-				widget.propertyFocus().setBoolean(true);
+				widget.focus.setBoolean(true);
 				focused = widget;
 			}
 		}
@@ -154,7 +133,7 @@ public class Pane extends Widget {
 	protected void onMouseMove(MouseMoveEvent e, boolean hasFocus) {
 		super.onMouseMove(e, hasFocus);
 		
-		for (Widget widget : children) {
+		for (Widget widget : getChildren()) {
 			widget.onMouseMove(e, widget.hasFocus());
 		}
 	}
@@ -163,7 +142,7 @@ public class Pane extends Widget {
 	protected void onMouseButton(MouseButtonEvent e, boolean hasFocus) {
 		super.onMouseButton(e, hasFocus);
 		
-		for (Widget widget : children) {
+		for (Widget widget : getChildren()) {
 			widget.onMouseButton(e, widget.hasFocus());
 		}
 	}
@@ -172,7 +151,7 @@ public class Pane extends Widget {
 	protected void onKey(KeyEvent e, boolean hasFocus) {
 		super.onKey(e, hasFocus);
 		
-		for (Widget widget : children) {
+		for (Widget widget : getChildren()) {
 			widget.onKey(e, widget.hasFocus());
 		}
 	}

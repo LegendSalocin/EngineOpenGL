@@ -18,6 +18,7 @@ public class SimpleProperty<T> implements Property<T> {
 	private final CallbackHandler<ValueChangeEvent<T>> callback = new CallbackHandler<ValueChangeEvent<T>>();
 	private final T defaultValue;
 	private T value;
+	private ReadOnlyProperty<T> readOnly;
 	
 	/**
 	 * Creates a new instance of this property.
@@ -51,6 +52,18 @@ public class SimpleProperty<T> implements Property<T> {
 		callback.call(e);
 		if (!e.isCanceled()) {
 			this.value = e.getNewValue();
+			
+			readOnly = new ReadOnlyProperty<T>() {
+				@Override
+				public void addValueChangeCallback(Callback<ValueChangeEvent<T>> callback) {
+					SimpleProperty.this.addValueChangeCallback(callback);
+				}
+				
+				@Override
+				public T getValue() {
+					return this.getValue();
+				}
+			};
 		}
 	}
 	
@@ -92,6 +105,11 @@ public class SimpleProperty<T> implements Property<T> {
 	@Override
 	public String save() {
 		throw new UnsupportedOperationException(getClass().getName() + " does not support configuration.");
+	}
+	
+	@Override
+	public ReadOnlyProperty<T> readOnly() {
+		return readOnly;
 	}
 	
 }

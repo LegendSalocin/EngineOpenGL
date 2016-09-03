@@ -1,10 +1,29 @@
 package de.salocin.engine.utils.font;
 
 import de.salocin.engine.utils.core.Color;
+import de.salocin.engine.utils.core.ColoredString;
 import de.salocin.engine.utils.texture.Texture;
 
 public interface FontRenderer {
 	
+	/**
+	 * Renders a text with a custom color per char. You can also use
+	 * {@link ColoredString#render(Font, float, float)} to render text with
+	 * different colored chars.
+	 * 
+	 * @param text
+	 *            The text to render
+	 * @param x
+	 *            The x position
+	 * @param y
+	 *            The y position (of the baseline)
+	 * @param colorPerChar
+	 *            The color for each char
+	 * @throws IllegalArgumentException
+	 *             if the text is null or the given color length does not math
+	 *             with the text length
+	 * @see ColoredString
+	 */
 	void renderText(String text, float x, float y, Color... colorPerChar);
 	
 	/**

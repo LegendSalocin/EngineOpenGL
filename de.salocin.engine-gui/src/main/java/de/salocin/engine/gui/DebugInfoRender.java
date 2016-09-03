@@ -61,11 +61,21 @@ public class DebugInfoRender {
 		
 		yOffset = defaultYOffset;
 		
+		long totalMem = Runtime.getRuntime().maxMemory();
+		long usedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		long freeMem = totalMem - usedMem;
+		
+		totalMem /= 1024 * 1024;
+		freeMem /= 1024 * 1024;
+		usedMem /= 1024 * 1024;
+		
 		renderLine("FPS: %d", FPS.getFPS());
+		renderLine("RAM: %04dMB", totalMem);
+		renderLine("    Used: %04dMB; Free: %dMB", usedMem, freeMem);
 		renderLine("Threads: %d", Thread.activeCount());
 		renderLine("GameLoop Delta: %d", FPS.getDelta());
-		renderLine("    %s: %dms; %s: %dms; %s: %dms; %s: %dms", Mode.FPS_COUNTER, TimeTracker.getFpsCounterDelta(), Mode.RENDER_STATE, TimeTracker.getRenderStateDelta(),
-				Mode.LOOP_SYNCHRONIZER, TimeTracker.getLoopSyncDelta(), Mode.V_SYNC, TimeTracker.getVSyncDelta());
+		renderLine("    %s: %dms; %s: %dms; %s: %dms", Mode.RENDER_STATE, TimeTracker.getRenderStateDelta(), Mode.LOOP_SYNCHRONIZER, TimeTracker.getLoopSyncDelta(), Mode.V_SYNC,
+				TimeTracker.getVSyncDelta());
 		renderLine("V-Sync: " + Display.isVsyncEnabled());
 		renderLine("Mouse: [%.2f|%.2f]", Mouse.getMouse().getMouseX(), Mouse.getMouse().getMouseY());
 	}

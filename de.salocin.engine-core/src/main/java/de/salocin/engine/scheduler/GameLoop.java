@@ -88,9 +88,7 @@ public class GameLoop implements Runnable {
 		while (!glfwWindowShouldClose(window)) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			
-			TimeTracker.start(Mode.FPS_COUNTER);
 			FPS.run();
-			TimeTracker.end();
 			
 			glfwPollEvents();
 			

@@ -8,6 +8,7 @@ import de.salocin.engine.display.input.Mouse;
 import de.salocin.engine.gui.widget.Pane;
 import de.salocin.engine.plugin.Instance;
 import de.salocin.engine.plugin.SimplePlugin;
+import de.salocin.engine.util.Viewport;
 import de.salocin.engine.utils.font.Font;
 import de.salocin.engine.utils.font.FontBuilder;
 
@@ -58,6 +59,15 @@ public class GuiPlugin extends SimplePlugin {
 		Display.addRenderStateCallback(e -> {
 			if (e.getNewValue() != null && GuiRenderState.class.isAssignableFrom(e.getNewValue().getClass())) {
 				GuiRenderState.current = (GuiRenderState) e.getNewValue();
+			}
+		});
+		
+		Viewport.addOrthoCallback(e -> {
+			if (GuiRenderState.getCurrentState() != null && GuiRenderState.getCurrentState().getRootPane() != null) {
+				Pane root = GuiRenderState.getCurrentState().getRootPane();
+				
+				root.setMinSize(e.getNewValue().getWidth(), e.getNewValue().getHeight());
+				root.layout();
 			}
 		});
 	}

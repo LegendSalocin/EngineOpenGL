@@ -2,6 +2,7 @@ package de.salocin.engine.gui;
 
 import de.salocin.engine.display.RenderState;
 import de.salocin.engine.gui.widget.Pane;
+import de.salocin.engine.util.Viewport;
 
 public abstract class GuiRenderState implements RenderState {
 	
@@ -13,8 +14,9 @@ public abstract class GuiRenderState implements RenderState {
 	}
 	
 	public void setRoot(Pane rootPane) {
-		rootPane.pack();
 		this.rootPane = rootPane;
+		rootPane.setMinSize(Viewport.getOrthoSize().getWidth(), Viewport.getOrthoSize().getHeight());
+		rootPane.layout();
 	}
 	
 	public Pane getRootPane() {
