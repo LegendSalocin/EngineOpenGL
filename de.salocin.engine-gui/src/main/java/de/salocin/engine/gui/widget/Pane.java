@@ -101,7 +101,7 @@ public abstract class Pane extends WidgetBackground {
 	
 	public void requestFocus(Widget child) {
 		if (focused != null) {
-			if (child.equals(focused)) {
+			if (child != null && child.equals(focused)) {
 				return;
 			} else {
 				focused.focus.setValue(false);
@@ -109,10 +109,12 @@ public abstract class Pane extends WidgetBackground {
 			}
 		}
 		
-		for (Widget widget : getChildren()) {
-			if (widget.equals(child)) {
-				widget.focus.setBoolean(true);
-				focused = widget;
+		if (child != null) {
+			for (Widget widget : getChildren()) {
+				if (widget.equals(child)) {
+					widget.focus.setBoolean(true);
+					focused = widget;
+				}
 			}
 		}
 	}

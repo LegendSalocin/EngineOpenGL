@@ -8,6 +8,8 @@ public final class FPS {
 	private static long lastTime;
 	private static long lastFpsDetect;
 	private static int fpsCounter;
+	private static int targetFps;
+	private static int targetFpsTimeout;
 	
 	private FPS() {
 	}
@@ -15,6 +17,14 @@ public final class FPS {
 	protected static void run() {
 		timer();
 		countFPS();
+		
+		if (targetFps > 0) {
+			try {
+				Thread.sleep(targetFpsTimeout);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private static void timer() {
@@ -43,6 +53,15 @@ public final class FPS {
 	
 	public static int getFPS() {
 		return fps;
+	}
+	
+	public static int getTargetFPS() {
+		return targetFps;
+	}
+	
+	public static void setTargetFPS(int targetFps) {
+		FPS.targetFps = targetFps;
+		FPS.targetFpsTimeout = 1000 / targetFps;
 	}
 	
 }

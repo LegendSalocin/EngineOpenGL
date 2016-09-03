@@ -92,7 +92,7 @@ public class GuiPlugin extends SimplePlugin {
 		return render;
 	}
 	
-	public static void getDebugInfoRender(DebugInfoRender render) {
+	public static void setDebugInfoRender(DebugInfoRender render) {
 		GuiPlugin.render = Validate.notNull(render);
 	}
 	
