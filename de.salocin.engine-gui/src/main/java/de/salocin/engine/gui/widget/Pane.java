@@ -23,8 +23,6 @@ public abstract class Pane extends WidgetBackground {
 	
 	public abstract Collection<Widget> getChildren();
 	
-	protected abstract Point computeChildPos(Widget child);
-	
 	protected abstract Point childPosWithinParent(Widget child);
 	
 	public void layout() {
@@ -32,7 +30,7 @@ public abstract class Pane extends WidgetBackground {
 		float y = 0.0f;
 		
 		if (hasParent()) {
-			Point p = getParent().computeChildPos(this);
+			Point p = getParent().childPosWithinParent(this);
 			x = p.getX();
 			y = p.getY();
 		}

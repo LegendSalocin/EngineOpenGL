@@ -38,16 +38,11 @@ public class AbsolutePane extends Pane {
 	}
 	
 	@Override
-	protected Point computeChildPos(Widget child) {
+	protected Point childPosWithinParent(Widget child) {
 		if (!children.containsKey(child)) {
 			throw new IllegalArgumentException("widget has not been added to this Pane");
 		}
 		
-		return children.get(child);
-	}
-	
-	@Override
-	protected Point childPosWithinParent(Widget child) {
 		return children.get(child);
 	}
 	
